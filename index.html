@@ -179,6 +179,11 @@ ol.steps strong{display:block; font-weight:600}
 .lbrows li{display:grid; grid-template-columns:34px 1fr auto; gap:8px; align-items:center; padding:7px 10px; border:1px solid var(--line); border-radius:6px; background:var(--card)}
 .lbrows li.top{background:var(--card-2)}
 .lbrows li.me{border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent)}
+.study{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0}
+.study .cnt{opacity:.7; margin-left:4px}
+.studyout{margin:10px 0}
+.studyout .trap td{padding:4px 8px}
+.lbrows .lbt{display:block; color:var(--ink-2); font-size:13px; font-weight:400; line-height:1.2}
 .lbrows .pos{font:700 18px/1 var(--f-head); color:var(--ink-2)}
 .lbrows .nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .acct{display:flex; flex-direction:column; gap:10px; max-width:420px}
@@ -203,6 +208,9 @@ ol.steps strong{display:block; font-weight:600}
 .errs li:first-child{border-top:0; padding-top:0}
 .errs .n{font:700 26px/1 var(--f-head); color:var(--bad); min-width:2ch; text-align:right}
 .errs .tip{grid-column:2; color:var(--ink-2); font-size:15px}
+.errs .errtp{grid-column:2; color:var(--ink-2); font-size:14px}
+.errs .actions{grid-column:2; margin-top:4px}
+.errs small{color:var(--ink-2); font-weight:400}
 .empty{color:var(--ink-2)}
 .setup .field:first-child{grid-column:1/-1}
 .cartouche > div:last-child{flex-basis:12ch; overflow-wrap:anywhere}
@@ -539,6 +547,8 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
             </div>
           </form>
           <div id="hint" class="hint" hidden></div>
+          <div id="study" class="study" hidden></div>
+          <div id="study-out" class="card studyout" hidden></div>
           <div id="feedback" class="fb" hidden role="status" aria-live="polite"></div>
           <div id="solution" class="solution" hidden></div>
         </article>
@@ -5201,7 +5211,7 @@ function cylSvg(r,h,lab,alt,o){
     if(o.hemi) out+=dashArc(S3arc(f,[0,h],r,true)); 
     if(o.hole){ out+=g.path(S3ell(f,[0,h],o.hole),'g-f g-hole')+dashArc(S3arc(f,[0,0],o.hole,false)); }
     const cT=f([0,h]), eT=f([o.hole||r,h]);
-    if(String(lab[0])[0]==='⌀'){ const eL=f([-r,h]); out+=g.seg(eL,eT,'g-thin')+g.dot(cT)+g.text(vadd(cT,[0,-10]),lab[0],'g-u2'); }
+    if(String(lab[0])[0]==='Ø'){ const eL=f([-r,h]); out+=g.seg(eL,eT,'g-thin')+g.dot(cT)+g.text(vadd(cT,[0,-10]),lab[0],'g-u2'); }
     else out+=g.seg(cT,eT,'g-thin')+g.dot(cT)+g.text(vadd(vmid(cT,eT),[0,-9]),lab[0],'g-u2');
     
     out+=g.len(BL,TL,lab[1],ce,10);
@@ -5316,7 +5326,7 @@ function genContenance(){
 /* ----- gs-3 : cylindre (valeur exacte) ----- */
 function genCylindre(){
   const r=rnd(2,8), h=rnd(3,12), ask=pick(['volume','latérale','totale']), u=uP(), useD=Math.random()<0.4, d=2*r;
-  const svg=cylSvg(r,h,[useD?'⌀ '+d:r,h],'Cylindre de hauteur '+h);
+  const svg=cylSvg(r,h,[useD?'Ø '+d:r,h],'Cylindre de hauteur '+h);
   const txt='Un cylindre de révolution a un '+(useD?'diamètre de «'+d+'» '+u:'rayon de «'+r+'» '+u)+' et une hauteur de «'+h+'» '+u+'. ';
   const R0=useD?['r = '+d+' / 2 = '+r]:[], R1=useD?stp('Rayon','Le diamètre est '+M(d)+' : le rayon est la moitié, '+M('r = '+d+' / 2 = '+r)+'.'):null;
   const pre=s=>R1?[R1].concat(s):s, rr=useD?d:r;
@@ -5880,16 +5890,17 @@ function genCouronne(){
   const svg=figure([[-R,-R],[R,R]],f=>{
     const O=f([0,0]); let out=g.circle(O,R*f.s,'g-circle')+g.circle(O,r*f.s,'g-hole')+g.dot(O);
     const e=f([R,0]), e2=f([r*Math.cos(2.2),r*Math.sin(2.2)]);
-    out+=g.seg(O,e,'g-thin')+g.text(vadd(vmid(O,e),[0,-9]),useD?String(2*R)+' (⌀)':String(R),'g-t')+g.seg(O,e2,'g-thin');
-    if(r>=2) out+=g.text(vadd(vmid(O,e2),[-9,-6]),useD?'⌀'+2*r:String(r),'g-t','end');
+    const u2=vunit(vsub(e2,O)), lab2=useD?'Ø'+2*r:String(r);
+    out+=g.seg(O,e,'g-thin')+g.text(vadd(e,[5,-8]),useD?'Ø'+2*R:String(R),'g-t','start')+g.seg(O,e2,'g-thin');
+    out+=g.text(r*f.s>=34?vadd(vmid(O,e2),vmul([-u2[1],u2[0]],-17)):vadd(e2,vmul(u2,13)),lab2,'g-t');
     return out;
-  },'Couronne circulaire de rayons '+R+' et '+r,{H:230,pad:30});
+  },'Couronne circulaire de rayons '+R+' et '+r,{H:230,pad:46});
   const txt=useD?'Une couronne (anneau) est comprise entre deux cercles de même centre, de diamètres «'+2*R+'» '+u+' et «'+2*r+'» '+u+'. ':'Une couronne (anneau) est comprise entre deux cercles de même centre, de rayons «'+R+'» '+u+' et «'+r+'» '+u+'. ';
   const pre=useD?['R = '+2*R+' / 2 = '+R,'r = '+2*r+' / 2 = '+r]:[];
-  if(ask==='aire') return mkGeo({svg:useD?svg.replace(/⌀/g,''):svg,mode:'pi',val:pib(0,R*R-r*r),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la couronne. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',placeholder:'grand disque = ...\npetit disque = ...\nA = ...',
+  if(ask==='aire') return mkGeo({svg,mode:'pi',val:pib(0,R*R-r*r),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la couronne. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',placeholder:'grand disque = ...\npetit disque = ...\nA = ...',
     work:pre.concat(['A = π × '+R+'² − π × '+r+'² = '+kPi(R*R)+' − '+kPi(r*r)+' = '+kPi(R*R-r*r)+' '+u+'²']),steps:(useD?[stp('Rayons',M('R = '+2*R+' / 2 = '+R)+' et '+M('r = '+2*r+' / 2 = '+r))]:[]).concat([stp('Grand disque moins petit disque',M('A = πR² − πr² = '+kPi(R*R)+' − '+kPi(r*r)+' = '+kPi(R*R-r*r))+' '+u+'²')]),hints:['Aire de la couronne = aire du grand disque − aire du petit disque.'],
     mistakes:[{v:pib(0,(R-r)*(R-r)),tag:'geo-decomp',msg:'On soustrait les aires (R² − r²), pas les rayons avant de les élever au carré.',w:['A = π × ('+R+' − '+r+')² = '+kPi((R-r)**2)]},{v:pib(0,R*R),tag:'geo-decomp',msg:'Tu n\'as calculé que le grand disque : retire le petit.',w:['A = π × '+R+'²']},{v:pib(0,2*(R-r)),tag:'geo-aire-pi',msg:'Une aire utilise πr² (le rayon au carré), pas 2πr.',w:['A = 2π × ('+R+' − '+r+')']},{v:pib(0,4*(R*R-r*r)),tag:'geo-rayon',msg:'Tu as utilisé les diamètres à la place des rayons.',w:['A = π × '+2*R+'² − π × '+2*r+'²']}].filter(m=>Math.abs(m.v.b-(R*R-r*r))>1e-9)});
-  return mkGeo({svg:useD?svg.replace(/⌀/g,''):svg,mode:'pi',val:pib(0,2*(R+r)),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> de la couronne (les deux cercles). Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',placeholder:'cercle extérieur = ...\ncercle intérieur = ...\nP = ...',
+  return mkGeo({svg,mode:'pi',val:pib(0,2*(R+r)),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> de la couronne (les deux cercles). Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',placeholder:'cercle extérieur = ...\ncercle intérieur = ...\nP = ...',
     work:pre.concat(['P = 2π × '+R+' + 2π × '+r+' = '+kPi(2*R)+' + '+kPi(2*r)+' = '+kPi(2*(R+r))+' '+u]),steps:[stp('Deux cercles','Le bord de la couronne comprend le cercle extérieur et le cercle intérieur.',M('P = 2π × '+R+' + 2π × '+r+' = '+kPi(2*(R+r)))+' '+u)],hints:['Le contour d\'une couronne est formé de deux cercles.'],
     mistakes:[{v:pib(0,2*R),tag:'geo-perim-cote',msg:'Le cercle intérieur fait aussi partie du bord de la couronne.',w:['P = 2π × '+R]},{v:pib(0,2*(R-r)),tag:'geo-perim-cote',msg:'Les deux longueurs de cercle s\'additionnent.',w:['P = 2π × ('+R+' − '+r+')']},{v:pib(0,R*R+r*r),tag:'geo-aire-pi',msg:'πr² donne une aire. La longueur d\'un cercle est 2πr.',w:['P = π × '+R+'² + π × '+r+'²']}].filter(m=>Math.abs(m.v.b-2*(R+r))>1e-9)});
 }
@@ -5901,7 +5912,7 @@ function genPlaque(){
   const svg=figure([[0,0],[W,H]],f=>{
     const p0=f([0,0]),p1=f([W,0]),p2=f([W,H]),p3=f([0,H]); let out=g.poly([p0,p1,p2,p3]);
     holes.forEach(h=>{ out+=g.circle(f(h),r*f.s,'g-hole'); });
-    const h0=f(holes[0]), e=f([holes[0][0]+r,holes[0][1]]); out+=g.dot(h0)+g.seg(h0,e,'g-thin')+g.text(vadd(h0,[r*f.s*0.5,-9]),String(r),'g-t');
+    const h0=f(holes[0]), e=f([holes[0][0]+r,holes[0][1]]); out+=g.dot(h0)+g.seg(h0,e,'g-thin')+g.text(vadd(e,[10,-8]),String(r),'g-t');
     return out+g.text([(p0[0]+p1[0])/2,p0[1]+17],String(W))+g.len(p0,p3,String(H),f([W/2,H/2]),12);
   },'Plaque rectangulaire de '+W+' sur '+H+' avec '+n+' perçages',{H:210,pad:34});
   const txt='Une plaque rectangulaire de «'+W+'» mm sur «'+H+'» mm est percée de «'+n+'» trous circulaires identiques de rayon «'+r+'» mm (entièrement dans la plaque). ';
@@ -6489,11 +6500,11 @@ function renderExercise(quiet){
   $('statement').innerHTML=(ex.word||ex.sys||ex.geo)&&ex.html?ex.html:M(ex.statement); $('statement').classList.toggle('word',!!ex.word||!!ex.geo); $('statement').classList.toggle('sys',!!ex.sys&&!ex.word);
   buildKeys();
   const inp=$('answer'); inp.value=''; inp.disabled=false;
-  ['hint','feedback','solution'].forEach(id=>{ const e=$(id); e.hidden=true; e.innerHTML=''; });
+  ['hint','feedback','solution','study-out'].forEach(id=>{ const e=$(id); e.hidden=true; e.innerHTML=''; });
   $('feedback').className='fb';
   $('btn-check').hidden=false; $('btn-hint').hidden=false; $('btn-hint').disabled=false;
   $('btn-solution').hidden=false; $('btn-solution').textContent='Voir la solution'; $('btn-next').hidden=true;
-  updatePreview(); renderProgress(); gameRender(); funRender(); attachDraw();
+  updatePreview(); renderProgress(); gameRender(); funRender(); attachDraw(); renderStudy();
   if(!quiet&&!S.ex.copy) inp.focus({preventScroll:true});
 }
 
@@ -6561,7 +6572,7 @@ function onCheck(){
   if(r.status==='syntax'){ showFb('mid',r.title,r.html); return; }
   betSettle(false);
   S.tries++; gameWrong();
-  if(r.tag){ stats.errors[r.tag]=(stats.errors[r.tag]||0)+1; S.seriesErrs[r.tag]=(S.seriesErrs[r.tag]||0)+1; saveStats(); }
+  if(r.tag){ stats.errors[r.tag]=(stats.errors[r.tag]||0)+1; noteErr(r.tag,S.ex.topic); S.seriesErrs[r.tag]=(S.seriesErrs[r.tag]||0)+1; saveStats(); }
   const retain=r.tag&&TAGS[r.tag]?'<p class="retain"><b>À retenir</b> · '+esc(TAGS[r.tag].tip)+'</p>':'';
   showFb(r.status==='wrong'?'ko':'mid',r.title,r.html+retain+'<p class="tip" style="margin-top:8px">Corrige ta réponse puis vérifie de nouveau. Un indice ou la solution sont disponibles.</p>');
 }
@@ -6570,7 +6581,7 @@ function resolve(kind){
   S.status=kind==='shown'?'shown':'solved';
   S.results[S.n]=kind; S.log[S.n]={html:(S.ex.word||S.ex.geo)?esc(S.ex.statement.length>80?S.ex.statement.slice(0,80)+'…':S.ex.statement):M(S.ex.statement),statement:S.ex.statement,kind,topic:S.ex.topic,kindEx:S.ex.kind};
   const st=stats.topics[S.ex.topic]||(stats.topics[S.ex.topic]={n:0,clean:0,helped:0,shown:0}); st.n++; st[kind]++; saveStats();
-  $('answer').disabled=true; $('btn-check').hidden=true; $('btn-hint').hidden=true; $('btn-step').hidden=true;
+  $('answer').disabled=true; $('btn-check').hidden=true; $('btn-hint').hidden=true; $('btn-step').hidden=true; renderStudy();
   $('btn-solution').textContent='Voir la méthode'; $('btn-next').hidden=false;
   $('btn-next').textContent=S.n+1>=TOTAL?'Voir le bilan de la série':'Exercice suivant';
   if(kind==='shown'){
@@ -6835,7 +6846,8 @@ function attachDraw(){
 
 /* ===== Couche de jeu : XP, rangs, combo, boss, badges, boutique, records ===== */
 const GSTORE='dev-fact-game-v1';
-const RANKS=[[0,'Ébauche'],[100,'Dégrossi'],[300,'Ajusté'],[700,'Rectifié'],[1400,'Poli'],[2500,'Micro-précision'],[4000,'Chef-d\'œuvre']];
+const RANKS=[[0,'Ébauche'],[50,'Ébauche II'],[100,'Dégrossi'],[200,'Dégrossi II'],[300,'Ajusté'],[500,'Ajusté II'],[700,'Rectifié'],[1000,'Rectifié II'],[1400,'Poli'],[1900,'Poli II'],[2500,'Micro-précision'],[3200,'Micro-précision II'],[4000,'Chef-d\'œuvre'],[5500,'Chef-d\'œuvre II']];
+const RK=n=>RANKS.findIndex(x=>x[1]===n);
 const DAILY_GOAL=15, BOSS_TOTAL=5, BOSS_WIN=4;
 const xpBase=L=>Math.round(10*Math.pow(1.4,Math.max(1,L)-1));
 const coinBase=L=>Math.ceil(Math.max(1,L)/2);
@@ -6864,7 +6876,7 @@ const TITLES={lynx:['Œil de lynx',30],as:['As du discriminant',40],pi:['Maître
 const SFX={base:{name:'Classique',desc:'Notes douces (sons d\'origine).',w:'sine',m:1,d:1,v:1,price:0},meca:{name:'Mécanique',desc:'Cliquetis secs, comme une machine qui tourne.',w:'square',m:0.5,d:0.55,v:0.32,price:40},carillon:{name:'Carillon',desc:'Petites cloches aiguës.',w:'triangle',m:2,d:1.7,v:0.9,price:40},flute:{name:'Flûte',desc:'Notes claires et légères.',w:'sine',m:1.5,d:1.3,v:0.9,price:40},retro:{name:'8 bits',desc:'Bips de console rétro.',w:'square',m:1,d:0.6,v:0.3,price:50},marimba:{name:'Marimba',desc:'Notes boisées, courtes et chaudes.',w:'triangle',m:0.75,d:1.4,v:1,price:45},orgue:{name:'Orgue',desc:'Notes tenues, comme un petit orgue.',w:'sawtooth',m:1,d:1.6,v:0.25,price:50},grave:{name:'Basse',desc:'Sons graves et ronds.',w:'sawtooth',m:0.5,d:1.2,v:0.3,price:45}};
 const CONFS={base:{name:'Classique',desc:'Couleurs du thème.',price:0,cols:null},arc:{name:'Arc-en-ciel',desc:'Confettis multicolores.',price:40,cols:['#E5484D','#F5A524','#F2D33C','#3DB36B','#2E90FA','#8E5CF0']},or:{name:'Pluie d\'or',desc:'Confettis dorés.',price:50,cols:['#FFD95A','#F5B700','#FFE9A0','#D99A00']},braise:{name:'Braise',desc:'Confettis rouge et orange.',price:45,cols:['#FF5A36','#FF9F1C','#FFD166','#E63946']},ronds:{name:'Bulles',desc:'Confettis ronds aux couleurs du thème.',price:40,cols:null,shape:'round'},etoiles:{name:'Étoiles',desc:'Petites étoiles dorées et bleutées.',price:60,cols:['#FFD95A','#FFFFFF','#9FD3FF'],shape:'star'},neige:{name:'Neige',desc:'Petits flocons blancs et bleutés.',price:40,cols:['#FFFFFF','#CFE6FF','#A9D0FF','#E8F2FF']}};
 const FRAMES={base:{name:'Aucun',desc:'Cadre d\'origine.',price:0},cartouche:{name:'Cartouche',desc:'Double trait, comme le cadre d\'un plan.',price:60},or:{name:'Doré',desc:'Liseré doré autour de la barre de jeu.',price:80},neon:{name:'Néon',desc:'Halo lumineux aux couleurs du thème.',price:80}};
-function gameDefaults(){ const o={xp:0,coins:0,streak:0,best:0,lastDay:'',daily:{d:'',n:0},dq:{d:'',l:[]},exams:[],badges:{},rec:{},hist:[],boss:{},shield:0,skip:0,ins:0,dbl:0,freeze:0,mag:0,compass:0,purse2:false,luck2:false,xpb2:false,winb2:false,gen2:false,disc2:false,dailyb2:false,dayskip2:false,bet100:false,bet50:false,pcarry:0,lb:false,lbSince:'',lastReward:null,wk:{w:'',xp:0},pw:{w:'',xp:0},claims:{},betDay:{d:'',g:0},luck:false,purse:false,xpb:false,disc:false,gen:false,winb:false,dayskip:false,dailyb:false,conf:'base',confs:['base'],frame:'base',frames:['base'],theme:'base',themes:['base'],title:'',titles:[],sfx:'base',sfxs:['base'],sound:true,fx:true,c:{n:0,clean:0,rev:0,alg:0,eq:0,geo:0,maxCombo:0,buys:0,perfect:0,dailyDone:0,dqDone:0,dqAll:0,exam:0,exam5:0,copy:0,betW:0,betL:0,gold:0,chest:0,podium:0,champion:0}}; PERK_ALL.forEach(id=>{ o[id]=false; }); return o; }
+function gameDefaults(){ const o={xp:0,coins:0,streak:0,best:0,lastDay:'',daily:{d:'',n:0},dq:{d:'',l:[]},exams:[],badges:{},rec:{},hist:[],boss:{},shield:0,skip:0,ins:0,dbl:0,freeze:0,mag:0,compass:0,st:{ex:0,trap:0,chk:0,tab:0,perso:0},purse2:false,luck2:false,xpb2:false,winb2:false,gen2:false,disc2:false,dailyb2:false,dayskip2:false,bet100:false,bet50:false,pcarry:0,lb:false,lbSince:'',lastReward:null,wk:{w:'',xp:0},pw:{w:'',xp:0},claims:{},betDay:{d:'',g:0},luck:false,purse:false,xpb:false,disc:false,gen:false,winb:false,dayskip:false,dailyb:false,conf:'base',confs:['base'],frame:'base',frames:['base'],theme:'base',themes:['base'],title:'',titles:[],sfx:'base',sfxs:['base'],sound:true,fx:true,c:{n:0,clean:0,rev:0,alg:0,eq:0,geo:0,maxCombo:0,buys:0,perfect:0,dailyDone:0,dqDone:0,dqAll:0,exam:0,exam5:0,copy:0,betW:0,betL:0,gold:0,chest:0,podium:0,champion:0}}; PERK_ALL.forEach(id=>{ o[id]=false; }); return o; }
 let G=loadGame();
 function normGame(s){
   const d=gameDefaults();
@@ -6906,8 +6918,8 @@ const BADGES=[
   ['algo','Algébriste','Réussir 40 exercices de l\'onglet Développer & factoriser sans aide.',()=>G.c.alg>=40],
   ['equa','Équationniste','Réussir 40 exercices de l\'onglet Équations sans aide.',()=>G.c.eq>=40],
   ['geom','Géomètre','Réussir 40 exercices de l\'onglet Géométrie sans aide.',()=>G.c.geo>=40],
-  ['rank3','Rectifié','Atteindre le rang « Rectifié ».',()=>rankOf(G.xp).i>=3],
-  ['rank6','Chef-d\'œuvre','Atteindre le rang « Chef-d\'œuvre ».',()=>rankOf(G.xp).i>=6],
+  ['rank3','Rectifié','Atteindre le rang « Rectifié ».',()=>rankOf(G.xp).i>=RK('Rectifié')],
+  ['rank6','Chef-d\'œuvre','Atteindre le rang « Chef-d\'œuvre ».',()=>rankOf(G.xp).i>=RK('Chef-d\'œuvre')],
   ['copy20','Correcteur','Corriger 20 copies du premier coup, sans indice.',()=>G.c.copy>=20],
   ['bet10','Parieur avisé','Gagner 10 paris de confiance.',()=>G.c.betW>=10],
   ['gold','Pépite','Réussir un exercice doré du premier coup, sans indice.',()=>G.c.gold>=1],
@@ -7104,7 +7116,7 @@ function gameProfileHTML(){
   h+='<div class="card"><h3>Boss vaincus <span class="cnt">'+bk.length+'</span></h3>'+(bk.length?'<ul class="plain">'+bk.map(k=>{ const p=k.split('|'); return '<li>'+esc(KIND_LABEL[p[0]]||p[0])+' · niveau '+esc(p[1])+' <span class="muted">('+esc(G.boss[k])+')</span></li>'; }).join('')+'</ul>':'<p class="empty">Aucun pour l\'instant. Le bouton « Affronter le boss » apparaît dans l\'onglet Entraînement quand un niveau est validé (5 exercices, 70 % sans aide).</p>')+'</div>';
   // records
   const rk=Object.keys(G.rec);
-  h+='<div class="card"><h3>Records</h3>'+(rk.length?'<div class="tbl"><table class="trap"><thead><tr><th>Onglet</th><th>Mode</th><th>Niveau</th><th>Meilleur score</th><th>Séries</th></tr></thead><tbody>'+rk.sort().map(k=>{ const p=k.split('|'); if(p[0]==='exam') return '<tr><td>'+esc(DOM_TITLE[p[1]].replace(/<[^>]+>/g,'').replace('&amp;','&'))+'</td><td>Examen blanc</td><td>—</td><td>'+fr(G.rec[k].best)+' / 6</td><td>'+G.rec[k].n+'</td></tr>'; const b=/^boss/.test(p[2]); return '<tr><td>'+esc(DOM_TITLE[p[0]].replace(/<[^>]+>/g,'').replace('&amp;','&'))+'</td><td>'+esc(modeLabel(p[0],p[1]))+'</td><td>'+(b?'Boss '+esc(p[2].slice(4)):(p[2]==='0'?'Tous':esc(p[2])))+'</td><td>'+fr(G.rec[k].best)+' / '+(b?BOSS_TOTAL:TOTAL)+'</td><td>'+G.rec[k].n+'</td></tr>'; }).join('')+'</tbody></table></div>':'<p class="empty">Termine une série pour établir un premier record.</p>')+'</div>';
+  h+='<div class="card"><h3>Records</h3>'+(rk.length?'<div class="tbl"><table class="trap"><thead><tr><th>Onglet</th><th>Mode</th><th>Niveau</th><th>Meilleur score</th><th>Séries</th></tr></thead><tbody>'+rk.sort().map(k=>{ const p=k.split('|'); if(p[0]==='exam') return '<tr><td>'+esc(examKeyLabel(p[1]))+'</td><td>Examen blanc</td><td>—</td><td>'+fr(G.rec[k].best)+' / 6</td><td>'+G.rec[k].n+'</td></tr>'; const b=/^boss/.test(p[2]); return '<tr><td>'+esc(DOM_TITLE[p[0]].replace(/<[^>]+>/g,'').replace('&amp;','&'))+'</td><td>'+esc(modeLabel(p[0],p[1]))+'</td><td>'+(b?'Boss '+esc(p[2].slice(4)):(p[2]==='0'?'Tous':esc(p[2])))+'</td><td>'+fr(G.rec[k].best)+' / '+(b?BOSS_TOTAL:TOTAL)+'</td><td>'+G.rec[k].n+'</td></tr>'; }).join('')+'</tbody></table></div>':'<p class="empty">Termine une série pour établir un premier record.</p>')+'</div>';
   // historique
   h+='<div class="card"><h3>Historique des séries</h3>'+sparkline()+(G.hist.length?'<ul class="rec hist">'+G.hist.slice(-8).reverse().map(x=>'<li><span class="tagk '+(x.s/x.t>=0.8?'clean':x.s/x.t>=0.5?'helped':'shown')+'">'+fr(x.s)+' / '+x.t+'</span><span>'+esc(x.d)+' · '+esc(modeLabel(x.dm,x.m))+(x.b?' · boss':(x.l?' · niveau '+x.l:''))+' · +'+x.x+' XP</span></li>').join('')+'</ul>':'')+'</div>';
   // boutique
@@ -7231,18 +7243,38 @@ function srsPills(){
 }
 
 /* ===== Mode examen, fiche de formules, vérification pas à pas ===== */
-const EXCFG={dur:30,lv:0};
+const EXCFG={dur:30,lv:0,scope:"dom"};
 const EXN={30:8,45:12,60:16};
 const running=()=>!!(S.exam&&!S.exam.done);
+const EXKINDS=['alg','eq','geo'];
+function examKeyLabel(k){
+  const clean=h=>h.replace(/<[^>]+>/g,'').replace('&amp;','&');
+  if(DOM_TITLE[k]) return clean(DOM_TITLE[k]);
+  if(k==='all') return 'Tous les domaines';
+  const d=domainOf(k), m=(MODES[d]||[]).find(x=>x[0]===k);
+  return clean(DOM_TITLE[d])+' · '+(m?m[1]:k);
+}
+function examScope(dom){ const sc=EXCFG.scope||'dom'; return (sc==='all'||sc==='dom'||DKINDS[dom].includes(sc))?sc:'dom'; }
+function examKey(dom){ const sc=examScope(dom); return sc==='dom'?dom:sc; }
+function examIds(dom,d2){
+  const sc=examScope(dom), ks=sc==='all'?DKINDS[d2||dom]:(sc==='dom'?DKINDS[dom]:[sc]);
+  return Object.keys(TOPICS).filter(id=>ks.includes(TOPICS[id].kind));
+}
+function examLvMax(dom){ const all=examScope(dom)==='all'?EXKINDS.reduce((a,d)=>a.concat(examIds(dom,d)),[]):examIds(dom); return Math.max.apply(null,all.map(id=>TOPICS[id].level)); }
 function examLevels(n,dom){
-  const mx=Math.max.apply(null,Object.keys(TOPICS).map(id=>TOPICS[id]).filter(T=>DKINDS[dom].includes(T.kind)).map(T=>T.level));
+  const mx=examLvMax(dom);
   if(EXCFG.lv) return Array.from({length:n},()=>Math.min(EXCFG.lv,mx));
   return Array.from({length:n},(_,i)=>Math.max(1,Math.min(mx,1+Math.floor(i*mx/n))));
 }
+function examPick(l,dom,i,avoid){
+  const d2=examScope(dom)==='all'?EXKINDS[i%3]:dom, ids=examIds(dom,d2);
+  const lvs=[...new Set(ids.map(id=>TOPICS[id].level))], L=lvs.reduce((p,c)=>Math.abs(c-l)<Math.abs(p-l)?c:p,lvs[0]);
+  return newExercise('mix',L,avoid,ids.filter(id=>TOPICS[id].level===L),d2);
+}
 function examStart(){
   const dom=S.domain, n=EXN[EXCFG.dur], lvs=examLevels(n,dom), avoid=[], qs=[];
-  lvs.forEach(l=>{ const ex=newExercise('mix',l,avoid,null,dom); avoid.push(ex.statement); qs.push({ex,ans:''}); });
-  S.exam={qs,i:0,dom,dur:EXCFG.dur,end:Date.now()+EXCFG.dur*60000,done:false,timer:null};
+  lvs.forEach((l,i)=>{ const ex=examPick(l,dom,i,avoid); avoid.push(ex.statement); qs.push({ex,ans:''}); });
+  S.exam={qs,i:0,dom,sk:examKey(dom),dur:EXCFG.dur,end:Date.now()+EXCFG.dur*60000,done:false,timer:null};
   S.pool=null; S.boss=null; TOTAL=n;
   S.exam.timer=setInterval(examTick,1000);
   document.getElementById('view-train').classList.add('examrun');
@@ -7290,7 +7322,7 @@ function examFinish(timeout){
     const good=res&&res.status==='ok'; W+=L; if(good){ got+=L; ok++; }
     const st=stats.topics[q.ex.topic]||(stats.topics[q.ex.topic]={n:0,clean:0,helped:0,shown:0}); st.n++; st[good?'clean':'shown']++;
     srsUpdate(q.ex.topic,good?'clean':'shown');
-    if(res&&res.tag&&!good){ stats.errors[res.tag]=(stats.errors[res.tag]||0)+1; }
+    if(res&&res.tag&&!good){ stats.errors[res.tag]=(stats.errors[res.tag]||0)+1; noteErr(res.tag,q.ex.topic); }
     rows.push({q,k,L,blank,good,res});
   });
   saveStats();
@@ -7298,13 +7330,13 @@ function examFinish(timeout){
   let xp=0; rows.forEach(r=>{ if(r.good) xp+=xpBase(r.L); }); xp=Math.round(xp*1.25); const coins=Math.ceil(ok/2)+(note>=5?5:0);
   G.c.n+=E.qs.length; G.c.exam=(G.c.exam||0)+1; if(note>=5) G.c.exam5=(G.c.exam5||0)+1;
   G.coins+=coins; const up=addXp(xp);
-  const key='exam|'+E.dom; const rec=G.rec[key]||(G.rec[key]={best:0,n:0}); rec.n++; if(note>rec.best) rec.best=note;
-  (G.exams=G.exams||[]).push({d:dayStr(0),dm:E.dom,n:E.qs.length,dur:E.dur,note,ok}); if(G.exams.length>12) G.exams.splice(0,G.exams.length-12);
+  const key='exam|'+E.sk; const rec=G.rec[key]||(G.rec[key]={best:0,n:0}); rec.n++; if(note>rec.best) rec.best=note;
+  (G.exams=G.exams||[]).push({d:dayStr(0),dm:E.sk,n:E.qs.length,dur:E.dur,note,ok}); if(G.exams.length>12) G.exams.splice(0,G.exams.length-12);
   const fresh=checkBadges(); announceBadges(fresh); saveGame(); renderBar();
   if(note>=5){ confetti(); tone(SND.good); }
   S.exam.result={rows,note,ratio,xp,coins,up,fresh,timeout,ok};
   document.getElementById('view-train').classList.remove('examrun'); $('exam-bar').hidden=true; TOTAL=10;
-  S.exam=null; S.lastExam={rows,note,ratio,xp,coins,up,fresh,timeout,ok,dom:E.dom,dur:E.dur};
+  S.exam=null; S.lastExam={rows,note,ratio,xp,coins,up,fresh,timeout,ok,dom:E.dom,sk:E.sk,dur:E.dur};
   setTab('exam'); newSeries();
 }
 function examViewHTML(){
@@ -7312,23 +7344,25 @@ function examViewHTML(){
   if(S.lastExam&&S.lastExam.show){ /* résultat affiché une fois */ }
   let h='';
   const R=S.lastExam;
-  if(R&&R.dom===dom){
+  if(R&&R.sk===examKey(dom)){
     h+='<div class="card exres"><h3>Résultat de l\'examen'+(R.timeout?' <span class="cnt">temps écoulé</span>':'')+'</h3><div class="kpis"><div class="kpi"><span class="lbl">Note</span><b>'+fr(R.note)+' / 6</b></div><div class="kpi"><span class="lbl">Réussies</span><b>'+R.ok+' / '+R.rows.length+'</b></div><div class="kpi"><span class="lbl">Récompense</span><b>+'+R.xp+' XP</b></div></div>'
       +'<p class="note">Note = 1 + 5 × points obtenus / points possibles ; une question vaut autant de points que son niveau. Récompense : +25 % d\'XP, +'+R.coins+' pièces.'+(R.up?' Nouveau rang : '+esc(rankOf(G.xp).name)+'.':'')+'</p>'
       +(R.fresh.length?'<p class="rw-b"><span class="lbl">Badges obtenus</span> '+R.fresh.map(b=>'<span class="bdg-chip">'+esc(b[1])+'</span>').join(' ')+'</p>':'')
       +'<ul class="rec">'+R.rows.map(r=>'<li class="exq"><details><summary><span class="tagk '+(r.good?'clean':'shown')+'">'+(r.good?'Juste':r.blank?'Sans réponse':'Faux')+'</span><span>Q'+(r.k+1)+' · niv. '+r.L+' · '+esc(r.q.ex.statement.length>90?r.q.ex.statement.slice(0,90)+'…':r.q.ex.statement)+'</span></summary>'
         +(r.blank?'':'<p class="lbl">Ta réponse</p><pre class="exans">'+esc(r.q.ans)+'</pre>')+(r.res&&!r.good&&r.res.html?'<div class="fb ko" style="margin:8px 0">'+'<h2>'+esc(r.res.title||'')+'</h2>'+r.res.html+'</div>':'')+solutionHTML(r.q.ex)+'</details></li>').join('')+'</ul></div>';
   }
-  const lvMax=Math.max.apply(null,Object.keys(TOPICS).map(id=>TOPICS[id]).filter(T=>DKINDS[dom].includes(T.kind)).map(T=>T.level));
-  h+='<div class="card"><h3>Examen blanc · '+DOM_TITLE[dom].replace(/<[^>]+>/g,'').replace('&amp;','&')+'</h3><p>Conditions d\'examen : temps limité, aucun indice, aucune correction avant la fin. Tu réponds dans l\'ordre que tu veux et tu peux revenir sur une question. Tout est corrigé à la remise de la copie, avec la solution détaillée.</p>'
+  const lvMax=examLvMax(dom), sc=examScope(dom), scL=sc==='all'?'Tous les domaines':sc==='dom'?DOM_TITLE[dom].replace(/<[^>]+>/g,'').replace('&amp;','&'):((MODES[dom].find(m=>m[0]===sc)||[0,sc])[1]);
+  h+='<div class="card"><h3>Examen blanc · '+esc(scL)+'</h3><p>Conditions d\'examen : temps limité, aucun indice, aucune correction avant la fin. Tu réponds dans l\'ordre que tu veux et tu peux revenir sur une question. Tout est corrigé à la remise de la copie, avec la solution détaillée.</p>'
+    +'<div class="field"><label class="lbl" for="ex-scope">Thème</label><select id="ex-scope" class="sel"><option value="dom"'+(sc==='dom'?' selected':'')+'>Tout le domaine (mélange)</option>'+MODES[dom].filter(m=>DKINDS[dom].includes(m[0])).map(m=>'<option value="'+m[0]+'"'+(sc===m[0]?' selected':'')+'>'+esc(m[1])+'</option>').join('')+'<option value="all"'+(sc==='all'?' selected':'')+'>Tous les domaines mélangés</option></select></div>'
     +'<div class="field"><span class="lbl">Durée</span><div class="seg" id="ex-dur" role="group">'+[30,45,60].map(m=>'<button type="button" data-d="'+m+'" aria-pressed="'+(EXCFG.dur===m)+'">'+m+' min · '+EXN[m]+' questions</button>').join('')+'</div></div>'
     +'<div class="field"><span class="lbl">Difficulté</span><div class="seg" id="ex-lv" role="group"><button type="button" data-l="0" aria-pressed="'+(EXCFG.lv===0)+'">Progressive</button>'+Array.from({length:lvMax},(_,i)=>'<button type="button" data-l="'+(i+1)+'" aria-pressed="'+(EXCFG.lv===i+1)+'">Niveau '+(i+1)+'</button>').join('')+'</div></div>'
     +'<div class="actions"><button type="button" class="btn primary" data-ex="start">Commencer l\'examen</button></div></div>';
-  const past=(G.exams||[]).filter(x=>x.dm===dom).slice(-5).reverse();
+  const past=(G.exams||[]).filter(x=>x.dm===examKey(dom)).slice(-5).reverse();
   if(past.length) h+='<div class="card"><h3>Examens précédents</h3><ul class="rec">'+past.map(x=>'<li><span class="tagk '+(x.note>=5?'clean':x.note>=4?'helped':'shown')+'">'+fr(x.note)+' / 6</span><span>'+esc(x.d)+' · '+x.n+' questions ('+x.dur+' min) · '+x.ok+' réussies</span></li>').join('')+'</ul></div>';
   return h;
 }
 function renderExamView(){ $('view-exam').innerHTML=examViewHTML(); }
+function examChange(e){ if(e.target.id==='ex-scope'){ EXCFG.scope=e.target.value; EXCFG.lv=0; renderExamView(); } }
 function examClick(e){
   const b=e.target.closest('button'); if(!b) return;
   if(b.dataset.d){ EXCFG.dur=+b.dataset.d; renderExamView(); return; }
@@ -7552,6 +7586,7 @@ function chestOpen(btn){
 function itemName(v){
   if(v==='shield') return 'Bouclier de combo'; if(v==='skip') return 'Passe'; if(PERK_NAME[v]) return 'Amélioration « '+PERK_NAME[v]+' »'; if(v==='ins3') return '3 assurances de pari'; if(v==='freeze3') return '3 gels de série'; if(v==='dbl3') return '3 potions double XP'; if(v==='chest-or') return 'Coffre en or';
   if(v==='skip3') return '3 passes'; if(v==='shield3') return '3 boucliers de combo'; if(v==='mag') return 'Aimant à pièces (20 exercices)'; if(v==='compass') return 'Boussole dorée'; if(v==='chest-bois') return 'Coffre en bois'; if(v==='chest-argent') return 'Coffre en argent';
+  if(v.indexOf('st-')===0){ const s=STUDY.find(x=>'st-'+x[0]===v); return s?s[1]:v; }
   if(v==='ins') return 'Assurance de pari'; if(v==='dbl') return 'Potion double XP (5 exercices)'; if(v==='freeze') return 'Gel de série';
   if(v==='compass3') return '3 boussoles dorées'; if(v==='chest-argent3') return '3 coffres en argent';
   if(v.indexOf('frame-')===0&&FRAMES[v.slice(6)]) return 'Cadre « '+FRAMES[v.slice(6)].name+' »';
@@ -7581,6 +7616,7 @@ function grantItem(v,equip){
   if(v==='compass3'){ G.compass+=3; return; }
   if(v==='chest-argent3'){ const tx=[]; for(let i=0;i<3;i++) tx.push(chestLootText(chestGive('argent'))); toast('3 coffres ouverts : '+tx.join(' · '),'ok'); tone(SND.chest); return; }
   if(v.indexOf('frame-')===0){ const k=v.slice(6); if(!G.frames.includes(k)) G.frames.push(k); if(equip){ G.frame=k; applyTheme(); } return; }
+  if(v.indexOf('st-')===0){ studyGrant(v); return; }
   if(v==='shield3'){ G.shield+=3; return; }
   if(v==='mag'){ G.mag+=20; return; }
   if(v==='compass'){ G.compass++; return; }
@@ -7634,11 +7670,11 @@ function dealHTML(){
 function shopNav(){
   const it=[['shop-objets','Objets'],['shop-perm','Permanents']];
   if(PERK_ALL.some(id=>PERK_UP[id]&&G[PERK_UP[id]])) it.push(['shop-niv','Niveaux 2 à 5']);
-  it.push(['shop-themes','Thèmes'],['shop-titres','Titres'],['shop-sons','Sons'],['shop-conf','Confettis'],['shop-cadres','Cadres']);
+  it.push(['shop-etude','Pour apprendre'],['shop-themes','Thèmes'],['shop-titres','Titres'],['shop-sons','Sons'],['shop-conf','Confettis'],['shop-cadres','Cadres']);
   return '<div class="card"><h3>Aller à</h3><div class="shop-nav">'+it.map(x=>'<button type="button" class="btn" data-g="goto:'+x[0]+'">'+x[1]+'</button>').join('')+'</div></div>';
 }
 function invHTML(){
-  const it=[['Boucliers de combo',G.shield],['Passes',G.skip],['Assurances de pari',G.ins],['Gels de série',G.freeze],['Potion ×2 XP (exerc.)',G.dbl],['Aimant (exerc.)',G.mag],['Boussoles dorées',G.compass]];
+  const it=[['Boucliers de combo',G.shield],['Passes',G.skip],['Assurances de pari',G.ins],['Gels de série',G.freeze],['Potion ×2 XP (exerc.)',G.dbl],['Aimant (exerc.)',G.mag],['Boussoles dorées',G.compass]].concat(STUDY.map(s=>[s[1],stG()[s[0]]||0]));
   return '<div class="card"><h3>Ton sac</h3><div class="kpis inv">'+it.map(x=>'<div class="kpi"><span class="lbl">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')+'</div>'
     +'<p class="note">Gains de paris aujourd\'hui : '+betToday()+' / '+betCap()+' pièces.</p></div>';
 }
@@ -7666,6 +7702,7 @@ function shopHTML(){
     +li('Pack de 3 assurances de pari','Trois assurances d\'un coup, moins cher qu\'à l\'unité. Possédées : '+G.ins+'.',buy('ins3',PRICES.ins3))
     +li('Pack de 3 gels de série','Trois gels d\'un coup, moins cher qu\'à l\'unité. Possédés : '+G.freeze+'.',buy('freeze3',PRICES.freeze3))
     +li('Pack de 3 potions double XP','15 exercices à XP doublé, moins cher qu\'à l\'unité. Restant : '+G.dbl+'.',buy('dbl3',PRICES.dbl3))+'</ul>';
+  h+='<h4 class="shop-h" id="shop-etude">Pour apprendre</h4><ul class="shop">'+STUDY.map(s=>li(s[1],s[2]+' En réserve : '+(stG()[s[0]]||0)+'.',buy('st-'+s[0]))).join('')+'</ul>';
   const perm=(v,name,desc)=>li(name,desc,G[v]?'<button type="button" class="btn" disabled>Acquis</button>':buy(v,PRICES[v]));
   const pct=x=>Math.round(x*100);
   const fr1=x=>String(x).replace('.',',');
@@ -7705,12 +7742,82 @@ function funInit(){
   $('bet').addEventListener('click',onBetClick);
 }
 
+/* ===== Objets pour apprendre : consommables utilisables pendant un exercice ===== */
+const STUDY=[
+  ['ex','Exemple corrigé','Un exercice du même thème avec d\'autres nombres, entièrement résolu. Compte comme une aide.',20],
+  ['trap','Piège du thème','Les erreurs les plus courantes sur ce thème, avec la règle à retenir. Compte comme une aide.',15],
+  ['chk','Vérification libre','Dit si ta réponse finale est juste, sans compter d\'essai ni d\'erreur.',20],
+  ['tab','Aide-mémoire de tables','Carrés, cubes, racines, π et valeurs trigonométriques usuelles. 5 consultations.',25],
+  ['perso','Rappel perso','La règle de ton erreur la plus fréquente, d\'après ta fiche d\'erreurs.',10]
+];
+STUDY.forEach(s=>{ PRICES['st-'+s[0]]=s[3]; });
+const stG=()=>G.st||(G.st={ex:0,trap:0,chk:0,tab:0,perso:0});
+function studyGrant(v){ const k=v.slice(3); stG()[k]=(stG()[k]||0)+(k==='tab'?5:1); }
+function studyAllowed(){ return !!S.ex&&S.status==='open'&&!running()&&!S.boss&&!S.ex.copy; }
+function renderStudy(){
+  const row=$('study'), out=$('study-out'); if(!row) return;
+  const own=STUDY.filter(s=>(stG()[s[0]]||0)>0);
+  if(!studyAllowed()||!own.length){ row.hidden=true; row.innerHTML=''; return; }
+  row.innerHTML='<span class="lbl">Outils d\'étude</span>'+own.map(s=>'<button type="button" class="btn" data-st="'+s[0]+'">'+esc(s[1])+' <span class="cnt">×'+stG()[s[0]]+'</span></button>').join('');
+  row.hidden=false;
+}
+function studyOut(html){ const o=$('study-out'); o.innerHTML=html+'<div class="actions"><button type="button" class="btn" data-st="close">Fermer</button></div>'; o.hidden=false; }
+function studyMsg(t){ studyOut('<p>'+t+'</p>'); }
+function studyTables(){
+  const sq=Array.from({length:25},(_,i)=>'<td>'+(i+1)+'² = '+(i+1)*(i+1)+'</td>'), rows=[];
+  for(let i=0;i<sq.length;i+=5) rows.push('<tr>'+sq.slice(i,i+5).join('')+'</tr>');
+  return '<span class="lbl">Aide-mémoire</span><div class="tbl"><table class="trap"><caption>Carrés</caption><tbody>'+rows.join('')+'</tbody></table></div>'
+    +'<p>Cubes : '+Array.from({length:10},(_,i)=>(i+1)+'³ = '+Math.pow(i+1,3)).join(' · ')+'</p>'
+    +'<p>Racines : '+M('\\sqrt{2} \\approx 1{,}414')+' · '+M('\\sqrt{3} \\approx 1{,}732')+' · '+M('\\sqrt{5} \\approx 2{,}236')+' · '+M('\\sqrt{6} \\approx 2{,}449')+' · '+M('\\sqrt{7} \\approx 2{,}646')+' · '+M('\\sqrt{8} \\approx 2{,}828')+' · '+M('\\sqrt{10} \\approx 3{,}162')+'</p>'
+    +'<p>'+M('\\pi \\approx 3{,}1416')+' · '+M('2\\pi \\approx 6{,}283')+' · '+M('\\pi^2 \\approx 9{,}870')+'</p>'
+    +'<div class="tbl"><table class="trap"><caption>Valeurs exactes (angles en degrés)</caption><thead><tr><th>Angle</th><th>sin</th><th>cos</th><th>tan</th></tr></thead><tbody>'
+    +'<tr><td>30°</td><td>'+M('\\frac{1}{2}')+'</td><td>'+M('\\frac{\\sqrt{3}}{2}')+'</td><td>'+M('\\frac{\\sqrt{3}}{3}')+'</td></tr>'
+    +'<tr><td>45°</td><td>'+M('\\frac{\\sqrt{2}}{2}')+'</td><td>'+M('\\frac{\\sqrt{2}}{2}')+'</td><td>1</td></tr>'
+    +'<tr><td>60°</td><td>'+M('\\frac{\\sqrt{3}}{2}')+'</td><td>'+M('\\frac{1}{2}')+'</td><td>'+M('\\sqrt{3}')+'</td></tr></tbody></table></div>';
+}
+function studyUse(k){
+  const st=stG();
+  if(k==='ex'){
+    const d=domainOf(TOPICS[S.ex.topic].kind), tw=newExercise('mix',S.ex.level,[S.ex.statement],[S.ex.topic],d);
+    studyOut('<span class="lbl">Exemple corrigé : même thème, autres nombres</span><div class="study-st">'+((tw.word||tw.sys||tw.geo)&&tw.html?tw.html:'<p>'+M(tw.statement)+'</p>')+'</div>'+solutionHTML(tw));
+    S.hints=Math.max(S.hints,1); betCancel('exemple consulté'); st.ex--; return true;
+  }
+  if(k==='trap'){
+    const cnt={}; for(let i=0;i<30;i++){ let tw; try{ tw=newExercise('mix',S.ex.level,null,[S.ex.topic],domainOf(TOPICS[S.ex.topic].kind)); }catch(e){ break; } (tw.mistakes||[]).forEach(m=>{ if(m.tag&&TAGS[m.tag]) cnt[m.tag]=(cnt[m.tag]||0)+1; }); }
+    const mine=(stats.errTopics||{});
+    Object.keys(mine).forEach(t=>{ if(TAGS[t]&&mine[t][S.ex.topic]) cnt[t]=(cnt[t]||0)+100*mine[t][S.ex.topic]; });
+    const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]).slice(0,3);
+    if(!top.length){ studyMsg('Aucun piège recensé pour ce thème. Ton objet n\'est pas consommé.'); return false; }
+    studyOut('<span class="lbl">Pièges à éviter sur ce thème</span><ul class="errs">'+top.map(t=>'<li><span class="n">!</span><span><b>'+esc(TAGS[t].label)+'</b></span><span class="tip">'+esc(TAGS[t].tip)+'</span></li>').join('')+'</ul>');
+    S.hints=Math.max(S.hints,1); betCancel('piège consulté'); st.trap--; return true;
+  }
+  if(k==='chk'){
+    const v=$('answer').value.trim(); if(!v){ studyMsg('Écris d\'abord ta réponse dans le champ, puis relance la vérification. Ton objet n\'est pas consommé.'); return false; }
+    let res; try{ res=checkWork(S.ex,v); }catch(e){ res={status:'syntax'}; }
+    studyOut(res.status==='ok'?'<p><b>Ta réponse finale est juste.</b> Clique sur « Vérifier » pour la valider.</p>':'<p><b>Ce n\'est pas encore ça.</b> Relis chaque étape, ou utilise « Vérifier l\'étape » pour trouver la ligne fautive.</p>');
+    st.chk--; return true;
+  }
+  if(k==='tab'){ studyOut(studyTables()); st.tab--; return true; }
+  if(k==='perso'){
+    const e=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]).sort((a,b)=>b[1]-a[1])[0];
+    if(!e){ studyMsg('Aucune erreur enregistrée pour l\'instant. Ton objet n\'est pas consommé.'); return false; }
+    studyOut('<span class="lbl">Ton erreur la plus fréquente ('+e[1]+' fois)</span><p><b>'+esc(TAGS[e[0]].label)+'</b></p><p>'+esc(TAGS[e[0]].tip)+'</p>'); st.perso--; return true;
+  }
+  return false;
+}
+function studyClick(e){
+  const b=e.target.closest('button[data-st]'); if(!b) return; const k=b.dataset.st;
+  if(k==='close'){ $('study-out').hidden=true; return; }
+  if(!studyAllowed()||(stG()[k]||0)<1) return;
+  const used=studyUse(k); if(used){ saveGame(); renderStudy(); funRender(); }
+}
+
 /* ===== Compte (pseudo + mot de passe, Supabase) : synchronisation entre appareils + classement hebdomadaire ===== */
 const SYNCKEY='dev-fact-sync-v1', BACKKEY='dev-fact-backup-v1';
 const LB_MIN_XP=150, LB_CAP=10000, LB_PUSH_MS=4000;
 const LB_REWARDS=[{coins:300,title:'champion'},{coins:200,title:'dauphin'},{coins:120,title:'podium'}];
 const SB_URL='https://pgdmtokjwevqmvorujgs.supabase.co', SB_KEY='sb_publishable_raG6hGktoPEhiYepyxKQzA_nMLz1eWS', ACCKEY='dev-fact-acct-v1', MAIL='@dev-fact.app';
-const SYNC={st:'init',db:null,user:null,uid:null,name:'',busyAuth:false,authErr:'',meta:null,base:0,busy:false,again:false,timer:null,applying:false,conflict:null,board:[],bready:false,names:{},bkey:'',myb:null,err:''};
+const SYNC={st:'init',db:null,user:null,uid:null,name:'',busyAuth:false,authErr:'',meta:null,base:0,busy:false,again:false,timer:null,applying:false,conflict:null,board:[],bready:false,names:{},titles:{},bkey:'',myb:null,err:''};
 /* st : init (reconnexion) · out (non connecté) · ok · conflict · err (serveur injoignable) */
 
 /* ---------- accès au serveur (API REST de Supabase, sans bibliothèque) ---------- */
@@ -7769,10 +7876,10 @@ const REMOTE={
     return poller(async()=>{ let rows; try{ rows=await sb('/rest/v1/saves?user_id=eq.'+SYNC.uid+'&select=data,t,x,c,n','GET'); }catch(e){ if(!firstDone&&er) er(e); else if(e.code==='auth') er&&er(e); return; }
       firstDone=true; const row=rows&&rows[0], sig=row?row.t:0; if(last===sig) return; last=sig;
       cb(row?{exists:true,data:()=>({j:row.data,t:+row.t,x:row.x,c:row.c,n:row.n})}:{exists:false,data:()=>undefined}); },20000); },
-  boardSet:async d=>{ await sb('/rest/v1/scores?on_conflict=user_id','POST',{user_id:SYNC.uid,name:SYNC.name,cur_w:d.cur.w,cur_xp:Math.min(LB_CAP,d.cur.xp|0),prev_w:d.prev.w,prev_xp:Math.min(LB_CAP,d.prev.xp|0),claims:d.claims,upd:new Date().toISOString()},{Prefer:'resolution=merge-duplicates,return=minimal'}); },
+  boardSet:async d=>{ await sb('/rest/v1/scores?on_conflict=user_id','POST',{user_id:SYNC.uid,name:SYNC.name,cur_w:d.cur.w,cur_xp:Math.min(LB_CAP,d.cur.xp|0),prev_w:d.prev.w,prev_xp:Math.min(LB_CAP,d.prev.xp|0),claims:d.claims,title:d.title||'',upd:new Date().toISOString()},{Prefer:'resolution=merge-duplicates,return=minimal'}); },
   boardDel:async()=>{ await sb('/rest/v1/scores?user_id=eq.'+SYNC.uid,'DELETE'); },
-  boardWatch:(cb)=>poller(async()=>{ const rows=await sb('/rest/v1/scores?select=user_id,name,cur_w,cur_xp,prev_w,prev_xp,claims','GET');
-      cb((rows||[]).map(r=>({id:r.user_id,name:r.name,cur:{w:r.cur_w,xp:r.cur_xp},prev:{w:r.prev_w,xp:r.prev_xp},claims:r.claims||{}}))); },45000)
+  boardWatch:(cb)=>poller(async()=>{ const rows=await sb('/rest/v1/scores?select=user_id,name,cur_w,cur_xp,prev_w,prev_xp,claims,title','GET');
+      cb((rows||[]).map(r=>({id:r.user_id,name:r.name,cur:{w:r.cur_w,xp:r.cur_xp},prev:{w:r.prev_w,xp:r.prev_xp},claims:r.claims||{},title:r.title||''}))); },45000)
 };
 
 const pad2=n=>String(n).padStart(2,'0');
@@ -7828,10 +7935,10 @@ async function syncFlush(){
 async function boardPush(){
   if(SYNC.st!=='ok'||!G.lb) return;
   ensureWeek();
-  const key=[G.wk.w,G.wk.xp,G.pw.w,G.pw.xp,Object.keys(G.claims).length].join('|');
+  const key=[G.wk.w,G.wk.xp,G.pw.w,G.pw.xp,Object.keys(G.claims).length,G.title||''].join('|');
   if(key===SYNC.bkey) return;
   try{
-    const doc={cur:{w:G.wk.w,xp:G.wk.xp},prev:{w:G.pw.w,xp:G.pw.xp},claims:clone(G.claims),upd:Date.now()};
+    const doc={cur:{w:G.wk.w,xp:G.wk.xp},prev:{w:G.pw.w,xp:G.pw.xp},claims:clone(G.claims),title:(G.title&&TITLES[G.title])?G.title:'',upd:Date.now()};
     await REMOTE.boardSet(doc); SYNC.bkey=key; SYNC.myb=doc;
     if(SYNC.bw) SYNC.bw.run();
   }catch(e){ if(e&&e.code==='auth') expired(); }
@@ -7924,7 +8031,7 @@ function startSync(){
   stopWatch();
   SYNC.sw=REMOTE.saveWatch(snap=>{ onCloud(snap.exists?snap.data():null); syncUI(); },e=>{ if(e&&e.code==='auth') expired(); else { SYNC.st='err'; SYNC.err='Serveur injoignable.'; syncUI(); } });
   SYNC.bw=REMOTE.boardWatch(rows=>{
-    SYNC.board=rows; SYNC.bready=true; rows.forEach(r=>{ if(r.name) SYNC.names[r.id]=r.name; });
+    SYNC.board=rows; SYNC.bready=true; rows.forEach(r=>{ if(r.name) SYNC.names[r.id]=r.name; SYNC.titles[r.id]=r.title||''; });
     const me=rows.find(b=>b.id===SYNC.uid); if(me) SYNC.myb=me;
     checkRewards(); if(!$('view-lb').hidden) renderLb();
   });
@@ -7962,10 +8069,11 @@ function syncUI(){
   if(!$('view-lb').hidden) renderLb();
 }
 function lbDur(ms){ const h=Math.floor(ms/3600000), d=Math.floor(h/24); return d>=1?d+' j '+(h%24)+' h':h+' h '+pad2(Math.floor(ms%3600000/60000))+' min'; }
+const lbTitle=id=>{ const k=id===SYNC.uid?G.title:SYNC.titles[id]; return (k&&TITLES[k])?'<small class="lbt">« '+esc(TITLES[k][0])+' »</small>':''; };
 const lbName=id=>id===SYNC.uid?'Toi':(SYNC.names[id]||'Joueur');
 function lbRows(r,limit){
   const me=r.findIndex(x=>x.id===SYNC.uid), show=r.slice(0,limit);
-  let h='<ol class="lbrows">'+show.map((x,i)=>'<li class="'+(x.id===SYNC.uid?'me':'')+(i<3?' top':'')+'"><span class="pos">'+(i+1)+'</span><span class="nm">'+esc(lbName(x.id))+'</span><b>'+x.xp+' XP</b></li>').join('')+'</ol>';
+  let h='<ol class="lbrows">'+show.map((x,i)=>'<li class="'+(x.id===SYNC.uid?'me':'')+(i<3?' top':'')+'"><span class="pos">'+(i+1)+'</span><span class="nm">'+esc(lbName(x.id))+lbTitle(x.id)+'</span><b>'+x.xp+' XP</b></li>').join('')+'</ol>';
   if(me>=limit) h+='<p class="note">Ta place : '+(me+1)+' sur '+r.length+' ('+r[me].xp+' XP).</p>';
   return h;
 }
@@ -8175,6 +8283,41 @@ function courseFull(){
   +'</div>';
 }
 
+function noteErr(tag,topic){
+  const o=(stats.errTopics=stats.errTopics||{})[tag]||(stats.errTopics[tag]={}); o[topic]=(o[topic]||0)+1;
+  (stats.errLast=stats.errLast||{})[tag]=dayStr(0);
+}
+function errSheetHTML(){
+  const all=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]).sort((a,b)=>b[1]-a[1]);
+  if(!all.length) return '<div class="card"><h3>Fiche d\'erreurs</h3><p class="empty">Aucune erreur enregistrée.</p></div>';
+  const row=([t,n])=>{
+    const tp=Object.entries((stats.errTopics||{})[t]||{}).sort((a,b)=>b[1]-a[1]).filter(([id])=>TOPICS[id]);
+    const last=(stats.errLast||{})[t];
+    return '<li class="errrow"><span class="n">'+n+'</span><span><b>'+esc(TAGS[t].label)+'</b>'+(last?' <small>· dernière fois le '+esc(last)+'</small>':'')+'</span><span class="tip">'+esc(TAGS[t].tip)+'</span>'
+      +(tp.length?'<span class="errtp">Rencontrée dans : '+tp.slice(0,3).map(([id,c])=>esc(TOPICS[id].label)+' ('+c+')').join(', ')+'</span><span class="actions"><button type="button" class="btn" data-act="errtrain" data-tag="'+esc(t)+'">S\'entraîner sur cette erreur</button></span>':'<span class="errtp">Entraînement ciblé disponible dès la prochaine fois que cette erreur arrive.</span>')+'</li>';
+  };
+  return '<div class="card"><h3>Fiche d\'erreurs <span class="cnt">'+all.length+' types</span></h3><p class="note">Triée de la plus fréquente à la plus rare. Le bouton lance une série avec les exercices où tu as fait cette erreur.</p><ul class="errs">'+all.slice(0,6).map(row).join('')+'</ul>'
+    +(all.length>6?'<details class="rules"><summary>Voir les '+(all.length-6)+' autres</summary><ul class="errs">'+all.slice(6).map(row).join('')+'</ul></details>':'')+'</div>';
+}
+function errTrain(tag){
+  const o=(stats.errTopics||{})[tag]||{}; let ids=Object.keys(o).filter(id=>TOPICS[id]).sort((a,b)=>o[b]-o[a]); if(!ids.length) return;
+  const dom=domainOf(TOPICS[ids[0]].kind); ids=ids.filter(id=>domainOf(TOPICS[id].kind)===dom);
+  setDomain(dom,'train'); S.mode='mix'; S.only=null; S.pool=[...ids,...ids]; renderSetup(); newSeries();
+}
+const THEME_RANKS=[[0,'Débutant'],[60,'Apprenti'],[200,'Compagnon'],[500,'Technicien'],[1000,'Expert'],[2000,'Maître']];
+function themePoints(kind){
+  let p=0; Object.keys(TOPICS).forEach(id=>{ const T=TOPICS[id], s=stats.topics[id]; if(T.kind===kind&&s) p+=(s.clean*1+s.helped*0.5+s.shown*0.1)*xpBase(T.level); });
+  return Math.round(p);
+}
+function themeRank(p){ let i=0; THEME_RANKS.forEach((r,k)=>{ if(p>=r[0]) i=k; }); const n=THEME_RANKS[i+1]; return {i,name:THEME_RANKS[i][1],min:THEME_RANKS[i][0],next:n?n[0]:null,nextName:n?n[1]:null}; }
+function themeRanksHTML(){
+  const doms=[['alg','Développer & factoriser'],['eq','Équations'],['geo','Géométrie']];
+  return '<div class="card"><h3>Rangs par thème</h3><p class="note">Points de maîtrise = exercices réussis sans aide (pleins points), avec aide (moitié) ou solution vue (peu), pondérés par le niveau.</p>'
+    +doms.map(([d,t])=>'<h4 class="shop-h">'+esc(t)+'</h4><div class="bars">'+DKINDS[d].map(k=>{
+      const p=themePoints(k), r=themeRank(p), pc=r.next?Math.min(100,Math.round(100*(p-r.min)/(r.next-r.min))):100;
+      return '<div class="bar-row"><div class="name">'+esc(KIND_LABEL[k])+'<small>'+p+' pts'+(r.next?' · prochain : '+esc(r.nextName)+' à '+r.next:' · rang maximal')+'</small></div>'
+        +'<div class="track" role="img" aria-label="'+pc+' % vers le rang suivant"><span class="clean" style="width:'+pc+'%"></span></div><div class="cnt">'+esc(r.name)+'</div></div>'; }).join('')+'</div>').join('')+'</div>';
+}
 function renderStats(){
   const ids=Object.keys(TOPICS), tot={n:0,clean:0,helped:0,shown:0};
   ids.forEach(id=>{ const s=stats.topics[id]; if(s){ tot.n+=s.n; tot.clean+=s.clean; tot.helped+=s.helped; tot.shown+=s.shown; } });
@@ -8187,12 +8330,13 @@ function renderStats(){
   if(!tot.n){
     h+='<div class="card"><h3>Pas encore de résultats</h3><p class="empty">Après ta première série, cette page montre ta réussite par thème et tes erreurs les plus fréquentes, avec le rappel de règle correspondant.</p></div>';
   } else {
+    h+=themeRanksHTML();
     h+='<div class="card"><h3>Réussite par thème</h3><div class="legend"><span><i style="background:var(--ok)"></i>Sans aide</span><span><i style="background:var(--warn)"></i>Avec aide</span><span><i style="background:var(--bad)"></i>Solution vue</span></div><div class="bars">'
       +ids.map(id=>{ const s=stats.topics[id]||{n:0,clean:0,helped:0,shown:0}, T=TOPICS[id], pc=k=>s.n?(100*s[k]/s.n):0;
         return '<div class="bar-row"><div class="name">'+esc(T.label)+'<small>'+KIND_LABEL[T.kind]+' · niveau '+T.level+'</small></div>'
           +'<div class="track" role="img" aria-label="'+s.clean+' sans aide, '+s.helped+' avec aide, '+s.shown+' solutions vues">'+(s.n?'<span class="clean" style="width:'+pc('clean')+'%"></span><span class="helped" style="width:'+pc('helped')+'%"></span><span class="shown" style="width:'+pc('shown')+'%"></span>':'')+'</div>'
           +'<div class="cnt">'+(s.n||'–')+'</div></div>'; }).join('')+'</div></div>';
-    h+='<div class="card"><h3>Erreurs les plus fréquentes</h3>'+(errs.length?'<ul class="errs">'+errs.map(([t,n])=>'<li><span class="n">'+n+'</span><span><b>'+esc(TAGS[t].label)+'</b></span><span class="tip">'+esc(TAGS[t].tip)+'</span></li>').join('')+'</ul>':'<p class="empty">Aucune erreur enregistrée.</p>')+'</div>';
+    h+=errSheetHTML();
   }
   h+='<div class="card"><h3>Données</h3><p class="empty">Les résultats sont stockés uniquement dans ce navigateur.</p><div class="actions" id="reset-zone"><button type="button" class="btn" data-act="reset">Effacer mes résultats</button></div></div></div>';
   $('view-stats').innerHTML=h;
@@ -8230,7 +8374,7 @@ function init(){
   $('answer').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); onCheck(); } });
   $('btn-hint').addEventListener('click',onHint);
   $('btn-step').addEventListener('click',onStep);
-  $('view-exam').addEventListener('click',examClick); $('exam-bar').addEventListener('click',examBarClick); $('feedback').addEventListener('click',examFbClick);
+  $('view-train').addEventListener('click',studyClick); $('view-exam').addEventListener('click',examClick); $('view-exam').addEventListener('change',examChange); $('exam-bar').addEventListener('click',examBarClick); $('feedback').addEventListener('click',examFbClick);
   $('view-formulas').addEventListener('click',e=>{ if(e.target.closest('[data-f="print"]')){ try{ window.print(); }catch(x){} } });
   $('btn-solution').addEventListener('click',onSolution);
   $('btn-next').addEventListener('click',onNext);
@@ -8250,6 +8394,7 @@ function init(){
     } else if(b.dataset.act==='reset-yes'){ stats={topics:{},errors:{},series:0}; saveStats(); renderStats(); }
     else if(b.dataset.act==='reset-no') renderStats();
     else if(b.dataset.act==='gotoshop') setTab('shop');
+    else if(b.dataset.act==='errtrain') errTrain(b.dataset.tag);
   });
   gameInit(); funInit(); lbInit(); syncInit();
   renderSetup(); setTab('train'); newSeries();
