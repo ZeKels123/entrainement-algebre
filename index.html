@@ -50,6 +50,7 @@ section[hidden]{display:none}
 .lbl{font:600 13px/1 var(--f-head); letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
 .setup{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px 24px}
 .field{display:flex; flex-direction:column; gap:8px; min-width:0}
+.sel{font:inherit; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:6px; padding:8px 10px; min-height:40px; max-width:100%}
 .seg{display:flex; flex-wrap:wrap; border:1px solid var(--line); border-radius:6px; overflow:hidden; align-self:flex-start; max-width:100%}
 .seg button{background:var(--card); border:0; border-right:1px solid var(--line); padding:8px 14px; cursor:pointer; color:var(--ink-2); min-height:40px}
 .seg button:last-child{border-right:0}
@@ -207,6 +208,17 @@ ol.steps strong{display:block; font-weight:600}
 .cartouche > div:last-child{flex-basis:12ch; overflow-wrap:anywhere}
 .geofig{margin:0; display:flex; flex-direction:column; align-items:center; gap:4px}
 .geofig figcaption{font-size:12px; color:var(--ink-3)}
+.drawbar{display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; margin-top:4px}
+.drawbar .dlbl{font-size:12px; color:var(--ink-3); margin-right:2px}
+.drawbar button{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:4px 10px; min-height:34px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.drawbar button:hover{background:var(--card-2)}
+.drawbar button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+.drawbar .dcol{width:34px; padding:0; position:relative}
+.drawbar .dcol::after{content:""; position:absolute; inset:9px; border-radius:50%; background:var(--dc)}
+.drawbar .dcol[aria-pressed="true"]{background:var(--card-2); border:2px solid var(--ink)}
+.geo-svg.drawing{touch-action:none; cursor:crosshair}
+.draw-s{fill:none; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; pointer-events:none}
+@media print{.drawbar{display:none}}
 .geo-svg{width:100%; max-width:400px; height:auto; display:block; color:var(--accent); overflow:visible}
 .geo{display:flex; flex-direction:column; gap:12px}
 .geotxt{margin:0}
@@ -487,6 +499,10 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
           <div class="field">
             <span class="lbl" id="lbl-level">Niveau</span>
             <div class="seg" id="seg-level" role="group" aria-labelledby="lbl-level"></div>
+          </div>
+          <div class="field" id="field-topic" hidden>
+            <label class="lbl" for="sel-topic">Thème</label>
+            <select id="sel-topic" class="sel"></select>
           </div>
           <div class="field" id="boss-field" hidden>
             <span class="lbl">Défi</span>
@@ -2517,7 +2533,7 @@ const NAMES3=[['A','B','C'],['A','B','C'],['E','F','G'],['M','N','P'],['R','S','
 /* ----- construction d'un exercice de géométrie ----- */
 function mkGeo(o){
   const val=typeof o.val==='number'?{a:o.val,b:0}:(o.val||{a:0,b:0}), mode=o.mode||'num', unit=o.unit||'', pow=o.pow||1;
-  const ustr=unit==='°'?'°':(unit?' '+unit+(pow===2?'²':''):'');
+  const ustr=unit==='°'?'°':(unit?' '+unit+(pow===2?'²':pow===3?'³':''):'');
   const pv=v=>v.a+v.b*Math.PI;
   const pstr=v=>{ const bs=(Math.abs(v.b)===1?'':NF(Math.abs(v.b)))+'π'; if(!v.b) return NF(v.a); if(!v.a) return (v.b<0?'−':'')+bs; if(v.a<0&&v.b>0) return bs+' − '+NF(-v.a); return NF(v.a)+(v.b<0?' − ':' + ')+bs; };
   let es; if(mode==='choice') es=o.choice; else if(mode==='fn') es=o.fn.lhs+' = '+o.fn.exact; else if(o.exact) es=o.exact; else if(mode==='sqrt') es=o.exact; else if(mode==='round') es=NF(Math.round(pv(val)*Math.pow(10,o.d))/Math.pow(10,o.d)); else es=pstr(val);
@@ -3831,8 +3847,8 @@ function geoNorm(s){
 function geoUnit(seg){
   let s=geoNorm(seg).trim(), unit='', pow=0, deg=false;
   const dm=s.match(/^(.*?)\s*(?:°|degr[ée]s?|deg)\s*$/i); if(dm){ s=dm[1]; deg=true; }
-  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|m)\s*(\^\s*2)?\s*$/i);
-  if(um){ s=um[1]; unit=um[2].toLowerCase(); pow=um[3]?2:1; }
+  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|m)\s*(\^\s*([23]))?\s*$/i);
+  if(um){ s=um[1]; unit=um[2].toLowerCase(); pow=um[3]?+um[4]:1; }
   return {core:s.trim(),unit,pow,deg};
 }
 const isNumCore=c=>/^[0-9+\-*/^().π√\s]+$/.test(c)&&/[0-9π]/.test(c);
@@ -3991,9 +4007,10 @@ function checkGeoWork(ex,input){
     if(G.unit==='°'){ return !usr.unit; }
     if(usr.deg) return false;
     if(!usr.unit) return true;
-    return usr.unit===G.unit&&usr.pow===(G.pow===2?2:1);
+    return usr.unit===G.unit&&usr.pow===(G.pow===2||G.pow===3?G.pow:1);
   })();
-  const unitMsg=()=>{ if(G.unit==='°') return 'Un angle se mesure en degrés (°), pas en '+usr.unit+'.'; if(usr.deg) return 'Cette grandeur est une '+(G.pow===2?'aire':'longueur')+' en '+G.unit+(G.pow===2?'²':'')+', pas un angle.'; if(usr.unit!==G.unit) return 'L\'énoncé est en '+G.unit+' : ton résultat doit être en '+G.unit+(G.pow===2?'²':'')+', pas en '+usr.unit+(usr.pow===2?'²':'')+'.'; return G.pow===2?'Une <b>aire</b> s\'exprime en '+G.unit+'² (unité au carré), pas en '+G.unit+'.':'Une <b>longueur</b> s\'exprime en '+G.unit+', pas en '+G.unit+'².'; };
+  const SUP=p=>p===3?'³':(p===2?'²':''), NOUN=p=>p===3?'volume':(p===2?'aire':'longueur');
+  const unitMsg=()=>{ if(G.unit==='°') return 'Un angle se mesure en degrés (°), pas en '+usr.unit+'.'; if(usr.deg) return 'Cette grandeur est un'+(G.pow===2?'e':'')+' '+NOUN(G.pow)+' en '+G.unit+SUP(G.pow)+', pas un angle.'; if(usr.unit!==G.unit) return 'L\'énoncé est en '+G.unit+' : ton résultat doit être en '+G.unit+SUP(G.pow)+', pas en '+usr.unit+SUP(usr.pow)+'.'; return G.pow>=2?'Un'+(G.pow===2?'e':'')+' <b>'+NOUN(G.pow)+'</b> s\'exprime en '+G.unit+SUP(G.pow)+(G.pow===2?' (unité au carré)':' (unité au cube)')+', pas en '+G.unit+SUP(usr.pow)+'.':'Une <b>longueur</b> s\'exprime en '+G.unit+', pas en '+G.unit+SUP(usr.pow)+'.'; };
   const val=G.val, vnum=gPv(val);
   let good=false, near=null;
   if(G.mode==='num'){ good=Math.abs(u.b)<1e-9&&Math.abs(u.a-val.a)<=1e-6*Math.max(1,Math.abs(val.a)); }
@@ -4033,8 +4050,8 @@ function previewGeo(line){
     if(isNumCore(u.core)) geoEval(u.core);
     const shown=parts[i].trim();
     if(!shown) continue;
-    const core=u.core.replace(/√/g,'√').replace(/\^2/g,'²');
-    const uni=u.deg?'°':(u.unit?' '+u.unit+(u.pow===2?'²':''):'');
+    const core=u.core.replace(/√/g,'√').replace(/\^2/g,'²').replace(/\^3/g,'³');
+    const uni=u.deg?'°':(u.unit?' '+u.unit+(u.pow===2?'²':u.pow===3?'³':''):'');
     out+=M(isNumCore(u.core)?u.core.replace(/\s+/g,' '):shown.replace(/\s+/g,' '))+(isNumCore(u.core)||u.unit||u.deg?esc(uni):'');
   }
   return out;
@@ -4753,6 +4770,1181 @@ TOPICS['gc-6e']={kind:'gcirc',level:6,label:'Deux cercles tangents dans un trian
 TOPICS['gm-6d']={kind:'gcomp',level:6,label:'Figure à encoches (Héron)',gen:genBotte};
 TOPICS['gm-6e']={kind:'gcomp',level:6,label:'Disque percé de deux segments',gen:genDisqueE};
 
+/* ===== Géométrie niveau 6 : nouvelles formes composées (rosace, hexagone à pétales, courroie, lunules) ===== */
+Object.assign(TAGS,{
+  'geo-rosace':{label:'Rosace de demi-disques',tip:'Les demi-disques se recouvrent : les pétales sont comptées deux fois dans la somme des demi-disques. Somme des demi-disques − carré = aire des pétales. Ou : un pétale = 2 × (quart de disque − triangle).'},
+  'geo-hexagone':{label:'Hexagone régulier',tip:'Un hexagone régulier de côté a se découpe en 6 triangles équilatéraux de côté a (aire √3/4 × a² chacun). Seuls les arcs forment le contour de la figure complète.'},
+  'geo-courroie':{label:'Courroie autour de deux poulies',tip:'Les rayons vers les points de contact sont perpendiculaires à la courroie. Dans le triangle rectangle formé par les centres, l\'hypoténuse vaut d et un côté vaut R − r : la longueur d\'un brin est le troisième côté (pas d), et l\'angle donne les arcs.'},
+  'geo-lunule':{label:'Lunules d\'Hippocrate',tip:'Lunules = demi-disques des deux côtés de l\'angle droit + triangle − demi-disque de l\'hypoténuse. Le demi-disque de l\'hypoténuse contient le triangle et les deux segments que les lunules n\'occupent pas.'}
+});
+/* arc passant par un point intermédiaire (coordonnées d'écran) */
+const arcM=(P,Q,Mid,R)=>{ const cr=(Mid[0]-P[0])*(Q[1]-Mid[1])-(Mid[1]-P[1])*(Q[0]-Mid[0]); return ' A'+gf(R)+' '+gf(R)+' 0 0 '+(cr>0?1:0)+' '+gf(Q[0])+' '+gf(Q[1]); };
+const dashArc=d=>'<path class="g-l g-dash" fill="none" d="'+d+'"/>';
+const SQ3=Math.sqrt(3);
+
+/* ----- rosace de quatre demi-disques dans un carré ----- */
+function genRosace(){
+  const r=rnd(2,6), Lc=2*r, ask=pick(['aire','périmètre']), u=uP(), r2=r*r;
+  const svg=figure([[-r,-r],[r,r]],f=>{
+    const O=f([0,0]), C1=f([r,r]), C2=f([-r,r]), C3=f([-r,-r]), C4=f([r,-r]), St=f([0,r]), Sr=f([r,0]), Sl=f([-r,0]), Sb=f([0,-r]), R=r*f.s;
+    let out='';
+    [[C1,St,Sr],[C2,St,Sl],[C3,Sb,Sl],[C4,Sb,Sr]].forEach(L=>{ out+=g.path(mv(O)+carc(O,L[0],L[1],R)+carc(L[0],O,L[2],R)+' Z','g-f'); });
+    out+=outline(mv(C1)+' L'+gf(C2[0])+' '+gf(C2[1])+' L'+gf(C3[0])+' '+gf(C3[1])+' L'+gf(C4[0])+' '+gf(C4[1])+' Z');
+    out+=dashArc(mv(C1)+arcM(C1,C2,O,R))+dashArc(mv(C2)+arcM(C2,C3,O,R))+dashArc(mv(C3)+arcM(C3,C4,O,R))+dashArc(mv(C4)+arcM(C4,C1,O,R));
+    out+=g.dim(C3,C4,String(Lc),O,10);
+    return out;
+  },'Carré de côté '+Lc+' avec un demi-disque tracé à l\'intérieur sur chaque côté : les quatre pétales communes sont colorées',{H:250,pad:34});
+  const txt='Un carré a pour côté «'+Lc+'» '+u+'. Sur chacun de ses côtés, on trace à l\'<b>intérieur</b> du carré le demi-disque dont ce côté est le diamètre. Les quatre demi-disques se chevauchent : la surface colorée est formée des points couverts par <b>deux</b> demi-disques (quatre <i>pétales</i>). ';
+  const D0='r = '+Lc+' / 2 = '+r, u2=' '+u+'²';
+  const s1=stp('Rayon des demi-disques','Le diamètre est le côté du carré : '+M(D0)+' '+u+'.');
+  if(ask==='aire'){
+    const Dp='Pétale = 2 × (π × '+r+'² / 4 − '+r+' × '+r+' / 2) = '+kPi(r2/2)+' − '+r2;
+    return mkGeo({svg,mode:'pi',val:pib(-4*r2,2*r2),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la surface colorée. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+      placeholder:'r = ...\nun pétale = ...\nA = ...',work:[D0,Dp,'A = 4 × ('+kPi(r2/2)+' − '+r2+') = '+kPi(2*r2)+' − '+4*r2+u2],
+      steps:[s1,stp('Un pétale','Il est formé de deux segments circulaires. Chaque segment = quart de disque − triangle rectangle de côtés '+M(r)+' et '+M(r)+' :',M('π × '+r+'² / 4 − '+r+' × '+r+' / 2 = '+kPi(r2/4)+' − '+NF(r2/2))),
+        stp('Quatre pétales',M('A = 4 × 2 × ('+kPi(r2/4)+' − '+NF(r2/2)+') = '+kPi(2*r2)+' − '+4*r2+' ≈ '+NF(Math.round((2*r2*Math.PI-4*r2)*100)/100))+' '+u+'²')],
+      hints:['Un pétale est l\'intersection de deux demi-disques : deux segments circulaires symétriques par rapport à la diagonale du carré.','Segment circulaire = quart de disque − triangle rectangle isocèle de côté '+r+'. Autre voie : somme des 4 demi-disques − aire du carré (les demi-disques recouvrent exactement le carré).'],
+      mistakes:[{v:pib(0,2*r2),tag:'geo-rosace',msg:'Tu as additionné les quatre demi-disques. Dans cette somme les pétales sont comptées deux fois et le carré entier est couvert : il faut retirer l\'aire du carré ('+4*r2+').',w:[D0,'A = 4 × π × '+r+'² / 2 = '+kPi(2*r2)+u2]},
+        {v:pib(-4*r2,4*r2),tag:'geo-rosace',msg:'Chaque demi-disque a pour aire πr²/2 (et non πr²).',w:[D0,'A = 4 × π × '+r+'² − '+4*r2+' = '+kPi(4*r2)+' − '+4*r2+u2]},
+        {v:pib(-4*Lc*Lc,2*Lc*Lc),tag:'geo-aire-pi',msg:'Le rayon vaut la moitié du côté ('+r+'), pas le côté entier.',w:['r = '+Lc,'A = 2π × '+Lc+'² − 4 × '+Lc+'² = '+kPi(2*Lc*Lc)+' − '+4*Lc*Lc+u2]},
+        {v:pib(-2*r2,r2),tag:'geo-segment',msg:'Un pétale est la réunion de <b>deux</b> segments circulaires : tu en as compté un seul par pétale.',w:[D0,'A = 4 × ('+kPi(r2/4)+' − '+NF(r2/2)+') = '+kPi(r2)+' − '+2*r2+u2]},
+        {v:pib(-r2,r2/2),tag:'geo-rosace',msg:'Il y a quatre pétales : tu en as compté un seul.',w:[D0,'A = '+kPi(r2/2)+' − '+r2+u2]}]});
+  }
+  const Pa=4*r;
+  return mkGeo({svg,mode:'pi',val:pib(0,Pa),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> de la surface colorée (le contour des quatre pétales). Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',
+    placeholder:'r = ...\nun pétale = ...\nP = ...',work:[D0,'Pétale : 2 quarts de cercle = 2 × (2π × '+r+' / 4) = '+kPi(r),'P = 4 × '+kPi(r)+' = '+kPi(Pa)+' '+u],
+    steps:[s1,stp('Contour d\'un pétale','Chaque pétale est limité par deux arcs de quart de cercle (angle au centre de 90°) :',M('2 × (90/360) × 2π × '+r+' = '+kPi(r))),stp('Quatre pétales',M('P = 4 × '+kPi(r)+' = '+kPi(Pa))+' '+u)],
+    hints:['Le contour d\'un pétale est formé de deux arcs de cercle de rayon '+r+'.','Les extrémités d\'un arc sont un coin du carré et le centre du carré : l\'angle au centre de l\'arc est de 90°.'],
+    mistakes:[{v:pib(0,2*r),tag:'geo-rosace',msg:'Un pétale a deux arcs, et il y a quatre pétales : 8 arcs de quart de cercle en tout.',w:[D0,'P = 4 × '+kPi(r/2)+' = '+kPi(2*r)+' '+u]},
+      {v:pib(0,8*r),tag:'geo-perim-cote',msg:'Un arc de 90° vaut le quart du cercle (2πr / 4), pas la moitié.',w:[D0,'P = 8 × '+kPi(r)+' = '+kPi(8*r)+' '+u]},
+      {v:pib(0,4*Lc),tag:'geo-aire-pi',msg:'Le rayon vaut la moitié du côté ('+r+'), pas le côté entier.',w:['r = '+Lc,'P = 4 × '+kPi(Lc)+' = '+kPi(4*Lc)+' '+u]},
+      {v:pib(4*Lc,4*r),tag:'geo-perim-cote',msg:'Le contour de la surface colorée ne comprend pas les côtés du carré.',w:[D0,'P = '+kPi(Pa)+' + 4 × '+Lc+' = '+kPi(Pa)+' + '+4*Lc+' '+u]}]});
+}
+
+/* ----- hexagone régulier et six demi-disques ----- */
+function genHexFleur(){
+  const k=rnd(1,5), a=2*k, ask=pick(['aire','périmètre']), u=uP(), k2=k*k;
+  const svg=figure([[-(a+k),-(a+k)],[a+k,a+k]],f=>{
+    const V=[0,1,2,3,4,5].map(i=>[a*Math.cos(i*Math.PI/3),a*Math.sin(i*Math.PI/3)]), fs=V.map(p=>f(p)), O=f([0,0]), R=k*f.s;
+    let out=g.poly(fs,'');
+    for(let i=0;i<6;i++){ const j=(i+1)%6, ang=(i*60+30)*Math.PI/180, mid=[(V[i][0]+V[j][0])/2,(V[i][1]+V[j][1])/2], top=f([mid[0]+k*Math.cos(ang),mid[1]+k*Math.sin(ang)]);
+      out+=g.path(mv(fs[i])+arcM(fs[i],fs[j],top,R)+' Z','g-f'); }
+    out+=outline(mv(fs[0])+fs.slice(1).map(p=>' L'+gf(p[0])+' '+gf(p[1])).join('')+' Z');
+    const m0=[(fs[0][0]+fs[1][0])/2,(fs[0][1]+fs[1][1])/2], dv=vunit(vsub(O,m0));
+    out+=g.text(vadd(m0,vmul(dv,13)),String(a),'g-u');
+    return out;
+  },'Hexagone régulier de côté '+a+' avec un demi-disque tracé à l\'extérieur sur chaque côté',{H:270,pad:22});
+  const txt='Un hexagone régulier a pour côté «'+a+'» '+u+'. Sur chacun de ses côtés, on trace à l\'<b>extérieur</b> le demi-disque dont ce côté est le diamètre. ';
+  const D0='r = '+a+' / 2 = '+k, u2=' '+u+'²';
+  const s1=stp('Rayon des demi-disques','Le diamètre d\'un demi-disque est un côté de l\'hexagone : '+M(D0)+' '+u+'.');
+  if(ask==='aire'){
+    const hex=6*k2, exact=kPi(3*k2)+' + '+kRt(6*k2,3);
+    return mkGeo({svg,mode:'pi',exact,val:pib(6*k2*SQ3,3*k2),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la figure colorée (hexagone et demi-disques). Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+      placeholder:'triangle équilatéral = ...\nhexagone = ...\ndemi-disques = ...\nA = ...',
+      work:[D0,'T = √3 / 4 × '+a+'² = '+kRt(k2,3),'H = 6 × '+kRt(k2,3)+' = '+kRt(6*k2,3),'D = 6 × π × '+k+'² / 2 = '+kPi(3*k2),'A = '+kRt(6*k2,3)+' + '+kPi(3*k2)+u2],
+      steps:[s1,stp('Aire de l\'hexagone','Il se découpe en 6 triangles équilatéraux de côté '+M(a)+', d\'aire '+M('(√3 / 4) × '+a+'² = '+kRt(k2,3))+' :',M('H = 6 × '+kRt(k2,3)+' = '+kRt(6*k2,3))),
+        stp('Aire des 6 demi-disques',M('6 × π × '+k+'² / 2 = '+kPi(3*k2))),stp('Aire totale',M('A = '+kRt(6*k2,3)+' + '+kPi(3*k2)+' ≈ '+NF(Math.round((6*k2*SQ3+3*k2*Math.PI)*100)/100))+' '+u+'²')],
+      hints:['Aire = hexagone + 6 demi-disques.','Un triangle équilatéral de côté c a pour aire (√3 / 4) × c². L\'hexagone régulier en contient 6.'],
+      mistakes:[{v:pib(0,3*k2),tag:'geo-hexagone',msg:'Tu as oublié l\'hexagone : la surface colorée comprend aussi la partie centrale.',w:[D0,'A = 6 × π × '+k+'² / 2 = '+kPi(3*k2)+u2]},
+        {v:pib(6*k2*SQ3,0),tag:'geo-hexagone',msg:'Tu as oublié les six demi-disques.',w:[D0,'A = 6 × '+kRt(k2,3)+' = '+kRt(6*k2,3)+u2]},
+        {v:pib(k2*SQ3,3*k2),tag:'geo-hexagone',msg:'L\'hexagone contient 6 triangles équilatéraux : il faut multiplier par 6.',w:[D0,'A = '+kRt(k2,3)+' + '+kPi(3*k2)+u2]},
+        {v:pib(6*k2*SQ3,6*k2),tag:'geo-aire-pi',msg:'Un demi-disque a pour aire πr²/2 (et non πr²).',w:[D0,'A = '+kRt(6*k2,3)+' + 6 × π × '+k+'² = '+kRt(6*k2,3)+' + '+kPi(6*k2)+u2]},
+        {v:pib(6*a*a*SQ3/4*2/3*0+a*a*SQ3*1.5,12*k2),tag:'geo-aire-pi',msg:'Le rayon d\'un demi-disque vaut la moitié du côté ('+k+'), pas le côté entier.',w:['r = '+a,'A = '+kRt(6*k2,3)+' + 6 × π × '+a+'² / 2 = '+kRt(6*k2,3)+' + '+kPi(12*k2)+u2]}].filter(m=>m.v.a!==1.5*a*a*SQ3||true)});
+  }
+  return mkGeo({svg,mode:'pi',val:pib(0,6*k),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> de la figure colorée. Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',
+    placeholder:'un demi-cercle = ...\nP = ...',work:[D0,'Un demi-cercle : π × '+a+' / 2 = '+kPi(k),'P = 6 × '+kPi(k)+' = '+kPi(6*k)+' '+u],
+    steps:[s1,stp('Contour','Le contour est formé des six demi-cercles ; les côtés de l\'hexagone sont à l\'intérieur de la figure, ils ne comptent pas.'),stp('Un demi-cercle',M('π × '+a+' / 2 = '+kPi(k))+' '+u),stp('Périmètre',M('P = 6 × '+kPi(k)+' = '+kPi(6*k))+' '+u)],
+    hints:['Seuls les six arcs de demi-cercle forment le bord de la figure.','Longueur d\'un demi-cercle de diamètre d : π × d / 2.'],
+    mistakes:[{v:pib(6*a,6*k),tag:'geo-perim-cote',msg:'Les côtés de l\'hexagone sont à l\'intérieur de la figure : ils ne font pas partie du contour.',w:[D0,'P = '+kPi(6*k)+' + 6 × '+a+' = '+kPi(6*k)+' + '+6*a+' '+u]},
+      {v:pib(0,12*k),tag:'geo-perim-cote',msg:'Un demi-cercle vaut πr (la moitié de 2πr), pas 2πr.',w:[D0,'P = 6 × 2π × '+k+' = '+kPi(12*k)+' '+u]},
+      {v:pib(0,3*k),tag:'geo-perim-cote',msg:'Il y a six demi-cercles (un par côté) : tu en as compté trois.',w:[D0,'P = 3 × '+kPi(k)+' = '+kPi(3*k)+' '+u]},
+      {v:pib(0,6*a),tag:'geo-aire-pi',msg:'Le rayon vaut la moitié du côté ('+k+'), pas le côté entier.',w:['r = '+a,'P = 6 × '+kPi(a)+' = '+kPi(6*a)+' '+u]}]});
+}
+
+/* ----- courroie autour de deux poulies (centres distants de 2(R − r)) ----- */
+function genCourroie(){
+  const r=pick([1,2,3,4]), k=pick([2,3,4]), R=r+k, d=2*k, ask=pick(['longueur','aire']), u=uP(), t3=k*SQ3;
+  const svg=figure([[-R,-R],[d+r,R]],f=>{
+    const c1=f([0,0]), c2=f([d,0]), c60=0.5, s60=SQ3/2;
+    const T1=f([R*c60,R*s60]), T1b=f([R*c60,-R*s60]), T2=f([d+r*c60,r*s60]), T2b=f([d+r*c60,-r*s60]);
+    const Rs=R*f.s, rs=r*f.s;
+    const belt=mv(T1)+' L'+gf(T2[0])+' '+gf(T2[1])+' A'+gf(rs)+' '+gf(rs)+' 0 0 1 '+gf(T2b[0])+' '+gf(T2b[1])+' L'+gf(T1b[0])+' '+gf(T1b[1])+' A'+gf(Rs)+' '+gf(Rs)+' 0 1 1 '+gf(T1[0])+' '+gf(T1[1])+' Z';
+    let out=g.path(belt,ask==='aire'?'g-f':'g-f g-hole')+'<path class="g-l g-thick" fill="none" d="'+belt+'"/>';
+    out+=g.seg(c1,c2,'g-dash')+g.seg(c1,T1,'g-thin')+g.seg(c2,T2,'g-thin')+g.dot(c1)+g.dot(c2);
+    out+=g.text(vadd(vmid(c1,T1),[-9,-10]),String(R),'g-u2')+g.text(vadd(vmid(c2,T2),[-9,-8]),String(r),'g-u2')+g.text(vadd(vmid(c1,c2),[0,15]),String(d),'g-v');
+    return out;
+  },'Courroie entourant deux poulies de rayons '+R+' et '+r+' dont les centres sont distants de '+d,{H:230,pad:24});
+  const txt='Une courroie entoure deux poulies de <b>rayons «'+R+'» '+u+' et «'+r+'» '+u+'</b>, dont les centres sont distants de <b>«'+d+'» '+u+'</b>. Les deux brins droits sont tangents aux deux poulies. ';
+  const D1='R − r = '+R+' − '+r+' = '+k, D2='sin φ = (R − r) / d = '+k+' / '+d+' = 1/2, donc φ = 30°', D3='angles des arcs : 180° + 60° = 240° (grande poulie) et 180° − 60° = 120° (petite)', D4='t = √('+d+'² − '+k+'²) = '+kRt(k,3);
+  const s1=stp('Triangle rectangle des centres','Les rayons vers les points de contact sont perpendiculaires aux brins : on obtient un triangle rectangle d\'hypoténuse '+M(d)+' (distance des centres) et de côté '+M(D1)+'.'), s2=stp('Angles','Le côté '+M(k)+' est la moitié de l\'hypoténuse '+M(d)+' : angle de '+M('30°')+' entre les centres et le brin. Les arcs mesurent '+M('240°')+' (grande poulie) et '+M('120°')+' (petite poulie).'), s3=stp('Longueur d\'un brin','Troisième côté du triangle rectangle : '+M(D4)+' '+u+'.');
+  const hints=['Trace le segment qui joint le centre de la petite poulie au rayon de la grande, parallèlement au brin : tu obtiens un triangle rectangle de côtés R − r, t (longueur d\'un brin) et d.','Quand le côté opposé à l\'angle vaut la moitié de l\'hypoténuse, l\'angle vaut 30°. L\'arc de la grande poulie vaut 180° + 60°, celui de la petite 180° − 60°.'];
+  if(ask==='longueur'){
+    const N=4*R+2*r, exact=fr3(N)+' + '+kRt(2*k,3);
+    return mkGeo({svg,mode:'pi',exact,val:pib(2*k*SQ3,N/3),unit:u,pow:1,text:txt+'Calcule la <b>longueur de la courroie</b>. Donne la <b>valeur exacte</b>.',ask:'la longueur de la courroie (valeur exacte)',
+      placeholder:'R − r = ...\nbrin = ...\narc grande poulie = ...\narc petite poulie = ...\nL = ...',work:[D1,D2,D3,D4,'A1 = 240/360 × 2π × '+R+' = '+fr3(4*R),'A2 = 120/360 × 2π × '+r+' = '+fr3(2*r),'L = 2 × '+kRt(k,3)+' + '+fr3(4*R)+' + '+fr3(2*r)+' = '+exact+' '+u],
+      steps:[s1,s2,s3,stp('Arcs',M('(240/360) × 2π × '+R+' = '+fr3(4*R))+' et '+M('(120/360) × 2π × '+r+' = '+fr3(2*r))),stp('Longueur totale',M('L = 2 × '+kRt(k,3)+' + '+fr3(4*R)+' + '+fr3(2*r)+' = '+exact+' ≈ '+NF(Math.round((2*k*SQ3+N/3*Math.PI)*100)/100))+' '+u)],
+      hints,
+      mistakes:[{v:pib(0,N/3),tag:'geo-courroie',msg:'Les deux brins droits font aussi partie de la courroie : ajoute 2 × '+kRt(k,3)+'.',w:[D1,D3,'L = '+fr3(4*R)+' + '+fr3(2*r)+' = '+fr3(N)+' '+u]},
+        {v:pib(2*d,N/3),tag:'geo-courroie',msg:'Un brin ne mesure pas '+d+' (distance des centres) : c\'est le troisième côté du triangle rectangle, '+kRt(k,3)+'.',w:[D1,D3,'L = 2 × '+d+' + '+fr3(N)+' = '+fr3(N)+' + '+2*d+' '+u]},
+        {v:pib(2*k*SQ3,(2*R+4*r)/3),tag:'geo-courroie',msg:'Les arcs sont inversés : c\'est la grande poulie qui est enroulée sur 240° et la petite sur 120°.',w:[D1,'A1 = 120/360 × 2π × '+R+' = '+fr3(2*R),'A2 = 240/360 × 2π × '+r+' = '+fr3(4*r),'L = '+kRt(2*k,3)+' + '+fr3(2*R+4*r)+' '+u]},
+        {v:pib(2*k*SQ3,R+r),tag:'geo-courroie',msg:'Les arcs ne sont pas des demi-cercles : l\'angle vaut 180° ± 60° (240° et 120°).',w:[D1,'A = π × '+R+' + π × '+r+' = '+kPi(R+r),'L = '+kRt(2*k,3)+' + '+kPi(R+r)+' '+u]},
+        {v:pib(k*SQ3,N/3),tag:'geo-courroie',msg:'Il y a deux brins droits (en haut et en bas) : tu n\'en as compté qu\'un.',w:[D1,D4,'L = '+kRt(k,3)+' + '+fr3(N)+' '+u]}]});
+  }
+  const N2=2*R*R+r*r, exact=fr3(N2)+' + '+kRt((R+r)*k,3), u2=' '+u+'²;'.slice(0,0)+'';
+  return mkGeo({svg,mode:'pi',exact,val:pib((R+r)*k*SQ3,N2/3),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la surface délimitée par la courroie. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+    placeholder:'t = ...\nsecteur de la grande poulie = ...\nsecteur de la petite poulie = ...\ntrapèzes = ...\nA = ...',
+    work:[D1,D2,D4,'S1 = 240/360 × π × '+R+'² = '+fr3(2*R*R),'S2 = 120/360 × π × '+r+'² = '+fr3(r*r),'T = 2 × ('+R+' + '+r+') × '+kRt(k,3)+' / 2 = '+kRt((R+r)*k,3),'A = '+exact+' '+u+'²'],
+    steps:[s1,s2,s3,stp('Découpage de la surface','Deux secteurs (240° et 120°) et deux trapèzes rectangles de bases '+M(R)+' et '+M(r)+' et de hauteur '+M(kRt(k,3))+' (entre les centres et les points de contact).'),
+      stp('Secteurs',M('(240/360) × π × '+R+'² = '+fr3(2*R*R))+' et '+M('(120/360) × π × '+r+'² = '+fr3(r*r))),stp('Trapèzes',M('2 × (('+R+' + '+r+') / 2) × '+kRt(k,3)+' = '+kRt((R+r)*k,3))),
+      stp('Aire totale',M('A = '+exact+' ≈ '+NF(Math.round(((R+r)*k*SQ3+N2/3*Math.PI)*100)/100))+' '+u+'²')],
+    hints:['Découpe la surface en deux secteurs circulaires (un par poulie) et deux trapèzes rectangles (entre les centres et les points de contact).',hints[1]],
+    mistakes:[{v:pib(0,N2/3),tag:'geo-courroie',msg:'Il manque les deux trapèzes situés entre les poulies.',w:[D1,'A = '+fr3(2*R*R)+' + '+fr3(r*r)+' = '+fr3(N2)+' '+u+'²']},
+      {v:pib(2*(R+r)*k*SQ3,N2/3),tag:'geo-demi',msg:'L\'aire d\'un trapèze vaut (base1 + base2) × hauteur / 2 : tu as oublié de diviser par 2.',w:[D1,'T = 2 × ('+R+' + '+r+') × '+kRt(k,3)+' = '+kRt(2*(R+r)*k,3),'A = '+fr3(N2)+' + '+kRt(2*(R+r)*k,3)+' '+u+'²']},
+      {v:pib((R+r)*k*SQ3,(R*R+2*r*r)/3),tag:'geo-courroie',msg:'Les secteurs sont inversés : 240° pour la grande poulie, 120° pour la petite.',w:[D1,'S1 = 120/360 × π × '+R+'² = '+fr3(R*R),'S2 = 240/360 × π × '+r+'² = '+fr3(2*r*r),'A = '+fr3(R*R+2*r*r)+' + '+kRt((R+r)*k,3)+' '+u+'²']},
+      {v:pib((R+r)*k*SQ3,(R*R+r*r)/2),tag:'geo-courroie',msg:'Les secteurs ne sont pas des demi-disques : l\'angle vaut 180° ± 60° (240° et 120°).',w:[D1,'S = π × '+R+'² / 2 + π × '+r+'² / 2 = '+kPi((R*R+r*r)/2),'A = '+kPi((R*R+r*r)/2)+' + '+kRt((R+r)*k,3)+' '+u+'²']},
+      {v:pib((R+r)*d,N2/3),tag:'geo-courroie',msg:'La hauteur du trapèze n\'est pas la distance des centres '+d+' : c\'est la longueur d\'un brin, '+kRt(k,3)+'.',w:[D1,'T = 2 × ('+R+' + '+r+') × '+d+' / 2 = '+(R+r)*d,'A = '+fr3(N2)+' + '+(R+r)*d+' '+u+'²']}]});
+}
+
+/* ----- lunules d'Hippocrate ----- */
+function genLunules(){
+  const T_=pick([[6,8,10],[12,16,20],[18,24,30],[10,24,26],[16,30,34]]), sw=Math.random()<0.5, a=sw?T_[1]:T_[0], b=sw?T_[0]:T_[1], c=T_[2], ask=pick(['aire','périmètre']), u=uP(), ra=a/2, rb=b/2, rc=c/2;
+  const svg=figure([[-b/2-1,-a/2-1],[a+1,b+1]],f=>{
+    const C=f([0,0]), A=f([a,0]), B=f([0,b]), ma=f([a/2,-a/2]), mb=f([-b/2,b/2]), Ra=ra*f.s, Rb=rb*f.s, Rc=rc*f.s;
+    let out=g.path(mv(C)+arcM(C,A,ma,Ra)+' Z','g-f')+g.path(mv(B)+arcM(B,C,mb,Rb)+' Z','g-f');
+    out+=g.path(mv(A)+arcM(A,B,C,Rc)+' Z','g-f g-hole');
+    out+=outline(mv(C)+arcM(C,A,ma,Ra))+outline(mv(B)+arcM(B,C,mb,Rb))+outline(mv(A)+arcM(A,B,C,Rc));
+    out+=outline(mv(C)+' L'+gf(A[0])+' '+gf(A[1])+' L'+gf(B[0])+' '+gf(B[1])+' Z')+g.right(C,A,B,10);
+    out+=g.text(vadd(vmid(C,A),[0,-12]),String(a),'g-u')+g.text(vadd(vmid(C,B),[12,0]),String(b),'g-u')+g.text(vadd(vmid(A,B),[10,-8]),'c','g-v');
+    return out;
+  },'Triangle rectangle de côtés '+a+' et '+b+', avec un demi-disque sur chaque côté : deux lunules colorées',{H:260,pad:22});
+  const txt='Un triangle rectangle a pour côtés de l\'angle droit «'+a+'» '+u+' et «'+b+'» '+u+'. On trace un demi-disque ayant pour diamètre chacun de ses côtés : ceux des côtés de l\'angle droit à l\'<b>extérieur</b> du triangle, celui de l\'hypoténuse du côté du triangle. Les deux <i>lunules</i> colorées sont les parties des petits demi-disques situées hors du grand. ';
+  const Dc='c² = '+a+'² + '+b+'² = '+(a*a+b*b)+', c = '+c, u2=' '+u+'²';
+  const s1=stp('Hypoténuse','Pythagore : '+M(Dc)+' '+u+'. Le demi-disque de l\'hypoténuse a pour rayon '+M(c+' / 2 = '+rc)+'.');
+  if(ask==='aire'){
+    const Sa=kPi(ra*ra/2), Sb=kPi(rb*rb/2), Sc=kPi(rc*rc/2), ab=a*b/2;
+    return mkGeo({svg,mode:'pi',val:pib(ab,0),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> des deux lunules.',ask:'l\'aire des deux lunules',
+      placeholder:'c = ...\ndemi-disques = ...\nA = ...',
+      work:[Dc,'S1 = π × '+ra+'² / 2 = '+Sa,'S2 = π × '+rb+'² / 2 = '+Sb,'S3 = π × '+rc+'² / 2 = '+Sc,'T = '+a+' × '+b+' / 2 = '+ab,'A = S1 + S2 + T − S3 = '+ab+u2],
+      steps:[s1,stp('Les trois demi-disques',M('π × '+ra+'² / 2 = '+Sa)+', '+M('π × '+rb+'² / 2 = '+Sb)+' et '+M('π × '+rc+'² / 2 = '+Sc)),
+        stp('Relation entre les surfaces','Le grand demi-disque contient le triangle et deux segments circulaires. Les lunules sont les petits demi-disques privés de ces segments : lunules = petits demi-disques + triangle − grand demi-disque.',M('T = '+a+' × '+b+' / 2 = '+ab)),
+        stp('Aire des lunules',M('A = '+Sa+' + '+Sb+' + '+ab+' − '+Sc+' = '+ab)+u2+' (les π se compensent : l\'aire des lunules est égale à celle du triangle)')],
+      hints:['Le grand demi-disque (hypoténuse) est formé du triangle et de deux segments circulaires. Chaque lunule = petit demi-disque − un de ces segments.','Écris : lunules = demi-disque a + demi-disque b + triangle − demi-disque c. Utilise c² = a² + b².'],
+      mistakes:[{v:pib(0,0),tag:'geo-lunule',msg:'Tu as oublié le triangle : le grand demi-disque contient le triangle, que les lunules ne retirent pas.',w:[Dc,'A = '+Sa+' + '+Sb+' − '+Sc+' = 0'+u2]},
+        {v:pib(a*b,0),tag:'geo-demi',msg:'L\'aire d\'un triangle rectangle vaut (côté × côté) / 2.',w:[Dc,'T = '+a+' × '+b+' = '+a*b,'A = '+a*b+u2]},
+        {v:pib(ab,(a*a+b*b+c*c)/8),tag:'geo-lunule',msg:'Le demi-disque de l\'hypoténuse se soustrait (il contient le triangle et les segments qui ne font pas partie des lunules).',w:[Dc,'A = '+Sa+' + '+Sb+' + '+Sc+' + '+ab+' = '+kPi((a*a+b*b+c*c)/8)+' + '+ab+u2]},
+        {v:pib(ab,(a*a+b*b-c*c)/4),tag:'geo-aire-pi',msg:'Un demi-disque a pour aire πr²/2 avec r = diamètre / 2 : tu as pris le diamètre comme rayon ou oublié la division par 2.',w:[Dc,'S = π × '+a+'² / 4 ...']},
+        {v:pib(0,(a*a+b*b)/8),tag:'geo-lunule',msg:'Tu as seulement calculé les deux petits demi-disques : les lunules sont ces demi-disques privés des segments du grand cercle.',w:[Dc,'A = '+Sa+' + '+Sb+' = '+kPi((a*a+b*b)/8)+u2]}]});
+  }
+  const P=(a+b+c)/2;
+  return mkGeo({svg,mode:'pi',val:pib(0,P),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> des deux lunules (somme des deux contours). Donne la <b>valeur exacte</b>.',ask:'le périmètre des deux lunules (valeur exacte)',
+    placeholder:'c = ...\narcs des petits demi-cercles = ...\narcs du grand cercle = ...\nP = ...',work:[Dc,'P1 = π × '+a+' / 2 + π × '+b+' / 2 = '+kPi((a+b)/2),'P2 = π × '+c+' / 2 = '+kPi(c/2),'P = '+kPi((a+b)/2)+' + '+kPi(c/2)+' = '+kPi(P)+' '+u],
+    steps:[stp('Hypoténuse','Pythagore : '+M(Dc)+' '+u+'.'),stp('Contour des lunules','Chaque lunule est limitée par l\'arc d\'un petit demi-cercle et par un arc du grand cercle. Les deux arcs du grand cercle forment ensemble le demi-cercle de diamètre '+M(c)+'.'),
+      stp('Longueurs',M('π × '+a+' / 2 + π × '+b+' / 2 = '+kPi((a+b)/2))+' et '+M('π × '+c+' / 2 = '+kPi(c/2))),stp('Périmètre',M('P = '+kPi((a+b)/2)+' + '+kPi(c/2)+' = '+kPi(P))+' '+u)],
+    hints:['Le contour des lunules est formé des arcs des deux petits demi-cercles et des arcs du grand cercle situés entre les sommets du triangle.','Les deux arcs du grand cercle, mis bout à bout, forment le demi-cercle de diamètre l\'hypoténuse.'],
+    mistakes:[{v:pib(0,(a+b)/2),tag:'geo-lunule',msg:'Chaque lunule a aussi un bord intérieur : l\'arc du grand cercle (au total un demi-cercle de diamètre '+c+').',w:[Dc,'P = '+kPi((a+b)/2)+' '+u]},
+      {v:pib(a+b+c,P),tag:'geo-perim-cote',msg:'Les côtés du triangle ne font pas partie du contour des lunules.',w:[Dc,'P = '+kPi(P)+' + '+(a+b+c)+' '+u]},
+      {v:pib(0,a+b+c),tag:'geo-perim-cote',msg:'Un demi-cercle de diamètre d vaut π × d / 2 (et non π × d).',w:[Dc,'P = π × '+a+' + π × '+b+' + π × '+c+' = '+kPi(a+b+c)+' '+u]},
+      {v:pib(0,(a+b)/2+c),tag:'geo-perim-cote',msg:'Le demi-cercle de diamètre '+c+' vaut π × '+c+' / 2, pas '+c+'.',w:[Dc,'P = '+kPi((a+b)/2)+' + '+c+' '+u]}]});
+}
+
+TOPICS['gm-6f']={kind:'gcomp',level:6,label:'Rosace de quatre demi-disques',gen:genRosace};
+TOPICS['gm-6g']={kind:'gcomp',level:6,label:'Hexagone et demi-disques',gen:genHexFleur};
+TOPICS['gm-6h']={kind:'gcomp',level:6,label:'Courroie autour de deux poulies',gen:genCourroie};
+TOPICS['gm-6i']={kind:'gcomp',level:6,label:'Lunules d\'Hippocrate',gen:genLunules};
+
+/* ===== Géométrie niveau 6 : figures à encoches et bosses (trapèze, maison, triangle rectangle) ===== */
+const abPi=(a,b)=>b===0?NF(a):(a===0?kPi(b):NF(a)+(b<0?' − ':' + ')+kPi(Math.abs(b)));
+const LQ=P=>' L'+gf(P[0])+' '+gf(P[1]);
+const rad2=(r)=>String(r);
+
+/* ----- trapèze rectangle : encoche en bas, bosse en haut ----- */
+function genTrapeze(){
+  const ask=pick(['aire','périmètre']), u=uP();
+  let p,H,s,T,B,r1,r2;
+  for(let i=0;i<500;i++){
+    [p,H,s]=pick([[3,4,5],[4,3,5],[5,12,13],[6,8,10],[8,6,10],[9,12,15],[12,9,15]]);
+    r2=rnd(1,3); r1=rnd(1,Math.min(3,H-1)); T=rnd(2*r2+2,2*r2+5); B=T+p;
+    if(r1!==r2&&B/2-r1>=0.6&&H*B/(2*s)>=r1+0.5) break;
+  }
+  const svg=figure([[-1,-0.8],[B+1.2,H+r2+1.4]],f=>{
+    const sc=f.s, F=q=>f(q), O=F([0,0]), Bp=F([B,0]), Tp=F([T,H]), Lp=F([0,H]), c1=F([B/2,0]), c2=F([T/2,H]), ce=F([B/2,H/2]);
+    const n1a=F([B/2-r1,0]), n1b=F([B/2+r1,0]), t1=F([T/2+r2,H]), t2=F([T/2-r2,H]);
+    const d=mv(O)+LQ(n1a)+arcM(n1a,n1b,F([B/2,r1]),r1*sc)+LQ(Bp)+LQ(Tp)+LQ(t1)+arcM(t1,t2,F([T/2,H+r2]),r2*sc)+LQ(Lp)+' Z';
+    let out=g.path(d,'g-f')+g.right(O,Lp,Bp,10)+g.right(Lp,O,Tp,10);
+    const e1=F([B/2,r1]), e2=F([T/2,H+r2]);
+    out+=g.seg(c1,e1,'g-thin')+g.seg(c2,e2,'g-thin')+g.dot(c1)+g.dot(c2)+g.text(vadd(vmid(c1,e1),[8,0]),String(r1),'g-u2')+g.text(vadd(vmid(c2,e2),[8,0]),String(r2),'g-u2');
+    [O,Bp,Tp,Lp].forEach(q=>{ out+=g.dot(q); });
+    out+=g.len(O,Bp,String(B),ce,10)+g.dim(Lp,Tp,String(T),ce,r2*sc+14);
+    out+= ask==='aire'?g.len(Bp,Tp,String(s),ce,10):g.len(O,Lp,String(H),ce,10);
+    return out;
+  },'Trapèze rectangle avec une encoche en demi-cercle de rayon '+r1+' sur la base et une bosse en demi-cercle de rayon '+r2+' sur le côté du haut',{H:250,pad:30});
+  const intro='La surface colorée est un trapèze rectangle (angles droits à gauche) auquel on a <b>retiré</b> une encoche en demi-cercle de rayon «'+r1+'» sur la base et <b>ajouté</b> une bosse en demi-cercle de rayon «'+r2+'» sur le côté du haut. Les centres des demi-cercles sont au milieu des côtés. Les longueurs sont en '+u+'. ';
+  const d_=B-T, At=(B+T)*H/2, bA=(r2*r2-r1*r1)/2, u2=' '+u+'²';
+  const sAB='B − T = '+B+' − '+T+' = '+d_;
+  if(ask==='aire'){
+    const WH=[sAB,'H = √('+s+'² − '+d_+'²) = '+H], WA='A₁ = ('+B+' + '+T+') × '+H+' / 2 = '+NF(At);
+    const WD='bosse = π × '+r2+'² / 2 = '+kPi(r2*r2/2), WE='encoche = π × '+r1+'² / 2 = '+kPi(r1*r1/2);
+    const Wf=WH.concat([WA,WD,WE]), fin=abPi(At,bA);
+    const mk=(v,tag,msg,w)=>({v,tag,msg,w});
+    return mkGeo({svg,mode:'pi',val:pib(At,bA),unit:u,pow:2,
+      text:intro+'La hauteur du trapèze n\'est pas donnée. Calcule l\'<b>aire</b> de la surface colorée. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+      placeholder:'hauteur = ...\ntrapèze = ...\ndemi-disques = ...\nA = ...',
+      work:Wf.concat(['A = '+NF(At)+' + '+kPi(r2*r2/2)+' − '+kPi(r1*r1/2)+' = '+fin+u2]),
+      steps:[stp('Hauteur du trapèze','Le côté oblique est l\'hypoténuse d\'un triangle rectangle dont un côté vaut '+M(sAB)+' et l\'autre est la hauteur :',M('H = √('+s+'² − '+d_+'²) = √'+(s*s-d_*d_)+' = '+H)),
+        stp('Aire du trapèze',M('A₁ = (B + T) × H / 2 = ('+B+' + '+T+') × '+H+' / 2 = '+NF(At))),
+        stp('Bosse et encoche','La bosse s\'ajoute, l\'encoche se retire : '+M('π × '+r2+'² / 2 = '+kPi(r2*r2/2))+' et '+M('π × '+r1+'² / 2 = '+kPi(r1*r1/2))),
+        stp('Aire totale',M('A = '+NF(At)+' + '+kPi(r2*r2/2)+' − '+kPi(r1*r1/2)+' = '+fin+' ≈ '+NF(Math.round((At+bA*Math.PI)*100)/100))+' '+u+'²')],
+      hints:['Pour trouver la hauteur, trace dans le trapèze un triangle rectangle : son hypoténuse est le côté oblique '+s+' et un côté vaut B − T.','Aire du trapèze : (B + T) × H / 2. Un demi-disque de rayon r a pour aire πr² / 2 : la bosse s\'ajoute, l\'encoche se retire.'],
+      mistakes:[mk(pib(At,0),'geo-decomp','Tu as calculé le trapèze seul : il faut ajouter la bosse et retirer l\'encoche.',Wf.concat(['A = '+NF(At)+u2])),
+        mk(pib(At,-bA),'geo-decomp','Signe inversé : la bosse ajoute de la surface, l\'encoche en retire.',Wf.concat(['A = '+NF(At)+' − '+kPi(r2*r2/2)+' + '+kPi(r1*r1/2)+u2])),
+        mk(pib(At,-(r1*r1+r2*r2)/2),'geo-decomp','La bosse dépasse du trapèze : on l\'ajoute. Seule l\'encoche se retire.',Wf.concat(['A = '+NF(At)+' − '+kPi(r2*r2/2)+' − '+kPi(r1*r1/2)+u2])),
+        mk(pib(At,r2*r2-r1*r1),'geo-aire-pi','Un demi-disque a pour aire πr² / 2 (et non πr²).',Wf.concat(['A = '+NF(At)+' + '+kPi(r2*r2)+' − '+kPi(r1*r1)+u2])),
+        mk(pib((B+T)*s/2,bA),'geo-pyth-cote','Le côté oblique n\'est pas la hauteur : la hauteur est un côté de l\'angle droit, H = √('+s+'² − '+d_+'²) = '+H+'.',['A₁ = ('+B+' + '+T+') × '+s+' / 2 = '+NF((B+T)*s/2),'A = '+NF((B+T)*s/2)+' + '+kPi(r2*r2/2)+' − '+kPi(r1*r1/2)+u2]),
+        mk(pib((B+T)*Math.sqrt(s*s+d_*d_)/2,bA),'geo-pyth-somme','Dans le triangle rectangle, le côté oblique est l\'hypoténuse : H² = '+s+'² − '+d_+'² (et non +).',['H = √('+s+'² + '+d_+'²) = '+NF(Math.round(Math.sqrt(s*s+d_*d_)*1000)/1000),'A₁ = ('+B+' + '+T+') × H / 2 ≈ '+NF(Math.round((B+T)*Math.sqrt(s*s+d_*d_)/2*100)/100)]),
+        mk(pib((B+T)*H,bA),'geo-demi','L\'aire d\'un trapèze vaut (B + T) × H / 2 : la division par 2 est oubliée.',[sAB,'H = '+H,'A₁ = ('+B+' + '+T+') × '+H+' = '+NF((B+T)*H)])]});
+  }
+  const aP=B+H+T+s-2*r1-2*r2, bP=r1+r2, PS='côtés droits : B + H + T = '+B+' + '+H+' + '+T+' = '+(B+H+T);
+  const WP=[sAB,'s = √('+d_+'² + '+H+'²) = '+s,PS,'diamètres retirés : '+(2*r1)+' + '+(2*r2)+' = '+(2*r1+2*r2),'demi-cercles : π × '+r1+' + π × '+r2+' = '+kPi(bP)];
+  return mkGeo({svg,mode:'pi',val:pib(aP,bP),unit:u,pow:1,
+    text:intro+'La longueur du côté oblique n\'est pas donnée. Calcule le <b>périmètre</b> de la surface colorée. Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',
+    placeholder:'côté oblique = ...\nsegments = ...\ndemi-cercles = ...\nP = ...',
+    work:WP.concat(['P = '+(B+H+T+s)+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' = '+abPi(aP,bP)+' '+u]),
+    steps:[stp('Côté oblique','Triangle rectangle de côtés '+M(sAB)+' et '+M('H = '+H)+' :',M('s = √('+d_+'² + '+H+'²) = '+s)),
+      stp('Segments du contour','Côtés complets : '+M(B+' + '+H+' + '+T+' + '+s+' = '+(B+H+T+s))+'. Le bord du bas perd le diamètre de l\'encoche ('+2*r1+') et celui du haut perd le diamètre de la bosse ('+2*r2+') : '+M((B+H+T+s)+' − '+(2*r1+2*r2)+' = '+aP)),
+      stp('Demi-cercles','Un demi-cercle de rayon r mesure '+M('πr')+' : '+M('π × '+r1+' + π × '+r2+' = '+kPi(bP))),
+      stp('Périmètre',M('P = '+abPi(aP,bP)+' ≈ '+NF(Math.round((aP+bP*Math.PI)*100)/100))+' '+u)],
+    hints:['Le côté oblique est l\'hypoténuse d\'un triangle rectangle de côtés B − T et H.','Sur la base et sur le haut, le contour suit le demi-cercle à la place du diamètre : retire les diamètres, ajoute πr pour chaque demi-cercle.'],
+    mistakes:[{v:pib(aP,0),tag:'geo-perim-cote',msg:'Tu as retiré les diamètres mais oublié les demi-cercles : le contour suit les arcs (πr chacun).',w:WP.slice(0,4).concat(['P = '+(B+H+T+s)+' − '+(2*r1+2*r2)+' = '+aP+' '+u])},
+      {v:pib(B+H+T+s,bP),tag:'geo-perim-cote',msg:'Les diamètres ne font plus partie du contour : il faut les retirer des côtés avant d\'ajouter les arcs.',w:[WP[0],WP[1],'P = '+(B+H+T+s)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP,2*bP),tag:'geo-perim-cote',msg:'Ce sont des demi-cercles : πr, pas 2πr.',w:WP.slice(0,4).concat(['cercles entiers : 2π × '+r1+' + 2π × '+r2+' = '+kPi(2*bP),'P = '+aP+' + '+kPi(2*bP)+' '+u])},
+      {v:pib(aP,(r1*r1+r2*r2)/2),tag:'geo-aire-pi',msg:'πr² / 2 est l\'aire d\'un demi-disque. Pour la longueur d\'un demi-cercle, on utilise πr.',w:WP.slice(0,4).concat(['demi-cercles : '+kPi(r1*r1/2)+' + '+kPi(r2*r2/2)+' = '+kPi((r1*r1+r2*r2)/2),'P = '+aP+' + '+kPi((r1*r1+r2*r2)/2)+' '+u])},
+      {v:pib(aP-s+H+d_,bP),tag:'geo-pyth-somme',msg:'Le côté oblique est l\'hypoténuse : '+s+' = √('+d_+'² + '+H+'²), et non '+d_+' + '+H+'.',w:['s = '+d_+' + '+H+' = '+(d_+H),'P = '+(B+H+T+d_+H)+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP-s,bP),tag:'geo-perim-cote',msg:'Il manque le côté oblique : '+s+' (hypoténuse du triangle rectangle).',w:[PS,'P = '+(B+H+T)+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' '+u]}]});
+}
+
+/* ----- maison : toit triangulaire, porte arrondie, fenêtre ronde ----- */
+function genMaison(){
+  const ask=pick(['aire','périmètre']), u=uP();
+  const [a,ht,s]=pick([[3,4,5],[4,3,5],[6,8,10],[5,12,13],[6,8,10]]), w=2*a, h=rnd(4,6), r=rnd(1,Math.min(2,Math.floor((w-2)/2)));
+  const dh=rnd(1,h-r-1), inr=a*ht/(a+s), rho=rnd(1,Math.max(1,Math.floor(inr-0.3)));
+  const svg=figure([[-1.3,-0.9],[w+(ask==='périmètre'?2.2:1.6),h+ht+0.7]],f=>{
+    const sc=f.s, F=q=>f(q), O=F([0,0]), Br=F([w,0]), Rr=F([w,h]), Lw=F([0,h]), Ap=F([a,h+ht]), ce=F([a,h/2]);
+    const d1=F([a-r,0]), d2=F([a-r,dh]), d3=F([a+r,dh]), d4=F([a+r,0]), W=F([a,h+inr]);
+    const d=mv(O)+LQ(d1)+LQ(d2)+arcM(d2,d3,F([a,dh+r]),r*sc)+LQ(d4)+LQ(Br)+LQ(Rr)+LQ(Ap)+LQ(Lw)+' Z';
+    let out=g.path(d,'g-f')+g.circle(W,rho*sc,'g-hole')+g.right(O,Lw,d1,10)+g.right(Br,d4,Rr,10);
+    const dc=F([a,dh]);
+    out+=g.seg(dc,d3,'g-thin')+g.dot(dc)+g.text(F([a+r/2,dh-0.5]),String(r),'g-u2')+g.text(F([a-r-0.5,dh/2]),String(dh),'g-u2');
+    const we=F([a+rho,h+inr]);
+    out+=g.seg(W,we,'g-thin')+g.dot(W)+g.text(F([a+rho/2,h+inr+0.5]),String(rho),'g-u2');
+    [O,Br,Rr,Lw,Ap].forEach(q=>{ out+=g.dot(q); });
+    out+=g.len(O,Br,String(w),ce,10)+g.len(O,Lw,String(h),ce,10);
+    out+= ask==='aire'?g.len(Rr,Ap,String(s),ce,10):g.dim(Rr,F([w,h+ht]),String(ht),ce,12);
+    return out;
+  },'Maison : rectangle surmonté d\'un toit triangulaire, avec une porte à sommet arrondi et une fenêtre ronde dans le pignon',{H:270,pad:26});
+  const intro='La façade d\'une maison est un rectangle de largeur «'+w+'» et de hauteur «'+h+'» surmonté d\'un toit triangulaire isocèle (le sommet est au-dessus du milieu de la largeur). La <b>porte</b> (en blanc) est formée d\'un rectangle de hauteur «'+dh+'» et d\'un demi-disque de rayon «'+r+'», centrée sur la largeur. Une <b>fenêtre ronde</b> de rayon «'+rho+'» est percée dans le toit. Longueurs en '+u+'. ';
+  const u2=' '+u+'²';
+  if(ask==='aire'){
+    const aA=w*h+a*ht-2*r*dh, bA=-(r*r/2+rho*rho), Rect=w+' × '+h+' = '+(w*h), Tri=w+' × '+ht+' / 2 = '+(a*ht);
+    const Wh='moitié de la base : '+w+' / 2 = '+a, Wh2='hauteur du toit = √('+s+'² − '+a+'²) = '+ht;
+    const Wp='porte : '+(2*r)+' × '+dh+' + π × '+r+'² / 2 = '+(2*r*dh)+' + '+kPi(r*r/2), Wf='fenêtre : π × '+rho+'² = '+kPi(rho*rho);
+    const Wf0=[Wh,Wh2,'rectangle : '+Rect,'triangle : '+Tri,Wp,Wf], fin=abPi(aA,bA);
+    return mkGeo({svg,mode:'pi',val:pib(aA,bA),unit:u,pow:2,
+      text:intro+'Le côté du toit mesure «'+s+'» ; sa hauteur n\'est pas donnée. Calcule l\'<b>aire</b> de la surface colorée (porte et fenêtre exclues). Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+      placeholder:'hauteur du toit = ...\nrectangle + triangle = ...\nporte = ...\nfenêtre = ...\nA = ...',
+      work:Wf0.concat(['A = '+(w*h)+' + '+(a*ht)+' − ('+(2*r*dh)+' + '+kPi(r*r/2)+') − '+kPi(rho*rho)+' = '+fin+u2]),
+      steps:[stp('Hauteur du toit','Le milieu de la base partage le toit en deux triangles rectangles : hypoténuse '+M(s)+', un côté '+M(a)+'.',M('hauteur = √('+s+'² − '+a+'²) = '+ht)),
+        stp('Murs et toit',M('rectangle : '+Rect)+' ; '+M('triangle : '+Tri)),
+        stp('Porte','Rectangle + demi-disque : '+M((2*r)+' × '+dh+' + π × '+r+'² / 2 = '+(2*r*dh)+' + '+kPi(r*r/2))),
+        stp('Fenêtre','Disque de rayon '+M(rho)+' : '+M('π × '+rho+'² = '+kPi(rho*rho))),
+        stp('Aire',M('A = '+(w*h+a*ht)+' − '+(2*r*dh)+' − '+kPi(r*r/2)+' − '+kPi(rho*rho)+' = '+fin+' ≈ '+NF(Math.round((aA+bA*Math.PI)*100)/100))+' '+u+'²')],
+      hints:['Pour la hauteur du toit, coupe le triangle isocèle en deux par la verticale du sommet : tu obtiens un triangle rectangle.','Aire = rectangle + triangle − porte − fenêtre. La porte = rectangle + demi-disque ; la fenêtre est un disque entier.'],
+      mistakes:[{v:pib(aA,-r*r/2),tag:'geo-decomp',msg:'Tu as oublié de retirer la fenêtre ronde.',w:Wf0.slice(0,5).concat(['A = '+(w*h+a*ht-2*r*dh)+' − '+kPi(r*r/2)+u2])},
+        {v:pib(w*h+a*ht,-rho*rho),tag:'geo-decomp',msg:'Tu as oublié de retirer la porte (rectangle et demi-disque).',w:Wf0.slice(0,4).concat([Wf,'A = '+(w*h+a*ht)+' − '+kPi(rho*rho)+u2])},
+        {v:pib(w*h+a*ht,-(r*r/2+rho*rho)),tag:'geo-decomp',msg:'La porte comprend aussi un rectangle ('+(2*r)+' × '+dh+') : retire-le en plus du demi-disque.',w:Wf0.slice(0,3).concat(['porte : '+kPi(r*r/2),Wf,'A = '+(w*h+a*ht)+' − '+kPi(r*r/2)+' − '+kPi(rho*rho)+u2])},
+        {v:pib(aA,-(r*r+rho*rho)),tag:'geo-aire-pi',msg:'La partie arrondie de la porte est un demi-disque : πr² / 2.',w:Wf0.slice(0,4).concat(['porte : '+(2*r*dh)+' + '+kPi(r*r),Wf,'A = '+(w*h+a*ht-2*r*dh)+' − '+kPi(r*r)+' − '+kPi(rho*rho)+u2])},
+        {v:pib(aA,-(r*r/2+2*rho)),tag:'geo-aire-pi',msg:'L\'aire d\'un disque de rayon r est πr² (2πr est sa circonférence).',w:Wf0.slice(0,4).concat(['porte : '+(2*r*dh)+' + '+kPi(r*r/2),'fenêtre : 2π × '+rho+' = '+kPi(2*rho),'A = '+(w*h+a*ht-2*r*dh)+' − '+kPi(r*r/2)+' − '+kPi(2*rho)+u2])},
+        {v:pib(w*h+a*s-2*r*dh,bA),tag:'geo-pyth-cote',msg:'Le côté du toit n\'est pas sa hauteur. La hauteur est √('+s+'² − '+a+'²) = '+ht+'.',w:['rectangle : '+Rect,'triangle : '+w+' × '+s+' / 2 = '+(a*s),'A = '+(w*h+a*s)+' − '+(2*r*dh)+' − '+kPi(r*r/2)+' − '+kPi(rho*rho)+u2]},
+        {v:pib(w*h+w*ht-2*r*dh,bA),tag:'geo-demi',msg:'L\'aire d\'un triangle vaut base × hauteur / 2.',w:[Wh2,'rectangle : '+Rect,'triangle : '+w+' × '+ht+' = '+(w*ht),'A = '+(w*h+w*ht)+' − '+(2*r*dh)+' − '+kPi(r*r/2)+' − '+kPi(rho*rho)+u2]}]});
+  }
+  const aP=(w-2*r)+2*dh+2*h+2*s, bP=r+2*rho;
+  const Ws='côté du toit = √('+a+'² + '+ht+'²) = '+s, Wo='contour : '+(w-2*r)+' + '+(2*h)+' + '+(2*s)+' + '+(2*dh)+' = '+aP;
+  return mkGeo({svg,mode:'pi',val:pib(aP,bP),unit:u,pow:1,
+    text:intro+'La hauteur du toit est «'+ht+'» ; la longueur de son côté n\'est pas donnée. Calcule le <b>périmètre</b> de la surface colorée : le contour extérieur, le contour de la porte et le bord de la fenêtre. Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',
+    placeholder:'côté du toit = ...\nsegments = ...\narcs et cercle = ...\nP = ...',
+    work:['moitié de la base : '+w+' / 2 = '+a,Ws,'bas : '+w+' − '+(2*r)+' = '+(w-2*r),Wo,'porte arrondie : π × '+r+' ; fenêtre : 2π × '+rho+' = '+kPi(2*rho),'P = '+aP+' + '+kPi(r)+' + '+kPi(2*rho)+' = '+abPi(aP,bP)+' '+u],
+    steps:[stp('Côté du toit','Triangle rectangle de côtés '+M(a)+' (moitié de la base) et '+M(ht)+' (hauteur) :',M('√('+a+'² + '+ht+'²) = '+s)),
+      stp('Segments du contour','Bas : '+M(w+' − '+(2*r)+' = '+(w-2*r))+' (la porte interrompt le bas) ; deux murs : '+M(2*h)+' ; deux côtés du toit : '+M(2*s)+' ; deux côtés verticaux de la porte : '+M(2*dh)+'.',M('total = '+aP)),
+      stp('Parties rondes','Haut de la porte : demi-cercle '+M('π × '+r+' = '+kPi(r))+' ; fenêtre : cercle entier '+M('2π × '+rho+' = '+kPi(2*rho))),
+      stp('Périmètre',M('P = '+abPi(aP,bP)+' ≈ '+NF(Math.round((aP+bP*Math.PI)*100)/100))+' '+u)],
+    hints:['Le côté du toit est l\'hypoténuse d\'un triangle rectangle de côtés (largeur / 2) et (hauteur du toit).','La porte enlève sa largeur au bas du contour, mais ajoute ses deux côtés verticaux et son demi-cercle. La fenêtre ajoute son cercle entier.'],
+    mistakes:[{v:pib(aP,r),tag:'geo-perim-cote',msg:'Le bord de la fenêtre fait partie du contour de la surface colorée : ajoute 2π × '+rho+'.',w:[Ws,Wo,'P = '+aP+' + '+kPi(r)+' '+u]},
+      {v:pib(aP+2*r,bP),tag:'geo-perim-cote',msg:'La porte interrompt le bas du contour : retire sa largeur ('+2*r+') de la longueur du bas.',w:[Ws,'bas : '+w,'P = '+(aP+2*r)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP-2*dh,bP),tag:'geo-perim-cote',msg:'Les deux côtés verticaux de la porte font partie du contour.',w:[Ws,'contour : '+(w-2*r)+' + '+(2*h)+' + '+(2*s)+' = '+(aP-2*dh),'P = '+(aP-2*dh)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP-2*s+2*ht,bP),tag:'geo-pyth-cote',msg:'La hauteur du toit n\'est pas la longueur de son côté : le côté est l\'hypoténuse √('+a+'² + '+ht+'²) = '+s+'.',w:['côté du toit = '+ht,'P = '+(aP-2*s+2*ht)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP-2*s+2*(a+ht),bP),tag:'geo-pyth-somme',msg:'Le côté du toit est une hypoténuse : √('+a+'² + '+ht+'²) et non '+a+' + '+ht+'.',w:['côté du toit = '+a+' + '+ht+' = '+(a+ht),'P = '+(aP-2*s+2*(a+ht))+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP,r+rho*rho),tag:'geo-aire-pi',msg:'πr² est une aire. Le bord d\'un disque est un cercle : 2πr.',w:[Ws,Wo,'fenêtre : π × '+rho+'² = '+kPi(rho*rho),'P = '+aP+' + '+kPi(r)+' + '+kPi(rho*rho)+' '+u]},
+      {v:pib(aP,2*r+2*rho),tag:'geo-perim-cote',msg:'Le haut de la porte est un demi-cercle (πr), pas un cercle entier.',w:[Ws,Wo,'P = '+aP+' + '+kPi(2*r)+' + '+kPi(2*rho)+' '+u]}]});
+}
+
+/* ----- triangle rectangle avec deux encoches (une sur un côté, une sur l'hypoténuse) ----- */
+function genTriEnc(){
+  const ask=pick(['aire','périmètre']), u=uP();
+  let p,q,hy,r1,r2,x1;
+  for(let i=0;i<500;i++){
+    [p,q,hy]=pick([[6,8,10],[8,6,10],[9,12,15],[12,9,15],[8,15,17],[15,8,17]]);
+    r1=rnd(1,3); r2=rnd(1,3); x1=p*pick([0.3,0.35,0.4]);
+    const M0=[p/2,q/2];
+    if(x1-r1>=0.5&&q*(p-x1)/hy>=r1+0.5&&p/2>=r2+0.5&&q/2>=r2+0.5&&Math.hypot(x1-M0[0],M0[1])>=r1+r2+0.5) break;
+    if(i===499){ r1=1; r2=1; x1=p*0.4; }
+  }
+  const hide=pick(['p','q']);
+  const svg=figure([[-1,-0.9],[p+1.3,q+1.2]],f=>{
+    const sc=f.s, F=q_=>f(q_), O=F([0,0]), A=F([p,0]), Bq=F([0,q]), ce=F([p/3,q/3]);
+    const uh=[-p/hy,q/hy], nIn=[-q/hy,-p/hy], Mh=[p/2,q/2];
+    const n1a=F([x1-r1,0]), n1b=F([x1+r1,0]), h1=F(vsub(Mh,vmul(uh,r2))), h2=F(vadd(Mh,vmul(uh,r2))), hm=F(vadd(Mh,vmul(nIn,r2)));
+    const d=mv(O)+LQ(n1a)+arcM(n1a,n1b,F([x1,r1]),r1*sc)+LQ(A)+LQ(h1)+arcM(h1,h2,hm,r2*sc)+LQ(Bq)+' Z';
+    let out=g.path(d,'g-f')+g.right(O,Bq,A,10);
+    const c1=F([x1,0]), e1=F([x1,r1]), cm=F(Mh), e2=F(vadd(Mh,vmul(nIn,r2)));
+    const sd=vunit(vsub(F(vadd(Mh,uh)),cm));
+    out+=g.seg(c1,e1,'g-thin')+g.dot(c1)+g.text(vadd(vmid(c1,e1),[8,0]),String(r1),'g-u2')+g.seg(cm,e2,'g-thin')+g.dot(cm)+g.text(vadd(vmid(cm,e2),vmul(sd,9)),String(r2),'g-u2');
+    [O,A,Bq].forEach(P=>{ out+=g.dot(P); });
+    const lp=ask==='aire'?hide!=='p':true, lq=ask==='aire'?hide!=='q':true;
+    if(lp) out+=g.len(O,A,String(p),ce,10);
+    if(lq) out+=g.len(O,Bq,String(q),ce,10);
+    if(ask==='aire') out+=g.len(A,Bq,String(hy),ce,10);
+    return out;
+  },'Triangle rectangle avec une encoche en demi-cercle de rayon '+r1+' sur un côté de l\'angle droit et une encoche de rayon '+r2+' au milieu de l\'hypoténuse',{H:250,pad:30});
+  const intro='La surface colorée est un triangle rectangle (angle droit en bas à gauche) dont on a retiré deux demi-disques : une encoche de rayon «'+r1+'» centrée sur le côté du bas et une encoche de rayon «'+r2+'» centrée au milieu de l\'hypoténuse. Longueurs en '+u+'. ';
+  const u2=' '+u+'²';
+  if(ask==='aire'){
+    const kn=hide==='p'?q:p, hd=hide==='p'?p:q, nm=hide==='p'?'le côté du bas':'le côté vertical', kname=hide==='p'?'le côté vertical':'le côté du bas';
+    const aA=p*q/2, bA=-(r1*r1+r2*r2)/2, WL=(hide==='p'?'p':'q')+' = √('+hy+'² − '+kn+'²) = '+hd, WT='A₁ = '+p+' × '+q+' / 2 = '+NF(aA);
+    const WE='encoches : π × '+r1+'² / 2 + π × '+r2+'² / 2 = '+kPi((r1*r1+r2*r2)/2), fin=abPi(aA,bA);
+    const W0=[WL,WT,WE];
+    return mkGeo({svg,mode:'pi',val:pib(aA,bA),unit:u,pow:2,
+      text:intro+'La longueur d\'un côté de l\'angle droit n\'est pas donnée. Calcule l\'<b>aire</b> de la surface colorée. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',
+      placeholder:'côté manquant = ...\ntriangle = ...\nencoches = ...\nA = ...',
+      work:W0.concat(['A = '+NF(aA)+' − '+kPi((r1*r1+r2*r2)/2)+' = '+fin+u2]),
+      steps:[stp('Côté manquant','L\'hypoténuse mesure '+M(hy)+' et '+kname+' mesure '+M(kn)+' :',M((hide==='p'?'p':'q')+' = √('+hy+'² − '+kn+'²) = √'+(hy*hy-kn*kn)+' = '+hd)),
+        stp('Aire du triangle',M('A₁ = '+p+' × '+q+' / 2 = '+NF(aA))),
+        stp('Encoches',M('π × '+r1+'² / 2 + π × '+r2+'² / 2 = '+kPi((r1*r1+r2*r2)/2))),
+        stp('Aire',M('A = '+NF(aA)+' − '+kPi((r1*r1+r2*r2)/2)+' = '+fin+' ≈ '+NF(Math.round((aA+bA*Math.PI)*100)/100))+' '+u+'²')],
+      hints:['Dans un triangle rectangle, l\'hypoténuse est le plus grand côté : (côté manquant)² = hypoténuse² − (autre côté)².','Aire = triangle − deux demi-disques (πr² / 2 chacun).'],
+      mistakes:[{v:pib(aA,0),tag:'geo-decomp',msg:'C\'est l\'aire du triangle : il faut encore retirer les deux encoches.',w:[WL,WT,'A = '+NF(aA)+u2]},
+        {v:pib(aA,(r1*r1+r2*r2)/2),tag:'geo-decomp',msg:'Les encoches sont retirées : on soustrait leur aire.',w:W0.concat(['A = '+NF(aA)+' + '+kPi((r1*r1+r2*r2)/2)+u2])},
+        {v:pib(aA,-(r1*r1+r2*r2)),tag:'geo-aire-pi',msg:'Une encoche est un demi-disque : aire πr² / 2 (et non πr²).',w:[WL,WT,'encoches : π × '+r1+'² + π × '+r2+'² = '+kPi(r1*r1+r2*r2),'A = '+NF(aA)+' − '+kPi(r1*r1+r2*r2)+u2]},
+        {v:pib(aA,-r1*r1/2),tag:'geo-decomp',msg:'Il y a deux encoches : retire aussi celle de l\'hypoténuse.',w:[WL,WT,'encoche : '+kPi(r1*r1/2),'A = '+NF(aA)+' − '+kPi(r1*r1/2)+u2]},
+        {v:pib(hy*kn/2,bA),tag:'geo-pyth-cote',msg:'L\'hypoténuse n\'est pas un côté de l\'angle droit : l\'autre côté vaut √('+hy+'² − '+kn+'²) = '+hd+'.',w:['A₁ = '+hy+' × '+kn+' / 2 = '+NF(hy*kn/2),'A = '+NF(hy*kn/2)+' − '+kPi((r1*r1+r2*r2)/2)+u2]},
+        {v:pib((hy-kn)*kn/2,bA),tag:'geo-pyth-somme',msg:'Pythagore s\'applique aux carrés : '+hd+' = √('+hy+'² − '+kn+'²), pas '+hy+' − '+kn+'.',w:[(hide==='p'?'p':'q')+' = '+hy+' − '+kn+' = '+(hy-kn),'A₁ = '+(hy-kn)+' × '+kn+' / 2 = '+NF((hy-kn)*kn/2)]},
+        {v:pib(p*q,bA),tag:'geo-demi',msg:'L\'aire d\'un triangle vaut base × hauteur / 2.',w:[WL,'A₁ = '+p+' × '+q+' = '+(p*q),'A = '+(p*q)+' − '+kPi((r1*r1+r2*r2)/2)+u2]}]});
+  }
+  const aP=p+q+hy-2*r1-2*r2, bP=r1+r2, WH='hypoténuse = √('+p+'² + '+q+'²) = '+hy, WS='côtés : '+p+' + '+q+' + '+hy+' = '+(p+q+hy);
+  const WP=[WH,WS,'diamètres retirés : '+(2*r1)+' + '+(2*r2)+' = '+(2*r1+2*r2),'demi-cercles : π × '+r1+' + π × '+r2+' = '+kPi(bP)];
+  return mkGeo({svg,mode:'pi',val:pib(aP,bP),unit:u,pow:1,
+    text:intro+'La longueur de l\'hypoténuse n\'est pas donnée. Calcule le <b>périmètre</b> de la surface colorée. Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',
+    placeholder:'hypoténuse = ...\nsegments = ...\ndemi-cercles = ...\nP = ...',
+    work:WP.concat(['P = '+(p+q+hy)+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' = '+abPi(aP,bP)+' '+u]),
+    steps:[stp('Hypoténuse',M('√('+p+'² + '+q+'²) = √'+(p*p+q*q)+' = '+hy)),
+      stp('Segments du contour','Les trois côtés mesurent '+M(p+' + '+q+' + '+hy+' = '+(p+q+hy))+'. Chaque encoche remplace son diamètre par un demi-cercle : on retire '+M(2*r1+' + '+2*r2+' = '+(2*r1+2*r2))+' : '+M(aP)),
+      stp('Demi-cercles',M('π × '+r1+' + π × '+r2+' = '+kPi(bP))),
+      stp('Périmètre',M('P = '+abPi(aP,bP)+' ≈ '+NF(Math.round((aP+bP*Math.PI)*100)/100))+' '+u)],
+    hints:['Calcule d\'abord l\'hypoténuse avec Pythagore.','Sur chaque encoche, le contour suit le demi-cercle à la place du diamètre : retire 2r, ajoute πr.'],
+    mistakes:[{v:pib(aP,0),tag:'geo-perim-cote',msg:'Tu as retiré les diamètres mais oublié les demi-cercles : le contour suit les arcs (πr chacun).',w:WP.slice(0,3).concat(['P = '+aP+' '+u])},
+      {v:pib(p+q+hy,bP),tag:'geo-perim-cote',msg:'Les diamètres ne font plus partie du contour : retire-les avant d\'ajouter les arcs.',w:[WH,WS,'P = '+(p+q+hy)+' + '+kPi(bP)+' '+u]},
+      {v:pib(aP,2*bP),tag:'geo-perim-cote',msg:'Ce sont des demi-cercles : πr, pas 2πr.',w:WP.slice(0,3).concat(['P = '+aP+' + '+kPi(2*bP)+' '+u])},
+      {v:pib(aP,(r1*r1+r2*r2)/2),tag:'geo-aire-pi',msg:'πr² / 2 est une aire. La longueur d\'un demi-cercle est πr.',w:WP.slice(0,3).concat(['P = '+aP+' + '+kPi((r1*r1+r2*r2)/2)+' '+u])},
+      {v:pib(p+q+(p+q)-2*r1-2*r2,bP),tag:'geo-pyth-somme',msg:'L\'hypoténuse n\'est pas la somme des deux côtés : elle vaut √('+p+'² + '+q+'²) = '+hy+'.',w:['hypoténuse = '+p+' + '+q+' = '+(p+q),'P = '+(2*(p+q))+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' '+u]},
+      {v:pib(p+q-2*r1-2*r2,bP),tag:'geo-perim-cote',msg:'Il manque l\'hypoténuse ('+hy+') dans le contour.',w:['P = '+(p+q)+' − '+(2*r1+2*r2)+' + '+kPi(bP)+' '+u]}]});
+}
+TOPICS['gm-6j']={kind:'gcomp',level:6,label:'Trapèze à encoche et bosse',gen:genTrapeze};
+TOPICS['gm-6k']={kind:'gcomp',level:6,label:'Maison, porte et fenêtre',gen:genMaison};
+TOPICS['gm-6l']={kind:'gcomp',level:6,label:'Triangle rectangle à deux encoches',gen:genTriEnc};
+
+/* ===== Géométrie : solides et volumes (pavé, cylindre, cône, pyramide, sphère, pièces composées) ===== */
+Object.assign(TAGS,{
+  'geo-vol-aire':{label:'Volume et aire confondus',tip:'Un volume (cm³) se calcule avec trois dimensions (aire de la base × hauteur…). Une aire de surface (cm²) additionne des aires de faces. Ce sont deux grandeurs différentes.'},
+  'geo-vol-formule':{label:'Formule du volume',tip:'Pavé : L × l × h. Cylindre : πr² × h. Cône et pyramide : (aire de la base × h) / 3. Boule : 4/3 × πr³. Le rayon est au carré (ou au cube pour la boule).'},
+  'geo-tiers':{label:'Facteur 1/3 (cône, pyramide)',tip:'Le cône et la pyramide occupent le tiers du volume du cylindre ou du prisme de même base et de même hauteur : V = (aire de la base × h) / 3.'},
+  'geo-unites-vol':{label:'Unités de volume',tip:'1 L = 1 dm³ = 1 000 cm³ et 1 m³ = 1 000 L. Pour passer de cm³ à des litres on divise par 1 000.'}
+});
+const S3E=0.28;
+const S3arc=(f,c,r,front)=>{ const L=f([c[0]-r,c[1]]), R=f([c[0]+r,c[1]]), sc=f.s; return 'M'+gf(L[0])+' '+gf(L[1])+' A'+gf(r*sc)+' '+gf(S3E*r*sc)+' 0 0 '+(front?0:1)+' '+gf(R[0])+' '+gf(R[1]); };
+const S3ell=(f,c,r)=>{ const L=f([c[0]-r,c[1]]), R=f([c[0]+r,c[1]]), sc=f.s, a=gf(r*sc)+' '+gf(S3E*r*sc); return 'M'+gf(L[0])+' '+gf(L[1])+' A'+a+' 0 0 0 '+gf(R[0])+' '+gf(R[1])+' A'+a+' 0 0 0 '+gf(L[0])+' '+gf(L[1])+' Z'; };
+const S3P=P=>gf(P[0])+' '+gf(P[1]);
+/* pavé : dimensions d'affichage normalisées */
+function drawBox3(f,dL,dh,dd){
+  const v=[dd*0.62,dd*0.46], A=f([0,0]), B=f([dL,0]), C=f([dL,dh]), D=f([0,dh]), A2=f([v[0],v[1]]), B2=f([dL+v[0],v[1]]), C2=f([dL+v[0],dh+v[1]]), D2=f([v[0],dh+v[1]]);
+  let out=g.path('M'+S3P(A)+' L'+S3P(B)+' L'+S3P(C)+' L'+S3P(D)+' Z','g-f')+g.path('M'+S3P(D)+' L'+S3P(C)+' L'+S3P(C2)+' L'+S3P(D2)+' Z','g-f g-hl')+g.path('M'+S3P(B)+' L'+S3P(C)+' L'+S3P(C2)+' L'+S3P(B2)+' Z','g-f g-hl');
+  out+=g.seg(A,A2,'g-dash g-thin')+g.seg(A2,B2,'g-dash g-thin')+g.seg(A2,D2,'g-dash g-thin');
+  return {out,A,B,C,D,B2,C2,D2,ce:f([dL/2+v[0]/2,dh/2+v[1]/2])};
+}
+function pavSvg(L,l,h,labs,alt,mid){
+  const mx=Math.max(L,l,h), n=x=>Math.max(1.6,4.4*x/mx);
+  const dL=n(L), dh=n(h), dd=n(l)*0.8;
+  return figure([[0,0],[dL+dd*0.62,dh+dd*0.46]],f=>{
+    const b=drawBox3(f,dL,dh,dd); let o=b.out;
+    o+=g.len(b.A,b.B,labs[0],b.ce,10)+g.len(b.A,b.D,labs[2],b.ce,10)+g.len(b.B,b.B2,labs[1],b.ce,9);
+    if(mid) o+=g.text(vmid(b.A,b.C),mid,'g-u');
+    return o;
+  },alt,{H:230,pad:30});
+}
+function cylSvg(r,h,lab,alt,o){
+  o=o||{};
+  return figure([[-r*1.1,-r*S3E*1.1],[r*1.1,h+r*S3E*1.1+(o.hemi?r:0)]],f=>{
+    const BL=f([-r,0]), BR=f([r,0]), TL=f([-r,h]), TR=f([r,h]), sc=f.s, rs=r*sc, ce=f([0,h/2]), eRx=gf(rs)+' '+gf(S3E*rs);
+    let body;
+    if(o.hemi) body='M'+S3P(BL)+' L'+S3P(TL)+' A'+gf(rs)+' '+gf(rs)+' 0 0 1 '+S3P(TR)+' L'+S3P(BR)+' A'+eRx+' 0 0 1 '+S3P(BL)+' Z';
+    else body='M'+S3P(TL)+' L'+S3P(BL)+' A'+eRx+' 0 0 0 '+S3P(BR)+' L'+S3P(TR)+' A'+eRx+' 0 0 0 '+S3P(TL)+' Z';
+    let out=g.path(body,'g-f');
+    if(!o.hemi) out+=g.path(S3ell(f,[0,h],r),'g-f g-hl');
+    out+=dashArc(S3arc(f,[0,0],r,false));
+    if(o.hemi) out+=dashArc(S3arc(f,[0,h],r,true)); 
+    if(o.hole){ out+=g.path(S3ell(f,[0,h],o.hole),'g-f g-hole')+dashArc(S3arc(f,[0,0],o.hole,false)); }
+    const cT=f([0,h]), eT=f([o.hole||r,h]);
+    if(String(lab[0])[0]==='⌀'){ const eL=f([-r,h]); out+=g.seg(eL,eT,'g-thin')+g.dot(cT)+g.text(vadd(cT,[0,-10]),lab[0],'g-u2'); }
+    else out+=g.seg(cT,eT,'g-thin')+g.dot(cT)+g.text(vadd(vmid(cT,eT),[0,-9]),lab[0],'g-u2');
+    
+    out+=g.len(BL,TL,lab[1],ce,10);
+    if(o.hemiTxt) out+=g.text(vadd(f([0,h+r/2]),[0,0]),o.hemiTxt,'g-u2');
+    return out;
+  },alt,{H:o.H||250,pad:30});
+}
+function coneSvg(r,H,labs,alt,o){
+  o=o||{};
+  return figure([[-r*1.1,-r*S3E*1.1],[r*1.1+(o.cyl?0:0),H+(o.cyl?o.cyl:0)+0.2]],f=>{
+    const BL=f([-r,0]), BR=f([r,0]), sc=f.s, rs=r*sc, eRx=gf(rs)+' '+gf(S3E*rs), Ap=f([0,H]), O=f([0,0]), ce=f([0,H/2]);
+    let out=g.path('M'+S3P(Ap)+' L'+S3P(BL)+' A'+eRx+' 0 0 0 '+S3P(BR)+' Z','g-f')+dashArc(S3arc(f,[0,0],r,false));
+    out+=g.seg(Ap,O,'g-dash g-thin')+g.dot(O)+g.right(O,Ap,BR,8);
+    if(labs[0]!=null){ const e=f([r,0]); out+=g.seg(O,e,'g-thin')+g.text(vadd(vmid(O,e),[0,10]),labs[0],'g-u2'); }
+    if(labs[1]!=null) out+=g.text(vadd(vadd(O,vmul(vsub(Ap,O),0.35)),[9,0]),labs[1],'g-u2','start');
+    if(labs[2]!=null) out+=g.len(Ap,BR,labs[2],ce,10);
+    return out;
+  },alt,{H:240,pad:30});
+}
+function pyrSvg(c,H,labs,alt){
+  const dc=3.4, vx=1.5, vy=1.0, hh=3.4;
+  return figure([[0,0],[dc+vx,hh+0.2]],f=>{
+    const A=f([0,0]), B=f([dc,0]), C=f([dc+vx,vy]), D=f([vx,vy]), cen_=f([(dc+vx)/2,vy/2]), P=f([(dc+vx)/2,vy/2+hh]), Mab=f([dc/2,0]), ce=f([(dc+vx)/2,hh/3]);
+    let out=g.path('M'+S3P(A)+' L'+S3P(B)+' L'+S3P(P)+' Z','g-f')+g.path('M'+S3P(B)+' L'+S3P(C)+' L'+S3P(P)+' Z','g-f g-hl');
+    out+=g.seg(A,D,'g-dash g-thin')+g.seg(D,C,'g-dash g-thin')+g.seg(D,P,'g-dash g-thin')+g.seg(P,cen_,'g-dash g-thin')+g.dot(cen_);
+    out+=g.len(A,B,labs[0],ce,10);
+    if(labs[1]!=null) out+=g.text(vadd(vmid(P,cen_),[9,0]),labs[1],'g-u2','start');
+    if(labs[2]!=null){ out+=g.seg(P,Mab,'g-thin')+g.dot(Mab)+g.text(vadd(vadd(P,vmul(vsub(Mab,P),0.6)),[10,0]),labs[2],'g-u2','start'); }
+    return out;
+  },alt,{H:240,pad:30});
+}
+function sphSvg(r,lab,alt,o){
+  o=o||{};
+  return figure([[-r,-r],[r,r+(o.cube?0:0)]],f=>{
+    const C0=f([0,0]), sc=f.s; let out='';
+    if(o.cube){ const q=f([-r,-r]), q2=f([r,r]); out+='<rect class="g-l" fill="none" x="'+gf(q[0])+'" y="'+gf(q2[1])+'" width="'+gf(q2[0]-q[0])+'" height="'+gf(q[1]-q2[1])+'"/>'; }
+    out+=g.circle(C0,r*sc,'')+dashArc(S3arc(f,[0,0],r,false))+'<path class="g-l g-thin" fill="none" d="'+S3arc(f,[0,0],r,true)+'"/>'+g.dot(C0);
+    const e=f([r,0]); out+=g.seg(C0,e,'g-thin')+g.text(vadd(vmid(C0,e),[0,-9]),lab,'g-u2');
+    return out;
+  },alt,{H:o.cube?240:230,pad:30});
+}
+
+const t3=(s)=>s; // lisibilité
+const volU=(u)=>u+'³';
+
+/* ----- gs-1 : pavé droit et cube : volume, aire totale ----- */
+function genPave(){
+  const cube=Math.random()<0.3, ask=pick(['volume','aire','volume']), u=uP();
+  let a,L,l,h;
+  if(cube){ a=rnd(2,9); L=l=h=a; } else { do{ L=rnd(4,12); l=rnd(2,8); h=rnd(2,9); }while(L===l||l===h||L===h); }
+  const svg=cube?pavSvg(a,a,a,[a,a,a],'Cube d\'arête '+a):pavSvg(L,l,h,[L,l,h],'Pavé droit de longueur '+L+', largeur '+l+' et hauteur '+h);
+  const txt=cube?'Un cube a pour arête «'+a+'» '+u+'. ':'Un pavé droit mesure «'+L+'» '+u+' de long, «'+l+'» '+u+' de large et «'+h+'» '+u+' de haut. ';
+  if(ask==='volume'){
+    const V=L*l*h;
+    return mkGeo({svg,val:V,unit:u,pow:3,text:txt+'Calcule son <b>volume</b>.',ask:'le volume',placeholder:cube?'V = 4 × 4 × 4\nV = 64 cm³':'V = 8 × 5 × 3\nV = 120 cm³',
+      work:cube?['V = '+a+'³ = '+V+' '+volU(u)]:['V = '+L+' × '+l+' × '+h+' = '+V+' '+volU(u)],
+      steps:[stp('Formule',cube?'Volume d\'un cube : arête × arête × arête, soit '+M('a³')+'.':'Volume d\'un pavé droit : '+M('longueur × largeur × hauteur')+'.'),stp('Calcul',M(cube?'V = '+a+'³ = '+V:'V = '+L+' × '+l+' × '+h+' = '+V)+' '+volU(u))],
+      hints:['Le volume d\'un pavé droit est le produit de ses trois dimensions.'],
+      mistakes:(cube?[{v:3*a,tag:'geo-vol-formule',msg:'Le volume est un produit : a × a × a (et non 3 × a).',w:['V = 3 × '+a+' = '+3*a]},{v:a*a,tag:'geo-vol-formule',msg:'a × a est l\'aire d\'une face. Le volume demande une troisième dimension : a³.',w:['V = '+a+' × '+a+' = '+a*a]},{v:6*a*a,tag:'geo-vol-aire',msg:'Tu as calculé l\'aire totale (6 faces). Le volume est a³.',w:['A = 6 × '+a+'² = '+6*a*a]}]
+        :[{v:L+l+h,tag:'geo-vol-formule',msg:'Les dimensions se multiplient, elles ne s\'additionnent pas.',w:['V = '+L+' + '+l+' + '+h+' = '+(L+l+h)]},{v:L*l,tag:'geo-vol-formule',msg:'L × l est l\'aire de la base. Il faut encore multiplier par la hauteur.',w:['V = '+L+' × '+l+' = '+L*l]},{v:2*(L*l+L*h+l*h),tag:'geo-vol-aire',msg:'Tu as calculé l\'aire totale. Le volume est le produit des trois dimensions.',w:['A = 2 × ('+L*l+' + '+L*h+' + '+l*h+') = '+2*(L*l+L*h+l*h)]}])});
+  }
+  const A=cube?6*a*a:2*(L*l+L*h+l*h), faces=cube?[a*a]:[L*l,L*h,l*h];
+  return mkGeo({svg,val:A,unit:u,pow:2,text:txt+'Calcule son <b>aire totale</b> (la somme de l\'aire de toutes les faces).',ask:'l\'aire totale',placeholder:cube?'A = 6 × 4²\nA = 96 cm²':'A = 2 × (8×5 + 8×3 + 5×3)\nA = 158 cm²',
+    work:cube?['A = 6 × '+a+'² = '+A+' '+u+'²']:['faces : '+L+' × '+l+' = '+L*l+' ; '+L+' × '+h+' = '+L*h+' ; '+l+' × '+h+' = '+l*h,'A = 2 × ('+L*l+' + '+L*h+' + '+l*h+') = '+A+' '+u+'²'],
+    steps:[stp('Les faces',cube?'Un cube a 6 faces carrées de côté '+M(a)+' : '+M(a+'² = '+a*a)+' chacune.':'Un pavé a 6 faces, identiques deux à deux : '+M(L+' × '+l+' = '+L*l)+', '+M(L+' × '+h+' = '+L*h)+' et '+M(l+' × '+h+' = '+l*h)+'.'),stp('Aire totale',cube?M('A = 6 × '+a*a+' = '+A)+' '+u+'²':M('A = 2 × ('+L*l+' + '+L*h+' + '+l*h+') = '+A)+' '+u+'²')],
+    hints:[cube?'6 faces carrées identiques.':'Les 6 faces sont identiques deux à deux : calcule les trois aires différentes et multiplie leur somme par 2.'],
+    mistakes:(cube?[{v:a*a,tag:'geo-vol-formule',msg:'Tu as compté une seule face : il y en a 6.',w:['A = '+a+'² = '+a*a]},{v:4*a*a,tag:'geo-vol-formule',msg:'Tu as oublié le dessus et le dessous (4 faces au lieu de 6).',w:['A = 4 × '+a+'² = '+4*a*a]},{v:a*a*a,tag:'geo-vol-aire',msg:'Tu as calculé le volume. L\'aire totale additionne les 6 faces.',w:['V = '+a+'³ = '+a**3]}]
+      :[{v:L*l+L*h+l*h,tag:'geo-vol-formule',msg:'Chaque aire apparaît deux fois (dessus/dessous, avant/arrière, gauche/droite) : multiplie la somme par 2.',w:['A = '+L*l+' + '+L*h+' + '+l*h+' = '+(L*l+L*h+l*h)]},{v:L*l*h,tag:'geo-vol-aire',msg:'Tu as calculé le volume. L\'aire totale additionne les aires des faces.',w:['V = '+L+' × '+l+' × '+h+' = '+L*l*h]},{v:2*(L*l+L*h),tag:'geo-vol-formule',msg:'Il manque la face '+l+' × '+h+' (et son opposée) : un pavé a trois paires de faces.',w:['A = 2 × ('+L*l+' + '+L*h+') = '+2*(L*l+L*h)]}])});
+}
+
+/* ----- gs-2 : contenances et unités de volume ----- */
+function genContenance(){
+  const t=pick(['cm3L','Lcm3','dm3L','m3L']);
+  if(t==='cm3L'){
+    const D=[10,12,15,20,25,30,40,50], pk=()=>pick(D); let L=pk(),l=pk(),h=pk(); while(L===l||l===h||L===h){ L=pk(); l=pk(); h=pk(); }
+    const V=L*l*h, ans=V/1000;
+    return mkGeo({svg:pavSvg(L,l,h,[L,l,h],'Bac de '+L+' sur '+l+' sur '+h+' centimètres'),val:ans,unit:'',pow:1,
+      text:'Un bac a la forme d\'un pavé droit de «'+L+'» cm de long, «'+l+'» cm de large et «'+h+'» cm de haut. Combien de <b>litres</b> peut-il contenir ?',ask:'la contenance en litres',placeholder:'V = 30 × 20 × 15 = 9000 cm³\nV = 9 L',
+      work:['V = '+L+' × '+l+' × '+h+' = '+V+' cm³','1 L = 1000 cm³','V = '+V+' / 1000 = '+NF(ans)+' L'],
+      steps:[stp('Volume en cm³',M(L+' × '+l+' × '+h+' = '+V)+' cm³'),stp('Conversion','1 L = 1 dm³ = 1 000 cm³ : on divise par 1 000.',M(V+' / 1000 = '+NF(ans))+' L')],
+      hints:['Calcule d\'abord le volume en cm³, puis convertis : 1 litre = 1 000 cm³.'],
+      mistakes:[{v:V,tag:'geo-unites-vol',msg:'C\'est le volume en cm³. Pour avoir des litres, divise par 1 000.',w:['V = '+V+' cm³']},{v:V/100,tag:'geo-unites-vol',msg:'1 L = 1 000 cm³ (et non 100 cm³).',w:['V = '+V+' / 100 = '+NF(V/100)+' L']},{v:V/10,tag:'geo-unites-vol',msg:'1 L = 1 000 cm³ : divise par 1 000.',w:['V = '+V+' / 10 = '+NF(V/10)+' L']},{v:V/1000000,tag:'geo-unites-vol',msg:'1 L vaut 1 000 cm³ (1 million de cm³ = 1 m³).',w:['V = '+V+' / 1000000 = '+NF(V/1e6)+' L']}]});
+  }
+  if(t==='Lcm3'){
+    const q=pick([0.25,0.5,0.75,1.5,2,2.5,3,0.33,1.2]);
+    return mkGeo({svg:pavSvg(10,6,8,['','',''],'Récipient',''),val:q*1000,unit:'',pow:1,
+      text:'Un récipient contient «'+NF(q)+'» litre'+(q>1?'s':'')+' d\'huile. Exprime ce volume en <b>cm³</b>.',ask:'le volume en cm³',placeholder:'V = 1,5 × 1000\nV = 1500 cm³',
+      work:['1 L = 1000 cm³','V = '+NF(q)+' × 1000 = '+NF(q*1000)+' cm³'],
+      steps:[stp('Conversion','1 L = 1 dm³ = 1 000 cm³ : on multiplie par 1 000.',M(NF(q)+' × 1000 = '+NF(q*1000))+' cm³')],
+      hints:['1 litre = 1 000 cm³.'],
+      mistakes:[{v:q*100,tag:'geo-unites-vol',msg:'1 L = 1 000 cm³ (et non 100).',w:['V = '+NF(q)+' × 100 = '+NF(q*100)]},{v:q*10,tag:'geo-unites-vol',msg:'1 L = 1 000 cm³ : multiplie par 1 000.',w:['V = '+NF(q)+' × 10 = '+NF(q*10)]},{v:q/1000,tag:'geo-unites-vol',msg:'Pour aller vers la petite unité (cm³), on multiplie.',w:['V = '+NF(q)+' / 1000 = '+NF(q/1000)]}]});
+  }
+  if(t==='dm3L'){
+    let L=rnd(3,12), l=rnd(2,8), h=rnd(2,9); while(L===l||l===h||L===h){ L=rnd(3,12); l=rnd(2,8); h=rnd(2,9); }
+    const V=L*l*h;
+    return mkGeo({svg:pavSvg(L,l,h,[L,l,h],'Aquarium de '+L+' sur '+l+' sur '+h+' décimètres'),val:V,unit:'',pow:1,
+      text:'Un aquarium a la forme d\'un pavé droit de «'+L+'» dm de long, «'+l+'» dm de large et «'+h+'» dm de haut. Combien de <b>litres</b> d\'eau contient-il quand il est plein ?',ask:'la contenance en litres',placeholder:'V = 8 × 4 × 5 = 160 dm³\nV = 160 L',
+      work:['V = '+L+' × '+l+' × '+h+' = '+V+' dm³','1 dm³ = 1 L','V = '+V+' L'],
+      steps:[stp('Volume en dm³',M(L+' × '+l+' × '+h+' = '+V)+' dm³'),stp('Conversion','1 dm³ = 1 L : le nombre ne change pas.',M(V)+' L')],
+      hints:['1 dm³ correspond exactement à 1 litre.'],
+      mistakes:[{v:V*1000,tag:'geo-unites-vol',msg:'Les dimensions sont déjà en dm : 1 dm³ = 1 L, il n\'y a rien à multiplier.',w:['V = '+V+' × 1000 = '+V*1000]},{v:V/1000,tag:'geo-unites-vol',msg:'Les dimensions sont en dm : 1 dm³ = 1 L (la division par 1 000 sert pour des cm³).',w:['V = '+V+' / 1000 = '+NF(V/1000)]},{v:L+l+h,tag:'geo-vol-formule',msg:'Le volume est le produit des trois dimensions.',w:['V = '+L+' + '+l+' + '+h]}]});
+  }
+  const m3=pick([0.5,1.2,1.5,2,2.5,3,4.5,0.8]);
+  return mkGeo({svg:pavSvg(10,6,8,['','',''],'Citerne',''),val:m3*1000,unit:'',pow:1,
+    text:'Une citerne a un volume de «'+NF(m3)+'» m³. Exprime sa contenance en <b>litres</b>.',ask:'la contenance en litres',placeholder:'V = 2 × 1000\nV = 2000 L',
+    work:['1 m³ = 1000 dm³ = 1000 L','V = '+NF(m3)+' × 1000 = '+NF(m3*1000)+' L'],
+    steps:[stp('Conversion','1 m³ = 1 000 dm³ = 1 000 L.',M(NF(m3)+' × 1000 = '+NF(m3*1000))+' L')],
+    hints:['1 m³ = 1 000 dm³ et 1 dm³ = 1 L.'],
+    mistakes:[{v:m3*100,tag:'geo-unites-vol',msg:'1 m³ = 1 000 L (et non 100).',w:['V = '+NF(m3)+' × 100']},{v:m3*1e6,tag:'geo-unites-vol',msg:'1 m³ = 1 000 L ; 1 million est le nombre de cm³.',w:['V = '+NF(m3)+' × 1000000']},{v:m3/1000,tag:'geo-unites-vol',msg:'Le litre est plus petit que le m³ : on multiplie.',w:['V = '+NF(m3)+' / 1000']}]});
+}
+
+/* ----- gs-3 : cylindre (valeur exacte) ----- */
+function genCylindre(){
+  const r=rnd(2,8), h=rnd(3,12), ask=pick(['volume','latérale','totale']), u=uP(), useD=Math.random()<0.4, d=2*r;
+  const svg=cylSvg(r,h,[useD?'⌀ '+d:r,h],'Cylindre de hauteur '+h);
+  const txt='Un cylindre de révolution a un '+(useD?'diamètre de «'+d+'» '+u:'rayon de «'+r+'» '+u)+' et une hauteur de «'+h+'» '+u+'. ';
+  const R0=useD?['r = '+d+' / 2 = '+r]:[], R1=useD?stp('Rayon','Le diamètre est '+M(d)+' : le rayon est la moitié, '+M('r = '+d+' / 2 = '+r)+'.'):null;
+  const pre=s=>R1?[R1].concat(s):s, rr=useD?d:r;
+  if(ask==='volume'){
+    const b=r*r*h;
+    return mkGeo({svg,mode:'pi',val:pib(0,b),unit:u,pow:3,text:txt+'Calcule son <b>volume</b>. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'V = π × 3² × 5\nV = 45π cm³',
+      work:R0.concat(['V = π × '+r+'² × '+h+' = '+kPi(b)+' '+volU(u)]),
+      steps:pre([stp('Formule','Volume = aire de la base × hauteur : '+M('V = πr² × h')+'.'),stp('Calcul',M('V = π × '+r+'² × '+h+' = '+kPi(b))+' '+volU(u)+' ≈ '+NF(Math.round(b*Math.PI*100)/100)+' '+volU(u))]),
+      hints:['La base est un disque de rayon r : son aire vaut πr².','Volume du cylindre : πr² × h.'],
+      mistakes:[{v:pib(0,r*h),tag:'geo-vol-formule',msg:'Le rayon est au carré dans l\'aire de la base : πr².',w:R0.concat(['V = π × '+r+' × '+h+' = '+kPi(r*h)])},{v:pib(0,4*r*r*h),tag:'geo-rayon',msg:'Tu as utilisé le diamètre à la place du rayon.',w:['V = π × '+d+'² × '+h+' = '+kPi(4*r*r*h)]},{v:pib(0,r*r*h/3),tag:'geo-tiers',msg:'Le facteur 1/3 est pour le cône et la pyramide, pas pour le cylindre.',w:['V = π × '+r+'² × '+h+' / 3']},{v:pib(0,2*r*h),tag:'geo-vol-aire',msg:'2πrh est l\'aire latérale. Le volume est πr²h.',w:['A = 2π × '+r+' × '+h+' = '+kPi(2*r*h)]}]});
+  }
+  if(ask==='latérale'){
+    const b=2*r*h;
+    return mkGeo({svg,mode:'pi',val:pib(0,b),unit:u,pow:2,text:txt+'Calcule son <b>aire latérale</b> (sans les deux disques). Donne la <b>valeur exacte</b>.',ask:'l\'aire latérale (valeur exacte)',placeholder:'A = 2π × 3 × 5\nA = 30π cm²',
+      work:R0.concat(['A = 2π × '+r+' × '+h+' = '+kPi(b)+' '+u+'²']),
+      steps:pre([stp('Idée','Déroulée, la surface latérale est un rectangle : sa largeur est le périmètre de la base '+M('2πr')+' et sa hauteur est '+M('h')+'.'),stp('Calcul',M('A = 2π × '+r+' × '+h+' = '+kPi(b))+' '+u+'²')]),
+      hints:['Développe la surface latérale : un rectangle de longueur 2πr et de largeur h.'],
+      mistakes:[{v:pib(0,r*h),tag:'geo-aire-pi',msg:'Le périmètre de la base est 2πr (et non πr).',w:R0.concat(['A = π × '+r+' × '+h+' = '+kPi(r*h)])},{v:pib(0,r*r*h),tag:'geo-vol-aire',msg:'πr²h est le volume. L\'aire latérale est 2πrh.',w:['V = π × '+r+'² × '+h]},{v:pib(0,2*r*(r+h)),tag:'geo-vol-formule',msg:'Tu as ajouté les deux disques : ils ne font pas partie de l\'aire latérale.',w:['A = 2π × '+r+' × ('+r+' + '+h+') = '+kPi(2*r*(r+h))]},{v:pib(0,4*r*h),tag:'geo-rayon',msg:'Tu as utilisé le diamètre à la place du rayon.',w:['A = 2π × '+d+' × '+h+' = '+kPi(4*r*h)]}]});
+  }
+  const b=2*r*(r+h);
+  return mkGeo({svg,mode:'pi',val:pib(0,b),unit:u,pow:2,text:txt+'Calcule son <b>aire totale</b> (surface latérale et deux disques). Donne la <b>valeur exacte</b>.',ask:'l\'aire totale (valeur exacte)',placeholder:'A = 2π × 3 × 5 + 2 × π × 3²\nA = 48π cm²',
+    work:R0.concat(['latérale : 2π × '+r+' × '+h+' = '+kPi(2*r*h),'deux disques : 2 × π × '+r+'² = '+kPi(2*r*r),'A = '+kPi(2*r*h)+' + '+kPi(2*r*r)+' = '+kPi(b)+' '+u+'²']),
+    steps:pre([stp('Surface latérale',M('2π × '+r+' × '+h+' = '+kPi(2*r*h))),stp('Deux disques',M('2 × π × '+r+'² = '+kPi(2*r*r))),stp('Aire totale',M('A = '+kPi(2*r*h)+' + '+kPi(2*r*r)+' = '+kPi(b))+' '+u+'²')]),
+    hints:['Aire totale = surface latérale + les deux bases (haut et bas).'],
+    mistakes:[{v:pib(0,2*r*h),tag:'geo-vol-formule',msg:'Il manque les deux disques (haut et bas).',w:R0.concat(['A = 2π × '+r+' × '+h+' = '+kPi(2*r*h)])},{v:pib(0,r*r+2*r*h),tag:'geo-vol-formule',msg:'Un cylindre a deux bases : 2πr², pas πr².',w:R0.concat(['A = '+kPi(2*r*h)+' + '+kPi(r*r)+' = '+kPi(r*r+2*r*h)])},{v:pib(0,r*r*h),tag:'geo-vol-aire',msg:'Tu as calculé le volume. L\'aire totale additionne des aires.',w:['V = π × '+r+'² × '+h]},{v:pib(0,2*r*r*h),tag:'geo-vol-formule',msg:'Les deux aires s\'additionnent, elles ne se multiplient pas.',w:['A = 2π'+r+' × '+h+' × '+r]}]});
+}
+
+/* ----- gs-4 : cône et pyramide ----- */
+function genConePyr(){
+  const t=pick(['cone-h','cone-s','pyr-h','pyr-a']), u=uP();
+  if(t==='cone-h'){
+    const r=rnd(2,8), H=rnd(3,12), N=r*r*H, ex=fr3(N);
+    return mkGeo({svg:coneSvg(r,H,[r,H,null],'Cône de rayon '+r+' et de hauteur '+H),mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:'Un cône de révolution a un rayon de base de «'+r+'» '+u+' et une hauteur de «'+H+'» '+u+'. Calcule son <b>volume</b>. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'V = π × 3² × 4 / 3\nV = 12π cm³',
+      work:['V = π × '+r+'² × '+H+' / 3 = '+ex+' '+volU(u)],
+      steps:[stp('Formule','Le volume d\'un cône est le tiers de celui du cylindre de même base : '+M('V = πr² × h / 3')+'.'),stp('Calcul',M('V = π × '+r+'² × '+H+' / 3 = '+ex)+' '+volU(u))],
+      hints:['Cône : V = (aire de la base × hauteur) / 3.'],
+      mistakes:[{v:pib(0,N),tag:'geo-tiers',msg:'Le volume du cône est le tiers de πr²h : n\'oublie pas de diviser par 3.',w:['V = π × '+r+'² × '+H+' = '+kPi(N)]},{v:pib(0,r*H/3),tag:'geo-vol-formule',msg:'Le rayon est au carré : πr².',w:['V = π × '+r+' × '+H+' / 3']},{v:pib(0,4*N/3),tag:'geo-rayon',msg:'Le rayon est '+r+' (c\'est lui qu\'on met au carré).',w:['V = π × '+2*r+'² × '+H+' / 3']},{v:pib(0,N/2),tag:'geo-tiers',msg:'C\'est un tiers (÷ 3), pas une moitié.',w:['V = π × '+r+'² × '+H+' / 2']}]});
+  }
+  if(t==='cone-s'){
+    const [p,q,s0]=pick([[3,4,5],[4,3,5],[6,8,10],[5,12,13],[9,12,15],[8,6,10]]), r=p, H=q, s=s0, ask=pick(['volume','aire']);
+    const svg=coneSvg(r,H,[r,null,s],'Cône de rayon '+r+' et de génératrice '+s);
+    const base='Un cône de révolution a un rayon de base de «'+r+'» '+u+' et une génératrice (côté oblique) de «'+s+'» '+u+'. ';
+    if(ask==='volume'){
+      const N=r*r*H, ex=fr3(N), WH='H = √('+s+'² − '+r+'²) = '+H;
+      return mkGeo({svg,mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:base+'Calcule son <b>volume</b>. Donne la <b>valeur exacte</b> (la hauteur n\'est pas donnée).',ask:'le volume (valeur exacte)',placeholder:'H = ...\nV = ...',
+        work:[WH,'V = π × '+r+'² × '+H+' / 3 = '+ex+' '+volU(u)],
+        steps:[stp('Hauteur du cône','La hauteur, le rayon et la génératrice forment un triangle rectangle (l\'hypoténuse est la génératrice) :',M('H = √('+s+'² − '+r+'²) = √'+(s*s-r*r)+' = '+H)),stp('Volume',M('V = π × '+r+'² × '+H+' / 3 = '+ex)+' '+volU(u))],
+        hints:['Dans le triangle rectangle formé par la hauteur, le rayon et la génératrice, la génératrice est l\'hypoténuse.'],
+        mistakes:[{v:pib(0,r*r*s/3),tag:'geo-pyth-cote',msg:'La génératrice n\'est pas la hauteur : H = √('+s+'² − '+r+'²) = '+H+'.',w:['V = π × '+r+'² × '+s+' / 3 = '+fr3(r*r*s)]},{v:pib(0,N),tag:'geo-tiers',msg:'N\'oublie pas de diviser par 3.',w:[WH,'V = π × '+r+'² × '+H+' = '+kPi(N)]},{v:pib(0,r*r*(s-r)/3),tag:'geo-pyth-somme',msg:'Pythagore s\'applique aux carrés : H² = '+s+'² − '+r+'².',w:['H = '+s+' − '+r+' = '+(s-r),'V = π × '+r+'² × '+(s-r)+' / 3']}]});
+    }
+    return mkGeo({svg,mode:'pi',val:pib(0,r*s),unit:u,pow:2,text:base+'Calcule son <b>aire latérale</b>. Donne la <b>valeur exacte</b>.',ask:'l\'aire latérale (valeur exacte)',placeholder:'A = π × 3 × 5\nA = 15π cm²',
+      work:['A = π × '+r+' × '+s+' = '+kPi(r*s)+' '+u+'²'],
+      steps:[stp('Formule','Aire latérale d\'un cône : '+M('π × r × g')+' (g = génératrice).'),stp('Calcul',M('A = π × '+r+' × '+s+' = '+kPi(r*s))+' '+u+'²')],
+      hints:['Aire latérale du cône : π × rayon × génératrice.'],
+      mistakes:[{v:pib(0,r*H),tag:'geo-pyth-cote',msg:'Il faut la génératrice ('+s+'), pas la hauteur ('+H+').',w:['A = π × '+r+' × '+H+' = '+kPi(r*H)]},{v:pib(0,r*(r+s)),tag:'geo-vol-formule',msg:'Tu as ajouté le disque de base : l\'aire latérale n\'en tient pas compte.',w:['A = π × '+r+' × ('+r+' + '+s+')']},{v:pib(0,2*r*s),tag:'geo-aire-pi',msg:'L\'aire latérale du cône est πrg (pas 2πrg).',w:['A = 2π × '+r+' × '+s]},{v:pib(0,r*r*H/3),tag:'geo-vol-aire',msg:'Tu as calculé le volume.',w:['V = π × '+r+'² × '+H+' / 3']}]});
+  }
+  if(t==='pyr-h'){
+    const c=rnd(3,10), H=c%3===0?rnd(2,12):3*rnd(1,4), V=c*c*H/3;
+    return mkGeo({svg:pyrSvg(c,H,[c,H,null],'Pyramide à base carrée de côté '+c+' et de hauteur '+H),val:V,unit:u,pow:3,text:'Une pyramide a pour base un carré de côté «'+c+'» '+u+' et pour hauteur «'+H+'» '+u+'. Calcule son <b>volume</b>.',ask:'le volume',placeholder:'V = 6 × 6 × 9 / 3\nV = 108 cm³',
+      work:['aire de la base : '+c+'² = '+c*c,'V = '+c*c+' × '+H+' / 3 = '+NF(V)+' '+volU(u)],
+      steps:[stp('Formule','Pyramide : '+M('V = (aire de la base × hauteur) / 3')+'.'),stp('Calcul',M('V = '+c+'² × '+H+' / 3 = '+c*c*H+' / 3 = '+NF(V))+' '+volU(u))],
+      hints:['La base est un carré de côté '+c+'. Volume = base × hauteur / 3.'],
+      mistakes:[{v:c*c*H,tag:'geo-tiers',msg:'Le volume d\'une pyramide est le tiers de base × hauteur : divise par 3.',w:['V = '+c+'² × '+H+' = '+c*c*H]},{v:c*H/3,tag:'geo-vol-formule',msg:'L\'aire de la base carrée est c² ('+c*c+').',w:['V = '+c+' × '+H+' / 3']},{v:c*c*H/2,tag:'geo-tiers',msg:'C\'est un tiers (÷ 3), pas une moitié.',w:['V = '+c+'² × '+H+' / 2']}]});
+  }
+  const [p,q,a_]=pick([[3,4,5],[4,3,5],[5,12,13],[6,8,10],[8,6,10],[9,12,15],[12,5,13],[8,15,17]]), c=2*p, H=q, V=c*c*H/3;
+  return mkGeo({svg:pyrSvg(c,null,[c,null,a_],'Pyramide à base carrée de côté '+c+' et d\'apothème '+a_),val:V,unit:u,pow:3,text:'Une pyramide régulière a pour base un carré de côté «'+c+'» '+u+'. La hauteur d\'une face triangulaire (l\'apothème) mesure «'+a_+'» '+u+'. Calcule son <b>volume</b> (la hauteur de la pyramide n\'est pas donnée).',ask:'le volume',placeholder:'H = ...\nV = ...',
+    work:['demi-côté : '+c+' / 2 = '+p,'H = √('+a_+'² − '+p+'²) = '+H,'V = '+c+'² × '+H+' / 3 = '+NF(V)+' '+volU(u)],
+    steps:[stp('Hauteur de la pyramide','Le pied de la hauteur est le centre de la base : la distance au milieu d\'un côté est '+M(c+' / 2 = '+p)+'. Triangle rectangle d\'hypoténuse l\'apothème :',M('H = √('+a_+'² − '+p+'²) = √'+(a_*a_-p*p)+' = '+H)),stp('Volume',M('V = '+c+'² × '+H+' / 3 = '+NF(V))+' '+volU(u))],
+    hints:['Le pied de la hauteur est au centre de la base : il est à c / 2 du milieu d\'un côté. Triangle rectangle : hauteur, c / 2 et apothème (hypoténuse).'],
+    mistakes:[{v:c*c*a_/3,tag:'geo-pyth-cote',msg:'L\'apothème n\'est pas la hauteur de la pyramide : H = √('+a_+'² − '+p+'²) = '+H+'.',w:['V = '+c+'² × '+a_+' / 3 = '+NF(c*c*a_/3)]},{v:c*c*H,tag:'geo-tiers',msg:'N\'oublie pas de diviser par 3.',w:['H = '+H,'V = '+c+'² × '+H+' = '+c*c*H]},{v:c*c*Math.sqrt(Math.max(0,a_*a_-c*c))/3,tag:'geo-pyth-cote',msg:'Dans le triangle rectangle, c\'est la moitié du côté ('+p+') qu\'on utilise, pas le côté entier.',w:['H = √('+a_+'² − '+c+'²)']}].filter(m=>isFinite(m.v)&&m.v>0)});
+}
+
+/* ----- gs-5 : boule (valeur exacte) ----- */
+function genBoule(){
+  const r=rnd(2,9), useD=Math.random()<0.4, d=2*r, t=pick(['V','V','A','demi','cube']), u=uP();
+  const intro=useD?'Une boule a un diamètre de «'+d+'» '+u+'. ':'Une boule a un rayon de «'+r+'» '+u+'. ';
+  const R0=useD?['r = '+d+' / 2 = '+r]:[], R1=useD?[stp('Rayon','Le diamètre est '+M(d)+' : '+M('r = '+d+' / 2 = '+r))]:[];
+  if(t==='V'){
+    const N=4*r**3, ex=fr3(N);
+    return mkGeo({svg:sphSvg(r,r,'Boule de rayon '+r),mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:intro+'Calcule son <b>volume</b>. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'V = 4/3 × π × 3³\nV = 36π cm³',
+      work:R0.concat(['V = 4/3 × π × '+r+'³ = '+ex+' '+volU(u)]),
+      steps:R1.concat([stp('Formule','Volume d\'une boule : '+M('V = (4/3) × π × r³')+'.'),stp('Calcul',M('V = (4/3) × π × '+r+'³ = '+N+'π / 3 = '+ex)+' '+volU(u))]),
+      hints:['Volume de la boule : 4/3 × π × r³ (le rayon est au cube).'],
+      mistakes:[{v:pib(0,4*r*r),tag:'geo-vol-aire',msg:'4πr² est l\'aire de la sphère. Le volume est 4/3 πr³.',w:['A = 4π × '+r+'² = '+kPi(4*r*r)]},{v:pib(0,4*r**3),tag:'geo-vol-formule',msg:'Il manque le facteur 1/3 : V = 4/3 × πr³.',w:['V = 4π × '+r+'³ = '+kPi(4*r**3)]},{v:pib(0,4*r*r/3),tag:'geo-vol-formule',msg:'Pour la boule, le rayon est au cube (r³).',w:['V = 4/3 π × '+r+'²']},{v:pib(0,4*d**3/3),tag:'geo-rayon',msg:'Tu as utilisé le diamètre à la place du rayon.',w:['V = 4/3 π × '+d+'³']}].filter(m=>Math.abs(m.v.b-N/3)>1e-9)});
+  }
+  if(t==='A'){
+    return mkGeo({svg:sphSvg(r,r,'Sphère de rayon '+r),mode:'pi',val:pib(0,4*r*r),unit:u,pow:2,text:intro.replace('boule','sphère')+'Calcule l\'<b>aire de sa surface</b>. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',placeholder:'A = 4π × 3²\nA = 36π cm²',
+      work:R0.concat(['A = 4π × '+r+'² = '+kPi(4*r*r)+' '+u+'²']),
+      steps:R1.concat([stp('Formule','Aire d\'une sphère : '+M('A = 4πr²')+'.'),stp('Calcul',M('A = 4π × '+r+'² = '+kPi(4*r*r))+' '+u+'²')]),
+      hints:['Aire de la sphère : 4πr².'],
+      mistakes:[{v:pib(0,4*r**3/3),tag:'geo-vol-aire',msg:'4/3 πr³ est le volume. L\'aire de la sphère est 4πr².',w:['V = 4/3 π × '+r+'³']},{v:pib(0,r*r),tag:'geo-aire-pi',msg:'πr² est l\'aire d\'un disque. La sphère vaut 4 fois cette aire.',w:['A = π × '+r+'² = '+kPi(r*r)]},{v:pib(0,2*r*r),tag:'geo-aire-pi',msg:'L\'aire de la sphère est 4πr² (et non 2πr²).',w:['A = 2π × '+r+'²']},{v:pib(0,16*r*r),tag:'geo-rayon',msg:'Tu as utilisé le diamètre à la place du rayon.',w:['A = 4π × '+d+'²']}]});
+  }
+  if(t==='demi'){
+    const N=2*r**3, ex=fr3(N);
+    return mkGeo({svg:sphSvg(r,r,'Demi-boule de rayon '+r),mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:'Une <b>demi-boule</b> (un dôme plein) a un rayon de «'+r+'» '+u+'. Calcule son <b>volume</b>. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'V = 1/2 × 4/3 × π × 3³\nV = 18π cm³',
+      work:['V = 1/2 × 4/3 × π × '+r+'³ = '+ex+' '+volU(u)],
+      steps:[stp('Moitié d\'une boule','Boule entière : '+M('(4/3) × π × '+r+'³ = '+fr3(4*r**3))+'. On prend la moitié :',M('V = '+ex)+' '+volU(u))],
+      hints:['Volume d\'une demi-boule = la moitié de 4/3 πr³ = 2/3 πr³.'],
+      mistakes:[{v:pib(0,4*r**3/3),tag:'geo-vol-formule',msg:'C\'est le volume de la boule entière : il faut prendre la moitié.',w:['V = '+fr3(4*r**3)]},{v:pib(0,r**3/3*1),tag:'geo-vol-formule',msg:'Moitié de 4/3 πr³ = 2/3 πr³.',w:['V = 1/3 π × '+r+'³']},{v:pib(0,2*r**3),tag:'geo-tiers',msg:'Il manque le facteur 1/3 : V = 2/3 πr³.',w:['V = 2π × '+r+'³']}]});
+  }
+  const a8=8*r**3, bb=4*r**3/3, ex=NF(a8)+' − '+fr3(4*r**3);
+  return mkGeo({svg:sphSvg(r,r,'Boule de rayon '+r+' dans un cube d\'arête '+2*r,{cube:true}),mode:'pi',exact:ex,val:pib(a8,-bb),unit:u,pow:3,text:'Une boule de rayon «'+r+'» '+u+' est exactement contenue dans un cube (elle touche les six faces). Calcule le volume de <b>l\'espace vide</b> entre la boule et le cube. Donne la <b>valeur exacte</b>.',ask:'le volume vide (valeur exacte)',placeholder:'cube = ...\nboule = ...\nV = ...',
+    work:['arête du cube = 2 × '+r+' = '+2*r,'cube : '+2*r+'³ = '+a8,'boule : 4/3 π × '+r+'³ = '+fr3(4*r**3),'V = '+ex+' '+volU(u)],
+    steps:[stp('Cube','L\'arête est le diamètre de la boule : '+M('2 × '+r+' = '+2*r)+'. Volume : '+M(2*r+'³ = '+a8)),stp('Boule',M('(4/3) × π × '+r+'³ = '+fr3(4*r**3))),stp('Espace vide','Cube − boule : '+M('V = '+ex)+' '+volU(u))],
+    hints:['L\'arête du cube est égale au diamètre de la boule.'],
+    mistakes:[{v:pib(a8,0),tag:'geo-vol-formule',msg:'C\'est le volume du cube : il faut retirer celui de la boule.',w:['V = '+a8]},{v:pib(r**3,-bb),tag:'geo-rayon',msg:'L\'arête du cube est le diamètre : 2 × '+r+' = '+2*r+', pas '+r+'.',w:['cube : '+r+'³ = '+r**3,'V = '+r**3+' − '+fr3(4*r**3)]},{v:pib(0,bb),tag:'geo-vol-formule',msg:'Tu n\'as calculé que la boule : l\'espace vide, c\'est cube − boule.',w:['V = '+fr3(4*r**3)]},{v:pib(a8,bb),tag:'geo-vol-formule',msg:'Le vide, c\'est le cube moins la boule (et non plus).',w:['V = '+a8+' + '+fr3(4*r**3)]}]});
+}
+
+/* ----- gs-6 : pièces composées ----- */
+function genPieceS(){
+  const t=pick(['silo','rivet','tube']), u=uP();
+  if(t==='silo'){
+    const [p,q,s]=pick([[3,4,5],[6,8,10],[9,12,15],[5,12,13]]), r=p, Hc=q, h=rnd(3,8), N=r*r*(3*h+Hc), ex=fr3(N);
+    const svg=figure([[-r*1.1,-r*S3E*1.1],[r*1.1,h+Hc+0.2]],f=>{
+      const BL=f([-r,0]), BR=f([r,0]), TL=f([-r,h]), TR=f([r,h]), Ap=f([0,h+Hc]), sc=f.s, eRx=gf(r*sc)+' '+gf(S3E*r*sc), ce=f([0,h/2]), cr=f([r,h]);
+      let out=g.path('M'+S3P(BL)+' L'+S3P(TL)+' L'+S3P(Ap)+' L'+S3P(TR)+' L'+S3P(BR)+' A'+eRx+' 0 0 1 '+S3P(BL)+' Z','g-f')+dashArc(S3arc(f,[0,0],r,false))+'<path class="g-l g-thin" fill="none" d="'+S3arc(f,[0,h],r,true)+'"/>'+dashArc(S3arc(f,[0,h],r,false));
+      const O=f([0,0]), cT=f([0,h]), eT=f([r,h]);
+      out+=g.seg(cT,eT,'g-thin')+g.dot(cT)+g.text(vadd(vmid(cT,eT),[0,10]),String(r),'g-u2')+g.len(BL,TL,String(h),ce,10)+g.len(Ap,TR,String(s),f([0,h/2]),10);
+      return out;
+    },'Silo : cylindre de rayon '+r+' et de hauteur '+h+' surmonté d\'un cône de génératrice '+s,{H:260,pad:30});
+    return mkGeo({svg,mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:'Un silo est formé d\'un cylindre de rayon «'+r+'» '+u+' et de hauteur «'+h+'» '+u+', surmonté d\'un cône de même base dont la génératrice mesure «'+s+'» '+u+'. Calcule le <b>volume</b> du silo. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'hauteur du cône = ...\ncylindre = ...\ncône = ...\nV = ...',
+      work:['H = √('+s+'² − '+r+'²) = '+Hc,'cylindre : π × '+r+'² × '+h+' = '+kPi(r*r*h),'cône : π × '+r+'² × '+Hc+' / 3 = '+fr3(r*r*Hc),'V = '+ex+' '+volU(u)],
+      steps:[stp('Hauteur du cône',M('H = √('+s+'² − '+r+'²) = '+Hc)),stp('Cylindre',M('π × '+r+'² × '+h+' = '+kPi(r*r*h))),stp('Cône',M('π × '+r+'² × '+Hc+' / 3 = '+fr3(r*r*Hc))),stp('Volume total',M('V = '+ex)+' '+volU(u))],
+      hints:['La hauteur du cône se trouve avec Pythagore (rayon, hauteur, génératrice).','Volume total = cylindre + cône.'],
+      mistakes:[{v:pib(0,r*r*h),tag:'geo-decomp',msg:'Tu as oublié le cône du dessus.',w:['V = '+kPi(r*r*h)]},{v:pib(0,r*r*(h+Hc)),tag:'geo-tiers',msg:'Le volume du cône est divisé par 3.',w:['V = '+kPi(r*r*h)+' + '+kPi(r*r*Hc)]},{v:pib(0,r*r*(3*h+s)/3),tag:'geo-pyth-cote',msg:'La génératrice n\'est pas la hauteur du cône : H = √('+s+'² − '+r+'²) = '+Hc+'.',w:['cône : π × '+r+'² × '+s+' / 3']},{v:pib(0,r*r*(3*h-Hc)/3),tag:'geo-decomp',msg:'Le cône s\'ajoute au cylindre (il est posé dessus).',w:['V = '+kPi(r*r*h)+' − '+fr3(r*r*Hc)]}].filter(m=>m.v.b>0&&Math.abs(m.v.b-N/3)>1e-9)});
+  }
+  if(t==='rivet'){
+    const r=rnd(2,6), h=rnd(3,10), N=3*r*r*h+2*r**3, ex=fr3(N);
+    const svg=cylSvg(r,h,[r,h],'Cylindre de rayon '+r+' et de hauteur '+h+' surmonté d\'une demi-boule',{hemi:true,H:260});
+    return mkGeo({svg,mode:'pi',exact:ex,val:pib(0,N/3),unit:u,pow:3,text:'Une pièce est formée d\'un cylindre de rayon «'+r+'» '+u+' et de hauteur «'+h+'» '+u+', surmonté d\'une <b>demi-boule</b> de même rayon. Calcule son <b>volume</b>. Donne la <b>valeur exacte</b>.',ask:'le volume (valeur exacte)',placeholder:'cylindre = ...\ndemi-boule = ...\nV = ...',
+      work:['cylindre : π × '+r+'² × '+h+' = '+kPi(r*r*h),'demi-boule : 2/3 × π × '+r+'³ = '+fr3(2*r**3),'V = '+ex+' '+volU(u)],
+      steps:[stp('Cylindre',M('π × '+r+'² × '+h+' = '+kPi(r*r*h))),stp('Demi-boule',M('(1/2) × (4/3) × π × '+r+'³ = '+fr3(2*r**3))),stp('Volume total',M('V = '+ex)+' '+volU(u))],
+      hints:['Volume = cylindre + demi-boule. La demi-boule est la moitié de 4/3 πr³.'],
+      mistakes:[{v:pib(0,r*r*h),tag:'geo-decomp',msg:'Tu as oublié la demi-boule.',w:['V = '+kPi(r*r*h)]},{v:pib(0,(3*r*r*h+4*r**3)/3),tag:'geo-vol-formule',msg:'Tu as pris une boule entière : la pièce n\'a qu\'une demi-boule (2/3 πr³).',w:['demi-boule : '+fr3(4*r**3)]},{v:pib(0,r*r*h+2*r**3),tag:'geo-tiers',msg:'Le volume de la demi-boule est 2/3 πr³ (il manque le facteur 1/3).',w:['demi-boule : 2π × '+r+'³']},{v:pib(0,(3*r*r*h-2*r**3)/3),tag:'geo-decomp',msg:'La demi-boule s\'ajoute au cylindre.',w:['V = '+kPi(r*r*h)+' − '+fr3(2*r**3)]}]});
+  }
+  const R=rnd(4,8), r=rnd(1,R-2), h=rnd(3,10), ask=pick(['volume','aire']);
+  const svg=cylSvg(R,h,[r,h,R-r],'Cylindre de rayon '+R+' et de hauteur '+h+' percé d\'un trou cylindrique de rayon '+r,{hole:r,H:260});
+  const txt='Un tube est un cylindre plein de rayon «'+R+'» '+u+' et de hauteur «'+h+'» '+u+', percé de part en part par un trou cylindrique de rayon «'+r+'» '+u+' (même axe). ';
+  if(ask==='volume'){
+    const b=(R*R-r*r)*h;
+    return mkGeo({svg,mode:'pi',val:pib(0,b),unit:u,pow:3,text:txt+'Calcule le <b>volume de matière</b>. Donne la <b>valeur exacte</b>.',ask:'le volume de matière (valeur exacte)',placeholder:'plein = ...\ntrou = ...\nV = ...',
+      work:['plein : π × '+R+'² × '+h+' = '+kPi(R*R*h),'trou : π × '+r+'² × '+h+' = '+kPi(r*r*h),'V = '+kPi(R*R*h)+' − '+kPi(r*r*h)+' = '+kPi(b)+' '+volU(u)],
+      steps:[stp('Cylindre plein',M('π × '+R+'² × '+h+' = '+kPi(R*R*h))),stp('Trou',M('π × '+r+'² × '+h+' = '+kPi(r*r*h))),stp('Matière',M('V = '+kPi(R*R*h)+' − '+kPi(r*r*h)+' = '+kPi(b))+' '+volU(u))],
+      hints:['Volume de matière = cylindre plein − cylindre du trou (même hauteur).'],
+      mistakes:[{v:pib(0,R*R*h),tag:'geo-decomp',msg:'Tu as oublié de retirer le trou.',w:['V = '+kPi(R*R*h)]},{v:pib(0,(R-r)**2*h),tag:'geo-vol-formule',msg:'On soustrait les aires des disques (R² − r²), pas les rayons avant de mettre au carré.',w:['V = π × ('+R+' − '+r+')² × '+h]},{v:pib(0,(R*R+r*r)*h),tag:'geo-decomp',msg:'Le trou est du vide : on retire son volume.',w:['V = '+kPi(R*R*h)+' + '+kPi(r*r*h)]},{v:pib(0,r*r*h),tag:'geo-decomp',msg:'Tu as calculé le volume du trou, pas celui de la matière.',w:['V = '+kPi(r*r*h)]}]});
+  }
+  const b=2*((R+r)*h+R*R-r*r);
+  return mkGeo({svg,mode:'pi',val:pib(0,b),unit:u,pow:2,text:txt+'Calcule l\'<b>aire totale de la surface</b> du tube (surface extérieure, surface intérieure du trou et les deux couronnes du haut et du bas). Donne la <b>valeur exacte</b>.',ask:'l\'aire totale (valeur exacte)',placeholder:'extérieur = ...\nintérieur = ...\ncouronnes = ...\nA = ...',
+    work:['extérieur : 2π × '+R+' × '+h+' = '+kPi(2*R*h),'intérieur : 2π × '+r+' × '+h+' = '+kPi(2*r*h),'deux couronnes : 2 × π × ('+R+'² − '+r+'²) = '+kPi(2*(R*R-r*r)),'A = '+kPi(b)+' '+u+'²'],
+    steps:[stp('Surface extérieure',M('2π × '+R+' × '+h+' = '+kPi(2*R*h))),stp('Surface du trou',M('2π × '+r+' × '+h+' = '+kPi(2*r*h))),stp('Deux couronnes','Chaque couronne est un disque de rayon '+M(R)+' privé d\'un disque de rayon '+M(r)+' :',M('2 × π × ('+R+'² − '+r+'²) = '+kPi(2*(R*R-r*r)))),stp('Aire totale',M('A = '+kPi(b))+' '+u+'²')],
+    hints:['Quatre morceaux : l\'extérieur, l\'intérieur du trou et deux couronnes (haut et bas).'],
+    mistakes:[{v:pib(0,2*R*h+2*(R*R-r*r)),tag:'geo-decomp',msg:'Tu as oublié la surface intérieure du trou.',w:['A = '+kPi(2*R*h)+' + '+kPi(2*(R*R-r*r))]},{v:pib(0,2*(R+r)*h+2*R*R),tag:'geo-decomp',msg:'Les bases sont des couronnes (disque moins trou), pas des disques pleins.',w:['A = '+kPi(2*(R+r)*h)+' + '+kPi(2*R*R)]},{v:pib(0,2*(R+r)*h),tag:'geo-decomp',msg:'Il manque les deux couronnes (haut et bas).',w:['A = '+kPi(2*(R+r)*h)]},{v:pib(0,2*(R-r)*h+2*(R*R-r*r)),tag:'geo-decomp',msg:'La surface du trou s\'ajoute (c\'est de la surface en plus), elle ne se retire pas.',w:['A = '+kPi(2*(R-r)*h)+' + '+kPi(2*(R*R-r*r))]}]});
+}
+TOPICS['gs-1']={kind:'gsol',level:1,label:'Pavé et cube : volume et aire',gen:genPave};
+TOPICS['gs-2']={kind:'gsol',level:2,label:'Contenances et unités (L, cm³)',gen:genContenance};
+TOPICS['gs-3']={kind:'gsol',level:3,label:'Cylindre (valeur exacte)',gen:genCylindre};
+TOPICS['gs-4']={kind:'gsol',level:4,label:'Cône et pyramide',gen:genConePyr};
+TOPICS['gs-5']={kind:'gsol',level:5,label:'Boule et sphère',gen:genBoule};
+TOPICS['gs-6']={kind:'gsol',level:6,label:'Pièces composées (silo, tube, dôme)',gen:genPieceS};
+
+/* ===== Trigonométrie du triangle rectangle ===== */
+Object.assign(TAGS,{
+  'geo-trig-rapport':{label:'Choix du rapport trigonométrique',tip:'SOH-CAH-TOA : sin α = opposé / hypoténuse ; cos α = adjacent / hypoténuse ; tan α = opposé / adjacent. « Opposé » et « adjacent » se définissent par rapport à l\'angle α : le côté opposé est en face de α, le côté adjacent touche α (sans être l\'hypoténuse).'},
+  'geo-trig-mult':{label:'Multiplier ou diviser',tip:'On écrit d\'abord le rapport (par exemple sin α = opposé / hypoténuse). Si le côté cherché est en haut de la fraction, on multiplie le côté connu par le rapport ; s\'il est en bas, on divise.'},
+  'geo-trig-inverse':{label:'Angle : fonction réciproque',tip:'Pour trouver un angle, on calcule d\'abord le rapport (par exemple sin α = opposé / hypoténuse), puis on utilise sin⁻¹, cos⁻¹ ou tan⁻¹ sur la calculatrice, réglée en degrés. Les deux angles aigus ont pour somme 90°.'},
+  'geo-trig-exact':{label:'Valeurs exactes de 30°, 45°, 60°',tip:'sin 30° = 1/2 ; cos 30° = √3/2 ; sin 45° = cos 45° = √2/2 ; sin 60° = √3/2 ; cos 60° = 1/2 ; tan 30° = √3/3 ; tan 45° = 1 ; tan 60° = √3.'}
+});
+const D2R=Math.PI/180, R1d=x=>Math.round(x*10)/10;
+const TR={sin:a=>Math.sin(a*D2R),cos:a=>Math.cos(a*D2R),tan:a=>Math.tan(a*D2R)};
+/* triangle rectangle : angle droit en P (0,0), α en Q, côté opposé = PR (vertical) */
+function trigSvg(o){
+  const al=o.alpha, w=4, hh=Math.max(1.4,Math.min(7,w*Math.tan(al*D2R))), fl=o.flip?-1:1;
+  const P=[0,0], Q=[fl*w,0], R=[0,hh];
+  return figure([P,Q,R],f=>{
+    const p=f(P), q=f(Q), r=f(R), ce=vmid(vmid(p,q),r); let out=g.poly([p,q,r])+g.right(p,r,q,11)+g.dot(p)+g.dot(q)+g.dot(r);
+    const rad=26, u1=vunit(vsub(p,q)), u2=vunit(vsub(r,q)), a1=vadd(q,vmul(u1,rad)), a2=vadd(q,vmul(u2,rad)), am=vadd(q,vmul(vunit(vadd(u1,u2)),rad));
+    out+='<path class="g-mark" d="M'+gf(a1[0])+' '+gf(a1[1])+arcM(a1,a2,am,rad)+'"/>';
+    out+=g.text(vadd(q,vmul(vunit(vadd(u1,u2)),rad+((o.alphaLab||'α').length>1?27:17))),o.alphaLab||'α','g-u');
+    const L=o.lab||{};
+    if(L.adj!=null) out+=g.len(p,q,String(L.adj),ce,10,L.adj==='?'?'g-u':'');
+    if(L.opp!=null) out+=g.len(p,r,String(L.opp),ce,10,L.opp==='?'?'g-u':'');
+    if(L.hyp!=null) out+=g.len(q,r,String(L.hyp),ce,10,L.hyp==='?'?'g-u':'');
+    return out;
+  },o.alt||'Triangle rectangle',{H:230,pad:34});
+}
+const SIDE={hyp:'l\'hypoténuse',adj:'le côté adjacent à α',opp:'le côté opposé à α'};
+const RAT={sin:'sin α = opposé / hypoténuse',cos:'cos α = adjacent / hypoténuse',tan:'tan α = opposé / adjacent'};
+
+/* ----- gr-1 : écrire sin, cos, tan comme fractions ----- */
+function genTrig1(){
+  const [a,b,c]=pick([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]), flip=Math.random()<0.5, opp=Math.random()<0.5?a:b, adj=opp===a?b:a, f=pick(['sin','cos','tan']);
+  const num={sin:opp,cos:adj,tan:opp}[f], den={sin:c,cos:c,tan:adj}[f], val=num/den, nm={sin:'opposé',cos:'adjacent',tan:'opposé'}[f], dn={sin:'hypoténuse',cos:'hypoténuse',tan:'adjacent'}[f];
+  const wrong=[]; const add=(n,d,tag,msg,w)=>{ if(Math.abs(n/d-val)>1e-9) wrong.push({v:n/d,tag,msg,w}); };
+  add(den,num,'geo-trig-rapport','Tu as écrit la fraction à l\'envers : '+f+' α = '+nm+' / '+dn+'.',[f+' α = '+den+'/'+num]);
+  const alts={sin:[[adj,c,'cos'],[opp,adj,'tan']],cos:[[opp,c,'sin'],[opp,adj,'tan']],tan:[[opp,c,'sin'],[adj,c,'cos']]}[f];
+  alts.forEach(x=>add(x[0],x[1],'geo-trig-rapport','Ce rapport est celui du '+(x[2]==='sin'?'sinus':x[2]==='cos'?'cosinus':'tangente')+'. Pour '+(f==='sin'?'le sinus':f==='cos'?'le cosinus':'la tangente')+' : '+RAT[f]+'.',[f+' α = '+x[0]+'/'+x[1]]));
+  add(adj,opp,'geo-trig-rapport','Opposé et adjacent sont par rapport à l\'angle α : le côté opposé est en face de α ('+opp+').',[f+' α = '+adj+'/'+opp]);
+  return mkGeo({svg:trigSvg({alpha:35,flip,lab:{opp,adj,hyp:c},alt:'Triangle rectangle de côtés '+opp+', '+adj+' et '+c}),mode:'num',exact:num+'/'+den,val,unit:'',pow:1,
+    text:'Dans ce triangle rectangle, les côtés mesurent «'+opp+'», «'+adj+'» et «'+c+'». Donne <b>'+f+' α</b> sous forme de <b>fraction</b>.',ask:f+' α (fraction)',placeholder:f+' α = '+nm+' / '+dn+'\n'+f+' α = '+num+'/'+den,
+    work:[RAT[f],f+' α = '+num+'/'+den],
+    steps:[stp('Repérer les côtés','Le côté en face de α est l\'<b>opposé</b> : '+M(opp)+'. Le côté qui touche α sans être l\'hypoténuse est l\'<b>adjacent</b> : '+M(adj)+'. L\'<b>hypoténuse</b> (en face de l\'angle droit) : '+M(c)+'.'),stp('Rapport',M(RAT[f])+' donc '+M(f+' α = '+num+'/'+den))],
+    hints:['SOH-CAH-TOA : sin = Opposé/Hypoténuse, cos = Adjacent/Hypoténuse, tan = Opposé/Adjacent.'],
+    mistakes:wrong});
+}
+
+/* ----- gr-2 : calculer une longueur ----- */
+function genTrig2(){
+  const al=pick([20,25,30,35,40,50,55,60,65,70]), flip=Math.random()<0.5, u=uP();
+  const combos=[['hyp','opp','sin','mul'],['hyp','adj','cos','mul'],['adj','hyp','cos','div'],['adj','opp','tan','mul'],['opp','hyp','sin','div'],['opp','adj','tan','div']];
+  const [K,T,fn,op]=pick(combos), kv=rnd(5,30), val=op==='mul'?kv*TR[fn](al):kv/TR[fn](al), ans=R1d(val);
+  const lab={}; lab[K]=kv; lab[T]='?';
+  const svg=trigSvg({alpha:al,alphaLab:al+'°',flip,lab,alt:'Triangle rectangle avec un angle de '+al+'°'});
+  const wrong=[]; ['sin','cos','tan'].forEach(f2=>['mul','div'].forEach(o2=>{ const v=o2==='mul'?kv*TR[f2](al):kv/TR[f2](al); if(R1d(v)!==ans&&!wrong.some(w=>R1d(w.v)===R1d(v))){ const sameFn=f2===fn; wrong.push({v,tag:sameFn?'geo-trig-mult':'geo-trig-rapport',msg:sameFn?'Le bon rapport est '+fn+' α, mais le côté cherché est '+(op==='mul'?'en haut':'en bas')+' de la fraction : il faut '+(op==='mul'?'multiplier':'diviser')+'.':'Tu as utilisé '+f2+' α. Ici le côté connu est '+SIDE[K]+' et le côté cherché '+SIDE[T]+' : c\'est le '+(fn==='sin'?'sinus':fn==='cos'?'cosinus':'la tangente')+'.',w:['côté = '+kv+(o2==='mul'?' × ':' / ')+f2+' '+al+'° = '+NF(R1d(v))]}); } }));
+  const fnm=fn+' '+al+'°', rel=RAT[fn].replace('α',al+'°');
+  return mkGeo({svg,mode:'round',d:1,val,unit:u,pow:1,
+    text:'Dans ce triangle rectangle, l\'angle α mesure «'+al+'°» et '+SIDE[K]+' mesure «'+kv+'» '+u+'. Calcule '+SIDE[T]+', arrondi au <b>dixième</b> (calculatrice en degrés).',ask:'la longueur (arrondie au dixième)',placeholder:'sin 35° = côté / 12\ncôté = 12 × sin 35° ≈ 6,9 cm',
+    work:[RAT[fn],op==='mul'?'côté = '+kv+' × '+fn+' '+al+'° = '+NF(ans)+' '+u:'côté = '+kv+' / '+fn+' '+al+'° = '+NF(ans)+' '+u],
+    steps:[stp('Choisir le rapport','Côté connu : '+SIDE[K]+' ; côté cherché : '+SIDE[T]+'. Le rapport qui relie '+(K==='hyp'||T==='hyp'?(K==='opp'||T==='opp'?'opposé et hypoténuse':'adjacent et hypoténuse'):'opposé et adjacent')+' est le '+(fn==='sin'?'sinus':fn==='cos'?'cosinus':'la tangente')+' : '+M(RAT[fn])+'.'),stp('Isoler le côté',op==='mul'?'Le côté cherché est en haut de la fraction : on multiplie.':'Le côté cherché est en bas de la fraction : on divise.',M(op==='mul'?'côté = '+kv+' × '+fn+' '+al+'° ≈ '+NF(ans):'côté = '+kv+' / '+fn+' '+al+'° ≈ '+NF(ans))+' '+u)],
+    hints:['SOH-CAH-TOA : choisis le rapport qui contient le côté connu et le côté cherché.','Écris le rapport avec les valeurs, puis isole le côté cherché.'],
+    mistakes:wrong.slice(0,6)});
+}
+
+/* ----- gr-3 : calculer un angle ----- */
+function genTrig3(){
+  const flip=Math.random()<0.5, kind=pick(['sin','cos','tan']);
+  let o,a,h;
+  for(let i=0;i<50;i++){ o=rnd(3,18); a=rnd(3,18); h=Math.round(Math.hypot(o,a)*10)/10; if(kind==='tan'||(kind==='sin'&&h>o)||(kind==='cos'&&h>a)) break; }
+  let lab, val, rat, num, den;
+  if(kind==='tan'){ lab={opp:o,adj:a,hyp:null}; val=Math.atan(o/a)/D2R; num=o; den=a; }
+  else { const hy=Math.max(o,a)+rnd(1,5); if(kind==='sin'){ lab={opp:o,hyp:hy}; val=Math.asin(o/hy)/D2R; num=o; den=hy; } else { lab={adj:a,hyp:hy}; val=Math.acos(a/hy)/D2R; num=a; den=hy; } }
+  lab.__=0; delete lab.__;
+  const ans=R1d(val), svg=trigSvg({alpha:Math.max(20,Math.min(65,val)),alphaLab:'α',flip,lab,alt:'Triangle rectangle'});
+  const fnm={sin:'sin⁻¹',cos:'cos⁻¹',tan:'tan⁻¹'}[kind], names={sin:['opposé','hypoténuse'],cos:['adjacent','hypoténuse'],tan:['opposé','adjacent']}[kind];
+  const wrong=[]; const add=(v,tag,msg,w)=>{ if(R1d(v)!==ans&&isFinite(v)&&v>0&&v<90&&!wrong.some(x=>R1d(x.v)===R1d(v))) wrong.push({v,tag,msg,w}); };
+  add(90-val,'geo-trig-inverse','Tu as trouvé l\'autre angle aigu : α = '+NF(ans)+'°, et son complément vaut 90° − α.',['autre angle = 90° − '+NF(ans)+'° = '+NF(R1d(90-val))+'°']);
+  if(kind==='tan') add(Math.atan(a/o)/D2R,'geo-trig-rapport','Tu as inversé la fraction : tan α = opposé / adjacent.',['tan α = '+a+'/'+o]);
+  else { const x=(kind==='sin'?Math.atan(o/Math.sqrt(Math.max(1,den*den-o*o))):Math.atan(Math.sqrt(Math.max(1,den*den-a*a))/a))/D2R; }
+  const oo=kind==='sin'?o:a; const alt1=kind==='sin'?Math.acos(num/den)/D2R:Math.asin(num/den)/D2R; add(alt1,'geo-trig-rapport','Tu as utilisé '+(kind==='sin'?'cos⁻¹':'sin⁻¹')+' : ici le rapport est '+RAT[kind]+', donc '+fnm+'.',[(kind==='sin'?'cos⁻¹':'sin⁻¹')+'('+num+'/'+den+')']);
+  add(Math.atan(num/den)/D2R*(kind==='tan'?0:1),'geo-trig-rapport','Tu as utilisé tan⁻¹ : le rapport à utiliser est '+RAT[kind]+'.',['tan⁻¹('+num+'/'+den+')']);
+  add(val*D2R,'geo-trig-inverse','Ta calculatrice était en radians : passe-la en degrés.',['α ≈ '+NF(Math.round(val*D2R*10)/10)]);
+  return mkGeo({svg,mode:'round',d:1,val,unit:'°',pow:1,
+    text:'Dans ce triangle rectangle, '+(kind==='tan'?'le côté opposé à α mesure «'+o+'» et le côté adjacent «'+a+'»':kind==='sin'?'le côté opposé à α mesure «'+o+'» et l\'hypoténuse «'+lab.hyp+'»':'le côté adjacent à α mesure «'+a+'» et l\'hypoténuse «'+lab.hyp+'»')+'. Calcule l\'angle α, arrondi au <b>dixième de degré</b>.',ask:'l\'angle α (arrondi au dixième)',placeholder:'sin α = 5/9\nα = sin⁻¹(5/9) ≈ 33,7°',
+    work:[RAT[kind].replace('hypoténuse',names[1]).split('=')[0].trim()+' = '+num+'/'+den,'α = '+fnm+'('+num+'/'+den+') ≈ '+NF(ans)+'°'],
+    steps:[stp('Choisir le rapport','On connaît le côté '+names[0]+' et le côté '+names[1]+' : '+M(RAT[kind])+'.'),stp('Fonction réciproque',M(kind+' α = '+num+'/'+den)+' donc '+M('α = '+fnm+'('+num+'/'+den+') ≈ '+NF(ans)+'°')+'.')],
+    hints:['Écris le rapport, puis utilise la touche '+fnm+' de la calculatrice (mode degrés).'],
+    mistakes:wrong.slice(0,5)});
+}
+
+/* ----- gr-4 : valeurs exactes (30°, 45°, 60°) ----- */
+function genTrig4(){
+  const al=pick([30,45,60]), flip=Math.random()<0.5, u=uP(), k=rnd(2,9), H=2*k, T=pick(['opp','adj']);
+  const ex={30:{opp:[k,0],adj:[0,k]},45:{opp:[0,k],adj:[0,k]},60:{opp:[0,k],adj:[k,0]}}[al][T];  // [entier, coefficient de racine]
+  const rt=al===45?2:3, intg=ex[0]>0, valn=intg?ex[0]:ex[1]*Math.sqrt(rt), exs=intg?String(ex[0]):kRt(ex[1],rt);
+  const fn=T==='opp'?'sin':'cos', exv={'sin30':'1/2','cos30':'√3/2','sin45':'√2/2','cos45':'√2/2','sin60':'√3/2','cos60':'1/2'}[fn+al];
+  const mkv=(v)=>v;
+  const wrong=[]; const add=(v,tag,msg,w)=>{ if(Math.abs(v-valn)>1e-6&&!wrong.some(x=>Math.abs(x.v-v)<1e-6)) wrong.push({v,tag,msg,w}); };
+  const other={30:{sin:k,cos:k*Math.sqrt(3)},45:{sin:k*Math.sqrt(2),cos:k*Math.sqrt(2)},60:{sin:k*Math.sqrt(3),cos:k}}[al];
+  add(fn==='sin'?other.cos:other.sin,'geo-trig-exact','Tu as pris la valeur de '+(fn==='sin'?'cos':'sin')+' '+al+'° : ici c\'est '+fn+' '+al+'° = '+exv+'.',[fn+' '+al+'° = '+(fn==='sin'?'cos':'sin')+' '+al+'°']);
+  add(H*(rt===2?Math.SQRT1_2:0.5)*(al===45?1:0)+ (al===45?0:H*Math.sqrt(3)),'geo-trig-exact','Valeur exacte à revoir : '+fn+' '+al+'° = '+exv+'.',['côté = '+H+' × √3']);
+  add(H,'geo-trig-rapport','Le côté cherché est plus petit que l\'hypoténuse ('+H+') : il vaut '+H+' × '+fn+' '+al+'°.',['côté = '+H]);
+  add(H/Math.sqrt(2),'geo-trig-exact','Ici '+fn+' '+al+'° = '+exv+'.',['côté = '+H+' / √2']);
+  add(valn*2,'geo-trig-exact','Tu as oublié de diviser par 2 : '+fn+' '+al+'° = '+exv+'.',['côté = '+H+' × '+(al===30?'√3':'1')]);
+  const lab={hyp:H}; lab[T]='?';
+  return mkGeo({svg:trigSvg({alpha:al,alphaLab:al+'°',flip,lab,alt:'Triangle rectangle avec un angle de '+al+'°'}),mode:intg?'num':'sqrt',exact:exs,val:valn,unit:u,pow:1,
+    text:'Dans ce triangle rectangle, l\'angle α mesure «'+al+'°» et l\'hypoténuse mesure «'+H+'» '+u+'. Calcule '+SIDE[T]+'. Donne la <b>valeur exacte</b> (sans calculatrice).',ask:'la valeur exacte du côté',placeholder:fn+' '+al+'° = '+exv+'\ncôté = '+H+' × '+exv,
+    work:[RAT[fn],fn+' '+al+'° = '+exv,'côté = '+H+' × '+exv+' = '+exs+' '+u],
+    steps:[stp('Rapport',M(RAT[fn])+', donc '+M('côté = '+H+' × '+fn+' '+al+'°')+'.'),stp('Valeur exacte',M(fn+' '+al+'° = '+exv)+' (à connaître).',M('côté = '+H+' × '+exv+' = '+exs)+' '+u)],
+    hints:['Valeurs à connaître : sin 30° = 1/2, cos 30° = √3/2, sin 45° = cos 45° = √2/2, sin 60° = √3/2, cos 60° = 1/2.'],
+    mistakes:wrong.slice(0,5)});
+}
+
+/* ----- gr-5 : problèmes concrets ----- */
+function genTrig5(){
+  const t=pick(['mat','rampe','pointe','echelle','pente']), u=uP();
+  const tri=(lab,al,alphaLab,alt)=>trigSvg({alpha:al,alphaLab,flip:Math.random()<0.5,lab,alt});
+  if(t==='mat'){
+    const d=rnd(15,60), al=pick([25,30,35,40,45,50,55]), v=d*TR.tan(al), ans=R1d(v), u2=pick(['m','m']);
+    return mkGeo({svg:tri({adj:d,opp:'?'},al,al+'°','Pylône vu sous un angle de '+al+'°'),mode:'round',d:1,val:v,unit:u2,pow:1,
+      text:'Depuis un point situé à «'+d+'» m du pied d\'un pylône (sur un sol horizontal), on voit son sommet sous un angle de «'+al+'°» au-dessus de l\'horizontale. On néglige la hauteur de l\'observateur. Quelle est la <b>hauteur</b> du pylône, arrondie au dixième ?',ask:'la hauteur (arrondie au dixième)',placeholder:'tan 40° = hauteur / 30\nhauteur = ...',
+      work:['tan '+al+'° = h / '+d,'h = '+d+' × tan '+al+'° ≈ '+NF(ans)+' m'],
+      steps:[stp('Rapport','On connaît le côté adjacent à l\'angle ('+d+' m) et on cherche le côté opposé : c\'est la tangente.',M('tan '+al+'° = h / '+d)),stp('Calcul',M('h = '+d+' × tan '+al+'° ≈ '+NF(ans))+' m')],
+      hints:['Côté adjacent connu, côté opposé cherché : tangente.'],
+      mistakes:[{v:d/TR.tan(al),tag:'geo-trig-mult',msg:'Le côté cherché (opposé) est en haut de tan α = opposé / adjacent : on multiplie.',w:['h = '+d+' / tan '+al+'°']},{v:d*TR.sin(al),tag:'geo-trig-rapport',msg:'Le sinus relie l\'opposé et l\'hypoténuse, que tu ne connais pas ici.',w:['h = '+d+' × sin '+al+'°']},{v:d*TR.cos(al),tag:'geo-trig-rapport',msg:'Le cosinus relie l\'adjacent et l\'hypoténuse : ce n\'est pas le bon rapport.',w:['h = '+d+' × cos '+al+'°']}].filter(m=>R1d(m.v)!==ans)});
+  }
+  if(t==='rampe'){
+    const L=rnd(4,20), al=pick([5,8,10,12,15,20]), v=L*TR.sin(al), ans=R1d(v);
+    return mkGeo({svg:tri({hyp:L,opp:'?'},al,al+'°','Rampe de '+L+' m inclinée de '+al+'°'),mode:'round',d:1,val:v,unit:'m',pow:1,
+      text:'Une rampe de «'+L+'» m de long fait un angle de «'+al+'°» avec l\'horizontale. De combien de mètres s\'élève-t-elle (dénivelé), arrondi au dixième ?',ask:'le dénivelé (arrondi au dixième)',placeholder:'sin '+al+'° = h / '+L+'\nh = ...',
+      work:['sin '+al+'° = h / '+L,'h = '+L+' × sin '+al+'° ≈ '+NF(ans)+' m'],
+      steps:[stp('Rapport','La rampe est l\'hypoténuse ('+L+' m), le dénivelé est le côté opposé à l\'angle : c\'est le sinus.',M('sin '+al+'° = h / '+L)),stp('Calcul',M('h = '+L+' × sin '+al+'° ≈ '+NF(ans))+' m')],
+      hints:['Hypoténuse connue, côté opposé cherché : sinus.'],
+      mistakes:[{v:L*TR.cos(al),tag:'geo-trig-rapport',msg:'Le dénivelé est le côté opposé à l\'angle (vertical) : c\'est le sinus, pas le cosinus.',w:['h = '+L+' × cos '+al+'°']},{v:L/TR.sin(al),tag:'geo-trig-mult',msg:'Le côté cherché (opposé) est en haut de la fraction : on multiplie.',w:['h = '+L+' / sin '+al+'°']},{v:L*TR.tan(al),tag:'geo-trig-rapport',msg:'La tangente relie opposé et adjacent. Ici on connaît l\'hypoténuse.',w:['h = '+L+' × tan '+al+'°']}].filter(m=>R1d(m.v)!==ans)});
+  }
+  if(t==='pointe'){
+    const D=pick([6,8,10,12,16,20]), h=rnd(10,40), v=Math.atan((D/2)/h)/D2R, ans=R1d(v);
+    const wr=[{v:2*v,tag:'geo-trig-inverse',msg:'Tu as calculé l\'angle total au sommet. La question demande le demi-angle (côté opposé = rayon).',w:['2α ≈ '+NF(R1d(2*v))+'°']},{v:Math.atan(D/h)/D2R,tag:'geo-trig-rapport',msg:'Le côté opposé au demi-angle est le rayon ('+D/2+'), pas le diamètre ('+D+').',w:['tan α = '+D+' / '+h]},{v:Math.atan(h/(D/2))/D2R,tag:'geo-trig-rapport',msg:'tan α = opposé / adjacent = '+D/2+' / '+h+' (la fraction était à l\'envers).',w:['tan α = '+h+' / '+D/2]}].filter(m=>R1d(m.v)!==ans&&m.v<90);
+    return mkGeo({svg:tri({opp:NF(D/2),adj:h,hyp:null},Math.max(20,Math.min(65,v)),'α','Pointe conique'),mode:'round',d:1,val:v,unit:'°',pow:1,
+      text:'Une pointe d\'outil conique a un diamètre de «'+D+'» mm à la base et une longueur (hauteur) de «'+h+'» mm. Le triangle ci-contre est une demi-coupe de la pointe : α est le <b>demi-angle au sommet</b>. Calcule α, arrondi au dixième de degré.',ask:'le demi-angle α (arrondi au dixième)',placeholder:'tan α = ... / ...\nα = tan⁻¹(...) ≈ ...°',
+      work:['rayon = '+D+' / 2 = '+NF(D/2),'tan α = '+NF(D/2)+' / '+h,'α = tan⁻¹('+NF(D/2)+'/'+h+') ≈ '+NF(ans)+'°'],
+      steps:[stp('Demi-coupe','Le côté opposé à α est le <b>rayon</b> '+M(D+' / 2 = '+NF(D/2))+' mm ; le côté adjacent est la hauteur '+M(h)+' mm.'),stp('Angle',M('tan α = '+NF(D/2)+' / '+h)+', donc '+M('α = tan⁻¹('+NF(D/2)+'/'+h+') ≈ '+NF(ans)+'°'))],
+      hints:['Passe du diamètre au rayon : le côté opposé est un rayon.'],mistakes:wr});
+  }
+  if(t==='echelle'){
+    const L=rnd(3,8), pied=Math.round(L*pick([0.25,0.3,0.35,0.4])*10)/10, v=Math.acos(pied/L)/D2R, ans=R1d(v);
+    return mkGeo({svg:tri({hyp:L,adj:NF(pied)},Math.max(20,Math.min(75,v)),'α','Échelle appuyée contre un mur'),mode:'round',d:1,val:v,unit:'°',pow:1,
+      text:'Une échelle de «'+L+'» m est appuyée contre un mur vertical, son pied étant à «'+NF(pied)+'» m du mur. Quel angle α fait-elle avec le sol ? (arrondi au dixième de degré)',ask:'l\'angle α (arrondi au dixième)',placeholder:'cos α = ... / ...\nα = ...',
+      work:['cos α = '+NF(pied)+' / '+L,'α = cos⁻¹('+NF(pied)+'/'+L+') ≈ '+NF(ans)+'°'],
+      steps:[stp('Rapport','L\'échelle est l\'hypoténuse ('+L+' m), la distance au mur est le côté adjacent à α ('+NF(pied)+' m) : cosinus.',M('cos α = '+NF(pied)+' / '+L)),stp('Angle',M('α = cos⁻¹('+NF(pied)+'/'+L+') ≈ '+NF(ans)+'°'))],
+      hints:['Adjacent et hypoténuse connus : cosinus.'],
+      mistakes:[{v:90-v,tag:'geo-trig-inverse',msg:'Tu as trouvé l\'angle avec le mur. L\'angle α est celui avec le sol.',w:['90° − '+NF(ans)+'° = '+NF(R1d(90-v))+'°']},{v:Math.asin(pied/L)/D2R,tag:'geo-trig-rapport',msg:'Le sinus relie opposé et hypoténuse. Ici, la distance au mur est le côté adjacent : cosinus.',w:['α = sin⁻¹('+NF(pied)+'/'+L+')']}].filter(m=>R1d(m.v)!==ans)});
+  }
+  const pc=pick([5,6,8,10,12,15]), v=Math.atan(pc/100)/D2R, ans=R1d(v);
+  return mkGeo({svg:tri({opp:pc,adj:100,hyp:null},Math.max(20,Math.min(60,v*3)),'α','Pente de '+pc+' %'),mode:'round',d:1,val:v,unit:'°',pow:1,
+    text:'Une route a une pente de «'+pc+' %» : elle monte de «'+pc+'» m pour «100» m parcourus horizontalement. Quel angle α fait-elle avec l\'horizontale ? (arrondi au dixième de degré)',ask:'l\'angle α (arrondi au dixième)',placeholder:'tan α = ... / ...\nα = ...',
+    work:['tan α = '+pc+' / 100 = '+NF(pc/100),'α = tan⁻¹('+NF(pc/100)+') ≈ '+NF(ans)+'°'],
+    steps:[stp('Rapport','Le dénivelé est le côté opposé ('+pc+' m), la distance horizontale est le côté adjacent (100 m) : tangente.',M('tan α = '+pc+' / 100 = '+NF(pc/100))),stp('Angle',M('α = tan⁻¹('+NF(pc/100)+') ≈ '+NF(ans)+'°'))],
+    hints:['Une pente de p % signifie tan α = p / 100.'],
+    mistakes:[{v:pc,tag:'geo-trig-inverse',msg:'Une pente de '+pc+' % ne correspond pas à '+pc+'° : il faut passer par tan α = '+NF(pc/100)+' puis tan⁻¹.',w:['α = '+pc+'°']},{v:Math.asin(pc/100)/D2R,tag:'geo-trig-rapport',msg:'Les 100 m sont mesurés à l\'horizontale (côté adjacent, pas l\'hypoténuse) : tangente.',w:['α = sin⁻¹('+NF(pc/100)+')']}].filter(m=>R1d(m.v)!==ans)});
+}
+
+/* ----- gr-6 : deux visées (hauteur d'une tour) ----- */
+function genTrig6(){
+  const al=pick([20,25,30,35]), be=pick([45,50,55,60]), d=rnd(10,60), u='m';
+  const ta=TR.tan(al), tb=TR.tan(be), x=d*ta/(tb-ta), h=x*tb, ans=R1d(h);
+  const svg=figure([[-0.3,0],[x+d+1,h+0.3]],f=>{
+    const F=f([0,0]), T=f([0,h]), B=f([x,0]), A=f([x+d,0]), ce=f([(x+d)/2,h/3]); let out=g.seg(F,A,'g-l')+g.seg(F,T,'g-l')+g.seg(T,B,'g-l')+g.seg(T,A,'g-l')+g.right(F,T,B,10)+g.dot(A)+g.dot(B)+g.dot(T)+g.dot(F);
+    const arc=(P,lab)=>{ const r=24, u1=[-1,0], u2=vunit(vsub(T,P)), a1=vadd(P,vmul(u1,r)), a2=vadd(P,vmul(u2,r)), bs=vunit(vadd(u1,u2)), am=vadd(P,vmul(bs,r)); return '<path class="g-mark" d="M'+gf(a1[0])+' '+gf(a1[1])+arcM(a1,a2,am,r)+'"/>'+g.text(vadd(P,vmul(bs,r+22)),lab,'g-u'); };
+    out+=arc(B,be+'°')+arc(A,al+'°');
+    out+=g.dim(B,A,String(d),ce,18)+g.text(vadd(vmid(F,T),[-12,0]),'h','g-u','end');
+    return out;
+  },'Tour vue de deux points alignés avec son pied',{H:240,pad:36});
+  const wr=[{v:d*tb,tag:'geo-decomp',msg:'La distance d n\'est pas la distance au pied de la tour : x (inconnu) est la distance entre B et le pied.',w:['h = '+d+' × tan '+be+'°']},{v:d*ta,tag:'geo-decomp',msg:'La distance entre A et le pied est x + d, pas d.',w:['h = '+d+' × tan '+al+'°']},{v:d*(tb-ta),tag:'geo-decomp',msg:'Il faut résoudre un système : h = x tan β et h = (x + d) tan α.',w:['h = '+d+' × (tan '+be+'° − tan '+al+'°)']},{v:d/(tb-ta),tag:'geo-decomp',msg:'x = d tan α / (tan β − tan α), puis h = x tan β.',w:['h = '+d+' / (tan '+be+'° − tan '+al+'°)']}].filter(m=>R1d(m.v)!==ans);
+  return mkGeo({svg,mode:'round',d:1,val:h,unit:u,pow:1,
+    text:'Une tour est vue depuis deux points A et B alignés avec son pied, sur un sol horizontal. Depuis A, le sommet est vu sous un angle de «'+al+'°» et depuis B, plus proche de la tour, sous un angle de «'+be+'°». On a «AB = '+d+'» m. Calcule la <b>hauteur</b> h de la tour, arrondie au dixième de mètre.',ask:'la hauteur h (arrondie au dixième)',placeholder:'x = distance de B au pied\nh = x × tan β\nh = (x + d) × tan α',
+    work:['h = x × tan '+be+'°','h = (x + '+d+') × tan '+al+'°','x tan '+be+'° = (x + '+d+') tan '+al+'°','x = '+d+' × tan '+al+'° / (tan '+be+'° − tan '+al+'°) ≈ '+NF(R1d(x)),'h = x × tan '+be+'° ≈ '+NF(ans)+' m'],
+    steps:[stp('Deux triangles rectangles','Notons x la distance de B au pied de la tour. Dans les deux triangles rectangles (côté opposé h, côté adjacent connu en fonction de x) :',M('h = x × tan '+be+'°')+' et '+M('h = (x + '+d+') × tan '+al+'°')),stp('Équation en x',M('x tan '+be+'° = (x + '+d+') tan '+al+'°')+', donc '+M('x (tan '+be+'° − tan '+al+'°) = '+d+' tan '+al+'°')+', '+M('x ≈ '+NF(R1d(x)))+' m.'),stp('Hauteur',M('h = x × tan '+be+'° ≈ '+NF(ans))+' m')],
+    hints:['Pose x = distance de B au pied de la tour. Écris tan β et tan α avec h et x.','Égale les deux expressions de h pour trouver x, puis calcule h.'],
+    mistakes:wr});
+}
+TOPICS['gr-1']={kind:'gtrig',level:1,label:'Sinus, cosinus, tangente (fractions)',gen:genTrig1};
+TOPICS['gr-2']={kind:'gtrig',level:2,label:'Calculer une longueur',gen:genTrig2};
+TOPICS['gr-3']={kind:'gtrig',level:3,label:'Calculer un angle',gen:genTrig3};
+TOPICS['gr-4']={kind:'gtrig',level:4,label:'Valeurs exactes (30°, 45°, 60°)',gen:genTrig4};
+TOPICS['gr-5']={kind:'gtrig',level:5,label:'Problèmes (pente, pointe, échelle)',gen:genTrig5};
+TOPICS['gr-6']={kind:'gtrig',level:6,label:'Hauteur par deux visées',gen:genTrig6};
+
+/* ===== Géométrie : exercices supplémentaires pour les thèmes existants ===== */
+Object.assign(TAGS,{
+  'geo-rapport-aire':{label:'Rapport d\'agrandissement et aires',tip:'Dans un agrandissement ou une réduction de rapport k, les longueurs sont multipliées par k, les aires par k² et les volumes par k³.'},
+  'geo-sinus-aire':{label:'Aire avec deux côtés et l\'angle',tip:'Aire d\'un triangle = 1/2 × a × b × sin(angle compris entre a et b). L\'angle doit être celui qui est entre les deux côtés utilisés.'},
+  'geo-arc-secteur':{label:'Arc et secteur : fraction du cercle',tip:'Un angle α au centre représente la fraction α/360 du cercle : arc = (α/360) × 2πr ; secteur = (α/360) × πr².'}
+});
+const gcdP=(a,b)=>b?gcdP(b,a%b):a;
+const fracPiP=(n,d)=>{ const k=gcdP(Math.abs(n),d); n/=k; d/=k; const c=n===1?'':String(n); return d===1?c+'π':(c+'π')+'/'+d; };
+const TRIPP=[[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15]];
+
+/* ----- gt-3b : triangle, valeur manquante ----- */
+function genTriInv(){
+  const u=uP(), t=pick(['h','b','third']);
+  if(t==='third'){
+    let a,b,c; do{ a=rnd(4,12); b=rnd(4,12); c=rnd(4,12); }while(a+b<=c||a+c<=b||b+c<=a); const P=a+b+c;
+    const svg=svgTri3({a,b,c,la:a+' '+u,lb:b+' '+u,lc:'?',alt:'Triangle avec deux côtés connus'});
+    return mkGeo({svg,val:c,unit:u,text:'Un triangle a un périmètre de «'+P+'» '+u+'. Deux de ses côtés mesurent «'+a+'» '+u+' et «'+b+'» '+u+'. Calcule la longueur du troisième côté.',ask:'le troisième côté',placeholder:'P = a + b + c\n'+P+' = '+a+' + '+b+' + c',
+      work:['P = '+a+' + '+b+' + c = '+P,'c = '+P+' − '+a+' − '+b+' = '+c+' '+u],steps:[stp('Périmètre',M('P = a + b + c')+', donc '+M(P+' = '+a+' + '+b+' + c')+'.'),stp('Isoler',M('c = '+P+' − '+a+' − '+b+' = '+c)+' '+u)],hints:['Le périmètre est la somme des trois côtés : retire les deux côtés connus.'],
+      mistakes:[{v:P-a,tag:'geo-perim-cote',msg:'Il faut aussi retirer le second côté connu ('+b+').',w:['c = '+P+' − '+a+' = '+(P-a)]},{v:P+a+b,tag:'geo-perim-cote',msg:'Le périmètre contient déjà les trois côtés : on soustrait les côtés connus.',w:['c = '+P+' + '+a+' + '+b]},{v:P/3,tag:'geo-formule',msg:'Le triangle n\'est pas équilatéral : les côtés sont différents.',w:['c = '+P+' / 3']}]});
+  }
+  const b=rnd(4,14), h=rnd(3,12), A=b*h/2, px=+(b*pick([0.3,0.5,0.7])).toFixed(2);
+  if(t==='h') return mkGeo({svg:svgTriH({b,px,h,labBase:b+' '+u,labH:'?',hUnk:true,alt:'Triangle de base '+b}),val:h,unit:u,text:'Un triangle a une aire de «'+NF(A)+'» '+u+'² et une base de «'+b+'» '+u+'. Calcule la hauteur correspondante.',ask:'la hauteur',placeholder:'A = b × h / 2\n'+NF(A)+' = '+b+' × h / 2',
+    work:['A = b × h / 2','h = 2 × '+NF(A)+' / '+b+' = '+h+' '+u],steps:[stp('Formule',M('A = b × h / 2')+' donc '+M('h = 2A / b')),stp('Calcul',M('h = 2 × '+NF(A)+' / '+b+' = '+h)+' '+u)],hints:['Aire = base × hauteur / 2 : retourne la formule pour isoler h.'],
+    mistakes:[{v:A/b,tag:'geo-demi',msg:'La formule est A = b × h / 2 : h = 2A / b (il faut doubler l\'aire).',w:['h = '+NF(A)+' / '+b]},{v:A*b/2,tag:'geo-formule',msg:'On divise l\'aire par la base, on ne la multiplie pas.',w:['h = '+NF(A)+' × '+b+' / 2']},{v:A*2,tag:'geo-formule',msg:'Il faut aussi diviser par la base.',w:['h = 2 × '+NF(A)]}]});
+  return mkGeo({svg:svgTriH({b,px,h,labBase:'?',bUnk:true,labH:h+' '+u,alt:'Triangle de hauteur '+h}),val:b,unit:u,text:'Un triangle a une aire de «'+NF(A)+'» '+u+'² et une hauteur de «'+h+'» '+u+'. Calcule la longueur de la base correspondante.',ask:'la base',placeholder:'A = b × h / 2\n'+NF(A)+' = b × '+h+' / 2',
+    work:['A = b × h / 2','b = 2 × '+NF(A)+' / '+h+' = '+b+' '+u],steps:[stp('Formule',M('A = b × h / 2')+' donc '+M('b = 2A / h')),stp('Calcul',M('b = 2 × '+NF(A)+' / '+h+' = '+b)+' '+u)],hints:['Retourne la formule A = b × h / 2 pour isoler b.'],
+    mistakes:[{v:A/h,tag:'geo-demi',msg:'b = 2A / h : n\'oublie pas de doubler l\'aire.',w:['b = '+NF(A)+' / '+h]},{v:A*h/2,tag:'geo-formule',msg:'On divise l\'aire par la hauteur, on ne la multiplie pas.',w:['b = '+NF(A)+' × '+h+' / 2']}]});
+}
+
+/* ----- gt-5b : aire d'un triangle avec deux côtés et l'angle compris ----- */
+function genTriSin(){
+  const a=rnd(5,14), b=rnd(4,12), ga=pick([30,40,50,60,70,110,120,130]), u=uP(), A=0.5*a*b*Math.sin(ga*Math.PI/180), ans=Math.round(A*10)/10;
+  const svg=figure((()=>{ const r=ga*Math.PI/180; return [[0,0],[a,0],[b*Math.cos(r),b*Math.sin(r)]]; })(),f=>{
+    const r=ga*Math.PI/180, C=[0,0], B=[a,0], Ap=[b*Math.cos(r),b*Math.sin(r)], c_=f(C), b_=f(B), a_=f(Ap), ce=cen([c_,b_,a_]);
+    let out=g.poly([c_,b_,a_])+g.dot(c_)+g.dot(b_)+g.dot(a_)+g.len(c_,b_,String(a),ce,10)+g.len(c_,a_,String(b),ce,10);
+    const rad=24, u1=vunit(vsub(b_,c_)), u2=vunit(vsub(a_,c_)), p1=vadd(c_,vmul(u1,rad)), p2=vadd(c_,vmul(u2,rad)), bs=vunit(vadd(u1,u2)), pm=vadd(c_,vmul(bs,rad));
+    out+='<path class="g-mark" d="M'+gf(p1[0])+' '+gf(p1[1])+arcM(p1,p2,pm,rad)+'"/>'+g.text(vadd(c_,vmul(bs,rad+(ga>100?18:24))),ga+'°','g-u');
+    return out;
+  },'Triangle avec deux côtés de '+a+' et '+b+' encadrant un angle de '+ga+' degrés',{H:230,pad:34});
+  const sg='sin '+ga+'°';
+  const wr=[{v:a*b*Math.sin(ga*Math.PI/180),tag:'geo-demi',msg:'Il manque le facteur 1/2 : A = 1/2 × a × b × sin(angle).',w:['A = '+a+' × '+b+' × '+sg]},{v:0.5*a*b*Math.cos(ga*Math.PI/180),tag:'geo-sinus-aire',msg:'C\'est le sinus de l\'angle qu\'il faut, pas le cosinus.',w:['A = 1/2 × '+a+' × '+b+' × cos '+ga+'°']},{v:0.5*a*b,tag:'geo-sinus-aire',msg:'Le triangle n\'est pas rectangle : l\'aire fait intervenir le sinus de l\'angle.',w:['A = 1/2 × '+a+' × '+b]}].filter(m=>Math.round(m.v*10)/10!==ans&&m.v>0);
+  return mkGeo({svg,mode:'round',d:1,val:A,unit:u,pow:2,text:'Un triangle a deux côtés de «'+a+'» '+u+' et «'+b+'» '+u+' qui forment un angle de «'+ga+'°». Calcule son aire, arrondie au <b>dixième</b> (calculatrice en degrés).',ask:'l\'aire (arrondie au dixième)',placeholder:'A = 1/2 × a × b × sin(angle)',
+    work:['A = 1/2 × '+a+' × '+b+' × '+sg,'A ≈ '+NF(ans)+' '+u+'²'],steps:[stp('Formule','Avec deux côtés et l\'angle compris : '+M('A = (1/2) × a × b × sin(γ)')+'. (C\'est base × hauteur / 2 avec la hauteur '+M('b × sin γ')+'.)'),stp('Calcul',M('A = (1/2) × '+a+' × '+b+' × '+sg+' ≈ '+NF(ans))+' '+u+'²')],hints:['La hauteur issue du sommet de l\'angle vaut côté × sin(angle).'],mistakes:wr});
+}
+
+/* ----- gq-3b : parallélogramme, deux hauteurs ----- */
+function genParaH(){
+  const [hh,xx,b2]=pick([[4,3,5],[3,4,5],[12,5,13],[8,6,10],[6,8,10]]), k=pick([2,3]), b1=k*b2, u=uP(), A=b1*hh, h2=k*hh;
+  const P0=[0,0], P1=[b1,0], P3=[xx,hh], P2=[b1+xx,hh];
+  const dv=vunit(vsub(P3,P0)), t_=(P1[0]-P0[0])*dv[0]+(P1[1]-P0[1])*dv[1], F=vadd(P0,vmul(dv,t_));
+  const svg=figure([P0,P1,P2,P3,F],f=>{
+    const a0=f(P0),a1=f(P1),a2=f(P2),a3=f(P3),fF=f(F),ce=cen([a0,a1,a2,a3]);
+    let out=g.poly([a0,a1,a2,a3])+g.len(a0,a1,String(b1),ce,10)+g.len(a0,a3,String(b2),ce,10);
+    const hf=f([xx,0]); out+=g.seg(a3,hf,'g-dash')+g.right(hf,a3,a1,9)+g.text(vadd(vmid(a3,hf),[10,0]),String(hh),'g-t','start');
+    if(t_>vlen(vsub(P3,P0))+0.01) out+=g.seg(a3,fF,'g-dash g-thin');
+    out+=g.seg(a1,fF,'g-dash')+g.right(fF,a1,a3,9)+g.text(vadd(vmid(a1,fF),[0,-9]),'?','g-u');
+    return out;
+  },'Parallélogramme avec ses deux hauteurs',{H:240,pad:34});
+  return mkGeo({svg,val:h2,unit:u,text:'Un parallélogramme a un côté de «'+b1+'» '+u+' dont la hauteur correspondante mesure «'+hh+'» '+u+'. Son autre côté mesure «'+b2+'» '+u+'. Calcule la hauteur correspondante à ce côté de «'+b2+'» '+u+'.',ask:'la hauteur cherchée',placeholder:'A = '+b1+' × '+hh+'\nA = b2 × h2',
+    work:['A = '+b1+' × '+hh+' = '+A+' '+u+'²','h = '+A+' / '+b2+' = '+h2+' '+u],steps:[stp('Aire','Aire = côté × hauteur correspondante : '+M('A = '+b1+' × '+hh+' = '+A)+' '+u+'².'),stp('Autre hauteur','La même aire s\'écrit avec l\'autre côté : '+M(A+' = '+b2+' × h')+', donc '+M('h = '+A+' / '+b2+' = '+h2)+' '+u)],hints:['L\'aire est la même quel que soit le côté choisi comme base.'],
+    mistakes:[{v:hh,tag:'geo-hauteur',msg:'Les deux hauteurs ne sont pas égales : chaque côté a sa hauteur correspondante.',w:['h = '+hh]},{v:b2*hh/b1,tag:'geo-formule',msg:'Tu as inversé le rapport : le plus grand côté a la plus petite hauteur.',w:['h = '+b2+' × '+hh+' / '+b1]},{v:A,tag:'geo-formule',msg:'Tu as calculé l\'aire. Il faut diviser par '+b2+'.',w:['A = '+A]},{v:A/2/b2,tag:'geo-demi',msg:'L\'aire d\'un parallélogramme est côté × hauteur (pas de division par 2).',w:['A = '+b1+' × '+hh+' / 2']}].filter(m=>m.v!==h2)});
+}
+
+/* ----- gq-4b : losange, côté et diagonale ----- */
+function genLosD(){
+  const [p,q,s]=pick([[3,4,5],[4,3,5],[5,12,13],[6,8,10],[8,6,10],[12,5,13]]), u=uP(), D1=2*p, D2=2*q, A=D1*D2/2, ask=pick(['aire','périmètre']);
+  const svg=figure([[-p,-q],[p,q]],f=>{
+    const L=f([-p,0]),R=f([p,0]),T=f([0,q]),B=f([0,-q]),O=f([0,0]),ce=O;
+    return g.poly([L,T,R,B])+g.seg(L,R,'g-dash')+g.seg(T,B,'g-dash')+g.dot(O)+g.len(L,T,String(s),ce,10)+g.text(vadd(f([p/2,0]),[0,-8]),String(D1),'g-t');
+  },'Losange avec une diagonale de '+D1+' et un côté de '+s,{H:230,pad:40});
+  const txt='Un losange a un côté de «'+s+'» '+u+' et une diagonale de «'+D1+'» '+u+'. ';
+  const WQ=['demi-diagonale connue : '+D1+' / 2 = '+p,'demi-diagonale cherchée = √('+s+'² − '+p+'²) = '+q,'autre diagonale = 2 × '+q+' = '+D2];
+  if(ask==='aire') return mkGeo({svg,val:A,unit:u,pow:2,text:txt+'Calcule son <b>aire</b> (l\'autre diagonale n\'est pas donnée).',ask:'l\'aire du losange',placeholder:'demi-diagonales...\nA = D × d / 2',
+    work:WQ.concat(['A = '+D1+' × '+D2+' / 2 = '+A+' '+u+'²']),steps:[stp('Les diagonales','Elles se coupent à angle droit en leur milieu : un triangle rectangle dont l\'hypoténuse est le côté '+M(s)+' et un côté la demi-diagonale '+M(p)+'.'),stp('Autre demi-diagonale',M('√('+s+'² − '+p+'²) = '+q)+', donc la diagonale vaut '+M(D2)+'.'),stp('Aire',M('A = '+D1+' × '+D2+' / 2 = '+A)+' '+u+'²')],hints:['Les diagonales d\'un losange sont perpendiculaires et se coupent en leur milieu.'],
+    mistakes:[{v:D1*s/2,tag:'geo-pyth-cote',msg:'Le côté du losange n\'est pas l\'autre diagonale. Cherche la demi-diagonale avec Pythagore.',w:['A = '+D1+' × '+s+' / 2']},{v:D1*q/2,tag:'geo-formule',msg:'Tu as utilisé la demi-diagonale : l\'autre diagonale vaut '+D2+'.',w:['A = '+D1+' × '+q+' / 2']},{v:D1*D2,tag:'geo-demi',msg:'Aire du losange = D × d / 2.',w:['A = '+D1+' × '+D2]},{v:D1*(s-p)/2,tag:'geo-pyth-somme',msg:'Pythagore : q² = '+s+'² − '+p+'² (pas de soustraction directe).',w:['q = '+s+' − '+p]}].filter(m=>m.v!==A)});
+  return mkGeo({svg,val:4*s,unit:u,text:txt+'Calcule son <b>périmètre</b>.',ask:'le périmètre du losange',placeholder:'P = 4 × côté',
+    work:['P = 4 × '+s+' = '+4*s+' '+u],steps:[stp('Quatre côtés égaux',M('P = 4 × '+s+' = '+4*s)+' '+u+'. La diagonale n\'est pas nécessaire.')],hints:['Un losange a quatre côtés égaux.'],mistakes:[{v:2*(D1+s),tag:'geo-perim-cote',msg:'Les diagonales ne font pas partie du contour.',w:['P = 2 × ('+D1+' + '+s+')']},{v:2*s,tag:'geo-perim-cote',msg:'Un losange a quatre côtés.',w:['P = 2 × '+s]},{v:4*D1,tag:'geo-perim-cote',msg:'Le côté mesure '+s+' (et non la diagonale).',w:['P = 4 × '+D1]}]});
+}
+
+/* ----- gq-5b : trapèze isocèle ----- */
+function genTrapIso(){
+  const [e,h,s]=pick([[3,4,5],[4,3,5],[6,8,10],[5,12,13],[8,6,10],[9,12,15]]), b=rnd(4,10), B=b+2*e, u=uP(), A=(B+b)*h/2, ask=pick(['aire','périmètre']);
+  const svg=figure([[0,0],[B,0],[B-e,h],[e,h]],f=>{
+    const p0=f([0,0]),p1=f([B,0]),p2=f([B-e,h]),p3=f([e,h]),ce=cen([p0,p1,p2,p3]);
+    return g.poly([p0,p1,p2,p3])+g.text([(p0[0]+p1[0])/2,p0[1]+17],String(B))+g.len(p3,p2,String(b),ce,10)+g.len(p0,p3,String(s),ce,10)+g.len(p1,p2,String(s),ce,10)+g.tick(p0,p3,1)+g.tick(p1,p2,1);
+  },'Trapèze isocèle de bases '+B+' et '+b+' et de côtés obliques '+s,{H:220,pad:34});
+  const txt='Un trapèze isocèle a pour bases «'+B+'» '+u+' et «'+b+'» '+u+' et pour côtés obliques «'+s+'» '+u+'. ';
+  if(ask==='périmètre') return mkGeo({svg,val:B+b+2*s,unit:u,text:txt+'Calcule son <b>périmètre</b>.',ask:'le périmètre',placeholder:'P = B + b + 2 × côté',work:['P = '+B+' + '+b+' + 2 × '+s+' = '+(B+b+2*s)+' '+u],steps:[stp('Les quatre côtés','Les deux côtés obliques sont égaux :',M('P = '+B+' + '+b+' + '+s+' + '+s+' = '+(B+b+2*s))+' '+u)],hints:['Un trapèze isocèle a deux côtés obliques de même longueur.'],mistakes:[{v:B+b+s,tag:'geo-perim-cote',msg:'Il y a deux côtés obliques.',w:['P = '+B+' + '+b+' + '+s]},{v:A,tag:'geo-perim-aire',msg:'Tu as calculé l\'aire.',w:['A = ('+B+' + '+b+') × '+h+' / 2']}].filter(m=>m.v!==B+b+2*s)});
+  return mkGeo({svg,val:A,unit:u,pow:2,text:txt+'Calcule son <b>aire</b> (la hauteur n\'est pas donnée).',ask:'l\'aire du trapèze',placeholder:'décalage = (B − b) / 2\nh = √(...)\nA = ...',
+    work:['décalage = ('+B+' − '+b+') / 2 = '+e,'h = √('+s+'² − '+e+'²) = '+h,'A = ('+B+' + '+b+') × '+h+' / 2 = '+NF(A)+' '+u+'²'],steps:[stp('Décalage','En traçant les deux hauteurs, il reste deux petits triangles rectangles égaux : leur côté horizontal vaut '+M('('+B+' − '+b+') / 2 = '+e)+'.'),stp('Hauteur',M('h = √('+s+'² − '+e+'²) = '+h)),stp('Aire',M('A = ('+B+' + '+b+') × '+h+' / 2 = '+NF(A))+' '+u+'²')],hints:['Les deux hauteurs découpent le trapèze en un rectangle et deux triangles rectangles identiques.'],
+    mistakes:[{v:(B+b)*s/2,tag:'geo-pyth-cote',msg:'Le côté oblique n\'est pas la hauteur : h = √('+s+'² − '+e+'²) = '+h+'.',w:['A = ('+B+' + '+b+') × '+s+' / 2']},{v:(B+b)*h,tag:'geo-demi',msg:'Aire du trapèze = (B + b) × h / 2.',w:['A = ('+B+' + '+b+') × '+h]},{v:(B+b)*Math.sqrt(Math.max(0,s*s-(B-b)*(B-b)))/2,tag:'geo-pyth-cote',msg:'Le décalage vaut (B − b) / 2 = '+e+' de chaque côté (et non B − b).',w:['h = √('+s+'² − '+(B-b)+'²)']},{v:(B+b)*(s-e)/2,tag:'geo-pyth-somme',msg:'Pythagore : h² = '+s+'² − '+e+'².',w:['h = '+s+' − '+e]}].filter(m=>isFinite(m.v)&&m.v>0&&Math.abs(m.v-A)>1e-6)});
+}
+
+/* ----- gp-3b : distance entre deux points d'un repère ----- */
+function genDistPts(){
+  const u=pick(['cm','cm','unités']), useT=Math.random()<0.5;
+  let dx,dy; if(useT){ const t=pick(TRIPP); dx=t[0]; dy=t[1]; } else { do{ dx=rnd(1,7); dy=rnd(1,7); }while(dx===dy||dx*dx+dy*dy===25||dx*dx+dy*dy===25); }
+  const x1=rnd(0,9-dx>0?Math.min(2,9-dx):0), y1=rnd(0,Math.min(2,9-dy>0?9-dy:0)), x2=x1+dx, y2=y1+dy;
+  const n=dx*dx+dy*dy, root=Math.sqrt(n), intg=Number.isInteger(root);
+  const xm=Math.max(x2,4)+1, ym=Math.max(y2,4)+1;
+  const svg=figure([[-0.8,-0.8],[xm,ym]],f=>{
+    let out=g.seg(f([0,0]),f([xm-0.3,0]),'g-l')+g.seg(f([0,0]),f([0,ym-0.3]),'g-l');
+    for(let i=1;i<xm-0.4;i++) out+=g.seg(f([i,-0.1]),f([i,0.1]),'g-mark')+g.text(f([i,-0.5]),String(i),'g-t');
+    for(let j=1;j<ym-0.4;j++) out+=g.seg(f([-0.1,j]),f([0.1,j]),'g-mark')+g.text(f([-0.5,j]),String(j),'g-t');
+    const A=f([x1,y1]),B=f([x2,y2]),C=f([x2,y1]);
+    out+=g.seg(A,C,'g-dash g-thin')+g.seg(C,B,'g-dash g-thin')+g.seg(A,B,'g-l')+g.dot(A)+g.dot(B);
+    out+=g.text(vadd(A,[-4,14]),'A','g-v','end')+g.text(vadd(B,[10,-8]),'B','g-v','start');
+    return out;
+  },'Deux points A et B dans un repère',{H:250,pad:30});
+  const WW=['Δx = '+x2+' − '+x1+' = '+dx,'Δy = '+y2+' − '+y1+' = '+dy,'AB² = '+dx+'² + '+dy+'² = '+n];
+  const ex=intg?String(root):radStr(n);
+  const mist=[{v:dx+dy,tag:'geo-pyth-somme',msg:'La distance n\'est pas la somme des écarts : c\'est l\'hypoténuse du triangle rectangle de côtés Δx et Δy.',w:['AB = '+dx+' + '+dy]},{v:n,tag:'geo-racine',msg:'AB² = '+n+' : il faut prendre la racine carrée.',w:WW.concat(['AB = '+n])},{v:Math.sqrt(Math.abs(dx*dx-dy*dy)),tag:'geo-pyth-somme',msg:'Pour la distance, on additionne les carrés des écarts.',w:['AB = √('+dx+'² − '+dy+'²)']}].filter(m=>m.v>0&&Math.abs(m.v-root)>1e-6);
+  return mkGeo({svg,mode:intg?'num':'sqrt',exact:ex,val:root,unit:'',pow:1,text:'Dans un repère orthonormé (l\'unité est le '+(u==='unités'?'carreau':u)+'), on donne «A('+x1+' ; '+y1+')» et «B('+x2+' ; '+y2+')». Calcule la distance «AB»'+(intg?'.':', en <b>valeur exacte</b>.'),ask:'la distance AB',placeholder:'Δx = ...\nΔy = ...\nAB = √(...)',
+    work:WW.concat(['AB = √'+n+' = '+ex]),steps:[stp('Écarts',M('Δx = '+x2+' − '+x1+' = '+dx)+' et '+M('Δy = '+y2+' − '+y1+' = '+dy)+'.'),stp('Pythagore','AB est l\'hypoténuse du triangle rectangle de côtés '+M(dx)+' et '+M(dy)+' :',M('AB = √('+dx+'² + '+dy+'²) = √'+n+' = '+ex))],hints:['Complète la figure par un triangle rectangle dont AB est l\'hypoténuse.'],mistakes:mist});
+}
+
+/* ----- gp-4b : diagonale d'un pavé ----- */
+function genDiagPave(){
+  const [a,b,c,d]=pick([[1,2,2,3],[2,3,6,7],[4,4,7,9],[2,6,9,11],[6,6,7,11],[3,4,12,13],[4,8,8,12],[2,10,11,15]]), k=a<=2?pick([1,2]):1, A=a*k, B=b*k, C=c*k, D=d*k, u=uP();
+  const dims=[[A,'long'],[B,'large'],[C,'haut']];
+  const L=Math.max(A,B,C), mx=Math.max(A,B,C), n=x=>Math.max(1.6,4.4*x/mx);
+  const dL=n(A), dh=n(C), dd=n(B)*0.8;
+  const svg=figure([[0,0],[dL+dd*0.62,dh+dd*0.46]],f=>{
+    const bx=drawBox3(f,dL,dh,dd); let out=bx.out;
+    out+=g.len(bx.A,bx.B,String(A),bx.ce,10)+g.len(bx.A,bx.D,String(C),bx.ce,10)+g.len(bx.B,bx.B2,String(B),bx.ce,9);
+    out+=g.seg(bx.A,bx.C2,'g-l g-dash')+g.dot(bx.A)+g.dot(bx.C2)+g.text(vadd(vmid(bx.A,bx.C2),[0,-11]),'?','g-u');
+    return out;
+  },'Pavé droit avec sa grande diagonale',{H:240,pad:34});
+  const f2=Math.sqrt(A*A+B*B);
+  return mkGeo({svg,val:D,unit:u,text:'Un pavé droit mesure «'+A+'» '+u+' de long, «'+B+'» '+u+' de large et «'+C+'» '+u+' de haut. Calcule la longueur de sa <b>grande diagonale</b> (d\'un coin au coin opposé).',ask:'la grande diagonale',placeholder:'diagonale de la base = ...\nD = √(...)',
+    work:['d² = '+A+'² + '+B+'² = '+(A*A+B*B),'D² = d² + '+C+'² = '+(A*A+B*B)+' + '+C*C+' = '+D*D,'D = '+D+' '+u],steps:[stp('Diagonale de la base','Triangle rectangle de côtés '+M(A)+' et '+M(B)+' : '+M('d² = '+A+'² + '+B+'² = '+(A*A+B*B))+'.'),stp('Deuxième triangle rectangle','La grande diagonale est l\'hypoténuse d\'un triangle de côtés '+M('d')+' et '+M(C)+' (la hauteur) :',M('D² = '+(A*A+B*B)+' + '+C+'² = '+D*D)+', donc '+M('D = '+D)+' '+u)],hints:['Cherche d\'abord la diagonale de la face du dessous, puis un second triangle rectangle vertical.'],
+    mistakes:[{v:A+B+C,tag:'geo-pyth-somme',msg:'La diagonale n\'est pas la somme des trois dimensions.',w:['D = '+A+' + '+B+' + '+C]},{v:f2,tag:'geo-decomp',msg:'C\'est la diagonale de la base. Il manque la hauteur : D² = d² + '+C+'².',w:['D = √('+A+'² + '+B+'²)']},{v:D*D,tag:'geo-racine',msg:'D² = '+D*D+' : prends la racine carrée.',w:['D² = '+D*D]},{v:f2+C,tag:'geo-pyth-somme',msg:'On ne peut pas additionner d et la hauteur : Pythagore une seconde fois.',w:['D = '+NF(Math.round(f2*100)/100)+' + '+C]}].filter(m=>Math.abs(m.v-D)>1e-6)});
+}
+
+/* ----- gh-2b : Thalès, ombre et hauteur ----- */
+function genOmbre(){
+  const [h1,s1]=pick([[2,3],[1.5,2],[2,5],[1,2],[3,4],[1.5,3],[2,4]]), k=pick([3,4,5,6,8]), s2=s1*k, H=h1*k, u='m';
+  const objs=pick([['un piquet','un arbre'],['un bâton','un pylône'],['une personne','un immeuble'],['un poteau','un clocher']]);
+  const svg=figure([[-0.5,-0.5],[2*s1+s2*0.2+s2+3,H+1]],f=>{ // deux triangles rectangles côte à côte
+    const sc=1; const x0=0, x1_=s1+1.6; let out=g.seg(f([-0.3,0]),f([x1_+s2+0.6,0]),'g-l');
+    const T=(x,h,s,l1,l2)=>{ const a=f([x,0]),b=f([x,h]),c=f([x+s,0]); return g.poly([a,b,c])+g.right(a,b,c,9)+l1+l2; };
+    const t1=(()=>{ const a=f([x0,0]),b=f([x0,h1*(H/H)]),c=f([x0+s1,0]); return g.poly([a,b,c])+g.right(a,b,c,8)+g.text(vadd(vmid(a,b),[-10,0]),NF(h1),'g-t','end')+g.text(vadd(vmid(a,c),[0,15]),NF(s1),'g-t'); })();
+    const a2=f([x1_,0]),b2=f([x1_,H]),c2=f([x1_+s2,0]);
+    const t2=g.poly([a2,b2,c2])+g.right(a2,b2,c2,8)+g.text(vadd(vmid(a2,b2),[-10,0]),'?','g-u','end')+g.text(vadd(vmid(a2,c2),[0,15]),NF(s2),'g-t');
+    return out+t1+t2;
+  },'Deux objets verticaux et leurs ombres, formant deux triangles semblables',{H:230,pad:30});
+  const val=H;
+  return mkGeo({svg,val,unit:u,text:'Au même moment, '+objs[0]+' de «'+NF(h1)+'» m de haut projette une ombre de «'+NF(s1)+'» m, et '+objs[1]+' projette une ombre de «'+NF(s2)+'» m (le sol est plat). Les rayons du soleil sont parallèles. Calcule la hauteur de '+objs[1]+'.',ask:'la hauteur',placeholder:'h1/ombre1 = h2/ombre2',
+    work:[NF(h1)+' / '+NF(s1)+' = h / '+NF(s2),'h = '+NF(h1)+' × '+NF(s2)+' / '+NF(s1)+' = '+NF(H)+' m'],steps:[stp('Triangles semblables','Les rayons parallèles font le même angle avec le sol : les deux triangles rectangles sont semblables (Thalès).'),stp('Proportion',M(NF(h1)+' / '+NF(s1)+' = h / '+NF(s2)),M('h = '+NF(h1)+' × '+NF(s2)+' / '+NF(s1)+' = '+NF(H))+' m')],hints:['Hauteur / ombre est le même rapport pour les deux objets.'],
+    mistakes:[{v:h1+(s2-s1),tag:'geo-thales-additif',msg:'Les longueurs sont proportionnelles (on multiplie), elles ne s\'additionnent pas.',w:['h = '+NF(h1)+' + ('+NF(s2)+' − '+NF(s1)+')']},{v:h1*s1/s2,tag:'geo-thales-inverse',msg:'Tu as inversé le rapport : le plus grand objet a la plus grande ombre.',w:['h = '+NF(h1)+' × '+NF(s1)+' / '+NF(s2)]},{v:s2,tag:'geo-thales-inverse',msg:'La hauteur n\'est pas égale à la longueur de l\'ombre (sauf soleil à 45°).',w:['h = '+NF(s2)]}].filter(m=>Math.abs(m.v-H)>1e-6)});
+}
+
+/* ----- gh-5b : agrandissement, réduction (longueurs, aires) ----- */
+function genAgrand(){
+  const [p,q]=pick([[3,2],[5,2],[2,1],[3,1],[4,3],[5,3],[5,4]]), m=rnd(1,3), a=q*m, a2=p*m, ask=pick(['aire','périmètre']), u=uP(), n=rnd(1,4), t=rnd(2,5);
+  const A1=q*q*n, A2=p*p*n, P1=q*t*3, P2=p*t*3;
+  const svg=figure([[0,0],[13,5.2]],f=>{
+    const s1=1.2, s2=p/q*1.2; const tri=(x,sc,lab)=>{ const A=f([x,0]),B=f([x+3*sc,0]),C=f([x+0.8*sc,2.4*sc]); return g.poly([A,B,C])+g.text(vadd(vmid(A,B),[0,15]),lab,'g-t'); };
+    return tri(0,s1,String(a))+tri(4.6,s2,String(a2));
+  },'Deux triangles semblables',{H:200,pad:30});
+  const kt=p+'/'+q, base='Un triangle a un côté de «'+a+'» '+u+', une aire de «'+A1+'» '+u+'² et un périmètre de «'+P1+'» '+u+'. On l\'<b>agrandit</b> : le côté correspondant du nouveau triangle mesure «'+a2+'» '+u+'. ';
+  if(ask==='aire') return mkGeo({svg,val:A2,unit:u,pow:2,text:base+'Calcule l\'<b>aire</b> du nouveau triangle.',ask:'l\'aire du triangle agrandi',placeholder:'k = '+a2+' / '+a+'\nA\' = A × k²',
+    work:['k = '+a2+' / '+a+' = '+kt,'A\' = '+A1+' × ('+kt+')² = '+A2+' '+u+'²'],steps:[stp('Rapport d\'agrandissement',M('k = '+a2+' / '+a+' = '+kt)),stp('Aires','Les longueurs sont multipliées par k, les <b>aires par k²</b> :',M('A\' = '+A1+' × ('+kt+')² = '+A1+' × '+(p*p)+'/'+(q*q)+' = '+A2)+' '+u+'²')],hints:['Dans un agrandissement de rapport k, les aires sont multipliées par k².'],
+    mistakes:[{v:A1*p/q,tag:'geo-rapport-aire',msg:'Les aires sont multipliées par k², pas par k.',w:['A\' = '+A1+' × '+kt+' = '+NF(A1*p/q)]},{v:A1+(a2-a),tag:'geo-thales-additif',msg:'Un agrandissement est une multiplication, pas un ajout.',w:['A\' = '+A1+' + ('+a2+' − '+a+')']},{v:A1*a2/a*a2/a*(p/q),tag:'geo-rapport-aire',msg:'Un seul facteur k² suffit.',w:['A\' = '+A1+' × k³']}].filter(m=>Math.abs(m.v-A2)>1e-6)});
+  return mkGeo({svg,val:P2,unit:u,text:base+'Calcule le <b>périmètre</b> du nouveau triangle.',ask:'le périmètre du triangle agrandi',placeholder:'k = '+a2+' / '+a+'\nP\' = P × k',
+    work:['k = '+a2+' / '+a+' = '+kt,'P\' = '+P1+' × '+kt+' = '+P2+' '+u],steps:[stp('Rapport',M('k = '+a2+' / '+a+' = '+kt)),stp('Périmètre','Les longueurs sont multipliées par k, donc le périmètre aussi :',M('P\' = '+P1+' × '+kt+' = '+P2)+' '+u)],hints:['Le périmètre est une longueur : il est multiplié par k.'],
+    mistakes:[{v:P1*p*p/(q*q),tag:'geo-rapport-aire',msg:'Seules les aires sont multipliées par k². Un périmètre est une longueur : × k.',w:['P\' = '+P1+' × ('+kt+')²']},{v:P1+(a2-a),tag:'geo-thales-additif',msg:'Tous les côtés sont multipliés par k : on ne rajoute pas simplement la différence d\'un côté.',w:['P\' = '+P1+' + '+(a2-a)]}].filter(m=>Math.abs(m.v-P2)>1e-6)});
+}
+
+/* ----- gc-3b : arc de cercle et secteur ----- */
+function genArcSect(){
+  const al=pick([30,45,60,90,120,135,150]), r=pick([2,3,4,5,6,8,9,10,12]), u=uP(), ask=pick(['arc','secteur']);
+  const svg=figure([[-r,-r*0.3],[r,r]],f=>{
+    const O=f([0,0]), R=r*f.s, P=f([r,0]), Q=f([r*Math.cos(al*Math.PI/180),r*Math.sin(al*Math.PI/180)]), M_=f([r*Math.cos(al*Math.PI/360),r*Math.sin(al*Math.PI/360)]);
+    let out=g.path(mv(O)+' L'+gf(P[0])+' '+gf(P[1])+arcM(P,Q,M_,R)+' Z','g-f')+g.dot(O);
+    const rad=22, u1=[1,0], u2=vunit(vsub(Q,O)), a1=vadd(O,vmul(u1,rad)), a2=vadd(O,vmul(u2,rad)), bs=vunit(vadd(u1,u2)), am=vadd(O,vmul(bs,rad));
+    out+='<path class="g-mark" d="M'+gf(a1[0])+' '+gf(a1[1])+arcM(a1,a2,am,rad)+'"/>'+g.text(vadd(O,vmul(bs,rad+(al>100?24:20))),al+'°','g-u');
+    out+=g.text(vadd(vmid(O,P),[0,12]),String(r),'g-t');
+    return out;
+  },'Secteur circulaire de rayon '+r+' et d\'angle '+al+' degrés',{H:230,pad:30});
+  const txt='Un secteur circulaire a un rayon de «'+r+'» '+u+' et un angle au centre de «'+al+'°». ';
+  const fr=al+'/360';
+  if(ask==='arc'){ const exs=fracPiP(al*r,180); return mkGeo({svg,mode:'pi',exact:exs,val:pib(0,al*r/180),unit:u,pow:1,text:txt+'Calcule la longueur de l\'<b>arc</b>. Donne la <b>valeur exacte</b>.',ask:'la longueur de l\'arc (valeur exacte)',placeholder:'arc = '+fr+' × 2π × '+r,
+    work:['arc = '+fr+' × 2π × '+r+' = '+exs+' '+u],steps:[stp('Fraction du cercle','L\'angle de '+M(al+'°')+' représente la fraction '+M(fr)+' du tour complet.'),stp('Longueur',M('arc = ('+al+'/360) × 2π × '+r+' = '+exs)+' '+u)],hints:['Longueur du cercle entier : 2πr. L\'arc en est la fraction α/360.'],
+    mistakes:[{v:pib(0,al*r*r/360),tag:'geo-arc-secteur',msg:'Tu as calculé l\'aire du secteur (πr²). Pour la longueur de l\'arc, on part de 2πr.',w:['arc = '+fr+' × π × '+r+'²']},{v:pib(0,2*r),tag:'geo-arc-secteur',msg:'C\'est le périmètre du cercle entier : l\'arc n\'en est qu\'une fraction.',w:['arc = 2π × '+r]},{v:pib(0,al*r/360),tag:'geo-arc-secteur',msg:'La longueur du cercle est 2πr (avec le 2).',w:['arc = '+fr+' × π × '+r]},{v:pib(r*2,al*r/180),tag:'geo-perim-cote',msg:'La question demande seulement l\'arc, sans les deux rayons.',w:['arc + 2r']}].filter(m=>Math.abs(m.v.b-al*r/180)>1e-9||m.v.a!==0)}); }
+  const exs=fracPiP(al*r*r,360);
+  return mkGeo({svg,mode:'pi',exact:exs,val:pib(0,al*r*r/360),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> du secteur. Donne la <b>valeur exacte</b>.',ask:'l\'aire du secteur (valeur exacte)',placeholder:'aire = '+fr+' × π × '+r+'²',
+    work:['A = '+fr+' × π × '+r+'² = '+exs+' '+u+'²'],steps:[stp('Fraction du disque','L\'angle de '+M(al+'°')+' représente la fraction '+M(fr)+' du disque.'),stp('Aire',M('A = ('+al+'/360) × π × '+r+'² = '+exs)+' '+u+'²')],hints:['Aire du disque entier : πr². Le secteur en est la fraction α/360.'],
+    mistakes:[{v:pib(0,al*r/180),tag:'geo-arc-secteur',msg:'Tu as calculé la longueur de l\'arc. L\'aire du secteur est la fraction de πr².',w:['A = '+fr+' × 2π × '+r]},{v:pib(0,r*r),tag:'geo-arc-secteur',msg:'C\'est l\'aire du disque entier. Le secteur en est la fraction '+fr+'.',w:['A = π × '+r+'²']},{v:pib(0,al*r/360),tag:'geo-aire-pi',msg:'Dans l\'aire d\'un disque, le rayon est au carré.',w:['A = '+fr+' × π × '+r]},{v:pib(0,al*r*r/180),tag:'geo-arc-secteur',msg:'Aire du secteur = (α/360) × πr² (et non 2πr²).',w:['A = '+fr+' × 2π × '+r+'²']}].filter(m=>Math.abs(m.v.b-al*r*r/360)>1e-9)});
+}
+
+/* ----- gc-4b : corde et distance au centre ----- */
+function genCorde(){
+  const [p0,d0,r0]=pick([[3,4,5],[4,3,5],[5,12,13],[12,5,13],[6,8,10],[8,6,10]]), k=pick([1,1,2]), p=p0*k, d=d0*k, r=r0*k, c=2*p, u=uP(), ask=pick(['dist','corde']);
+  const svg=figure([[-r,-r],[r,r]],f=>{
+    const O=f([0,0]), Rr=r*f.s, A=f([-p,d]), B=f([p,d]), M_=f([0,d]);
+    let out=g.circle(O,Rr,'g-circle')+g.seg(A,B,'g-l')+g.seg(O,M_,'g-dash')+g.seg(O,A,'g-thin g-dash')+g.dot(O)+g.dot(M_)+g.right(M_,O,B,9)+g.dot(A)+g.dot(B);
+    out+=g.text(vadd(O,[8,12]),'O','g-v');
+    out+=ask==='dist'?g.len(A,B,String(c),O,12)+g.text(vadd(vmid(O,M_),[-10,0]),'?','g-u','end'):g.len(A,B,'?',O,12,'g-u')+g.text(vadd(vmid(O,M_),[-10,0]),String(d),'g-t','end');
+    out+=g.text(vadd(vmid(O,A),[-9,-4]),String(r),'g-t','end');
+    return out;
+  },'Cercle de rayon '+r+' avec une corde et la distance du centre à la corde',{H:250,pad:36});
+  const WQ=['moitié de la corde : '+(ask==='dist'?c+' / 2 = '+p:'?')];
+  if(ask==='dist') return mkGeo({svg,val:d,unit:u,text:'Un cercle de centre «O» a un rayon de «'+r+'» '+u+'. Une corde mesure «'+c+'» '+u+'. Calcule la <b>distance</b> du centre «O» à cette corde (perpendiculaire).',ask:'la distance du centre à la corde',placeholder:'demi-corde = ...\nd = √(r² − ...²)',
+    work:['demi-corde = '+c+' / 2 = '+p,'d = √('+r+'² − '+p+'²) = √'+(r*r-p*p)+' = '+d+' '+u],steps:[stp('Triangle rectangle','La perpendiculaire du centre à la corde passe par son milieu : triangle rectangle d\'hypoténuse le rayon '+M(r)+' et de côté la demi-corde '+M(c+' / 2 = '+p)+'.'),stp('Pythagore',M('d = √('+r+'² − '+p+'²) = '+d)+' '+u)],hints:['La perpendiculaire menée du centre coupe la corde en son milieu.'],
+    mistakes:[{v:Math.sqrt(Math.max(0,r*r-c*c)),tag:'geo-pyth-cote',msg:'C\'est la moitié de la corde ('+p+') qui est dans le triangle rectangle.',w:['d = √('+r+'² − '+c+'²)']},{v:r-p,tag:'geo-pyth-somme',msg:'Pythagore : d² = r² − (demi-corde)², pas d = r − demi-corde.',w:['d = '+r+' − '+p]},{v:Math.sqrt(r*r+p*p),tag:'geo-pyth-cote',msg:'Le rayon est l\'hypoténuse : on soustrait les carrés.',w:['d = √('+r+'² + '+p+'²)']}].filter(m=>m.v>0&&Math.abs(m.v-d)>1e-6)});
+  return mkGeo({svg,val:c,unit:u,text:'Un cercle de centre «O» a un rayon de «'+r+'» '+u+'. Une corde est à la distance «'+d+'» '+u+' du centre. Calcule la <b>longueur de la corde</b>.',ask:'la longueur de la corde',placeholder:'demi-corde = √(r² − d²)\ncorde = 2 × ...',
+    work:['demi-corde = √('+r+'² − '+d+'²) = '+p,'corde = 2 × '+p+' = '+c+' '+u],steps:[stp('Demi-corde','Triangle rectangle d\'hypoténuse le rayon '+M(r)+' et de côté '+M(d)+' : '+M('√('+r+'² − '+d+'²) = '+p)+'.'),stp('Corde','Le pied de la perpendiculaire est le milieu de la corde :',M('corde = 2 × '+p+' = '+c)+' '+u)],hints:['La demi-corde est un côté de l\'angle droit du triangle rectangle.'],
+    mistakes:[{v:p,tag:'geo-decomp',msg:'C\'est la demi-corde : la corde entière vaut le double.',w:['demi-corde = '+p]},{v:2*(r-d),tag:'geo-pyth-somme',msg:'Pythagore : demi-corde² = r² − d².',w:['corde = 2 × ('+r+' − '+d+')']},{v:2*Math.sqrt(r*r+d*d),tag:'geo-pyth-cote',msg:'Le rayon est l\'hypoténuse : demi-corde² = r² − d².',w:['corde = 2 × √('+r+'² + '+d+'²)']}].filter(m=>m.v>0&&Math.abs(m.v-c)>1e-6)});
+}
+
+/* ----- gm-3b : couronne circulaire ----- */
+function genCouronne(){
+  const R=rnd(4,12), r=rnd(1,R-2), u=uP(), ask=pick(['aire','périmètre']), useD=Math.random()<0.4;
+  const svg=figure([[-R,-R],[R,R]],f=>{
+    const O=f([0,0]); let out=g.circle(O,R*f.s,'g-circle')+g.circle(O,r*f.s,'g-hole')+g.dot(O);
+    const e=f([R,0]), e2=f([r*Math.cos(2.2),r*Math.sin(2.2)]);
+    out+=g.seg(O,e,'g-thin')+g.text(vadd(vmid(O,e),[0,-9]),useD?String(2*R)+' (⌀)':String(R),'g-t')+g.seg(O,e2,'g-thin');
+    if(r>=2) out+=g.text(vadd(vmid(O,e2),[-9,-6]),useD?'⌀'+2*r:String(r),'g-t','end');
+    return out;
+  },'Couronne circulaire de rayons '+R+' et '+r,{H:230,pad:30});
+  const txt=useD?'Une couronne (anneau) est comprise entre deux cercles de même centre, de diamètres «'+2*R+'» '+u+' et «'+2*r+'» '+u+'. ':'Une couronne (anneau) est comprise entre deux cercles de même centre, de rayons «'+R+'» '+u+' et «'+r+'» '+u+'. ';
+  const pre=useD?['R = '+2*R+' / 2 = '+R,'r = '+2*r+' / 2 = '+r]:[];
+  if(ask==='aire') return mkGeo({svg:useD?svg.replace(/⌀/g,''):svg,mode:'pi',val:pib(0,R*R-r*r),unit:u,pow:2,text:txt+'Calcule l\'<b>aire</b> de la couronne. Donne la <b>valeur exacte</b>.',ask:'l\'aire (valeur exacte)',placeholder:'grand disque = ...\npetit disque = ...\nA = ...',
+    work:pre.concat(['A = π × '+R+'² − π × '+r+'² = '+kPi(R*R)+' − '+kPi(r*r)+' = '+kPi(R*R-r*r)+' '+u+'²']),steps:(useD?[stp('Rayons',M('R = '+2*R+' / 2 = '+R)+' et '+M('r = '+2*r+' / 2 = '+r))]:[]).concat([stp('Grand disque moins petit disque',M('A = πR² − πr² = '+kPi(R*R)+' − '+kPi(r*r)+' = '+kPi(R*R-r*r))+' '+u+'²')]),hints:['Aire de la couronne = aire du grand disque − aire du petit disque.'],
+    mistakes:[{v:pib(0,(R-r)*(R-r)),tag:'geo-decomp',msg:'On soustrait les aires (R² − r²), pas les rayons avant de les élever au carré.',w:['A = π × ('+R+' − '+r+')² = '+kPi((R-r)**2)]},{v:pib(0,R*R),tag:'geo-decomp',msg:'Tu n\'as calculé que le grand disque : retire le petit.',w:['A = π × '+R+'²']},{v:pib(0,2*(R-r)),tag:'geo-aire-pi',msg:'Une aire utilise πr² (le rayon au carré), pas 2πr.',w:['A = 2π × ('+R+' − '+r+')']},{v:pib(0,4*(R*R-r*r)),tag:'geo-rayon',msg:'Tu as utilisé les diamètres à la place des rayons.',w:['A = π × '+2*R+'² − π × '+2*r+'²']}].filter(m=>Math.abs(m.v.b-(R*R-r*r))>1e-9)});
+  return mkGeo({svg:useD?svg.replace(/⌀/g,''):svg,mode:'pi',val:pib(0,2*(R+r)),unit:u,pow:1,text:txt+'Calcule le <b>périmètre</b> de la couronne (les deux cercles). Donne la <b>valeur exacte</b>.',ask:'le périmètre (valeur exacte)',placeholder:'cercle extérieur = ...\ncercle intérieur = ...\nP = ...',
+    work:pre.concat(['P = 2π × '+R+' + 2π × '+r+' = '+kPi(2*R)+' + '+kPi(2*r)+' = '+kPi(2*(R+r))+' '+u]),steps:[stp('Deux cercles','Le bord de la couronne comprend le cercle extérieur et le cercle intérieur.',M('P = 2π × '+R+' + 2π × '+r+' = '+kPi(2*(R+r)))+' '+u)],hints:['Le contour d\'une couronne est formé de deux cercles.'],
+    mistakes:[{v:pib(0,2*R),tag:'geo-perim-cote',msg:'Le cercle intérieur fait aussi partie du bord de la couronne.',w:['P = 2π × '+R]},{v:pib(0,2*(R-r)),tag:'geo-perim-cote',msg:'Les deux longueurs de cercle s\'additionnent.',w:['P = 2π × ('+R+' − '+r+')']},{v:pib(0,R*R+r*r),tag:'geo-aire-pi',msg:'πr² donne une aire. La longueur d\'un cercle est 2πr.',w:['P = π × '+R+'² + π × '+r+'²']}].filter(m=>Math.abs(m.v.b-2*(R+r))>1e-9)});
+}
+
+/* ----- gm-4b : plaque percée (usinage) ----- */
+function genPlaque(){
+  const n=pick([2,4]), r=rnd(1,3), W=pick([14,16,18,20,24]), H=pick([10,12,14,16]), u='mm', ask=pick(['aire','périmètre']);
+  const holes=n===2?[[W/4,H/2],[3*W/4,H/2]]:[[W/4,H/4],[3*W/4,H/4],[W/4,3*H/4],[3*W/4,3*H/4]];
+  const svg=figure([[0,0],[W,H]],f=>{
+    const p0=f([0,0]),p1=f([W,0]),p2=f([W,H]),p3=f([0,H]); let out=g.poly([p0,p1,p2,p3]);
+    holes.forEach(h=>{ out+=g.circle(f(h),r*f.s,'g-hole'); });
+    const h0=f(holes[0]), e=f([holes[0][0]+r,holes[0][1]]); out+=g.dot(h0)+g.seg(h0,e,'g-thin')+g.text(vadd(h0,[r*f.s*0.5,-9]),String(r),'g-t');
+    return out+g.text([(p0[0]+p1[0])/2,p0[1]+17],String(W))+g.len(p0,p3,String(H),f([W/2,H/2]),12);
+  },'Plaque rectangulaire de '+W+' sur '+H+' avec '+n+' perçages',{H:210,pad:34});
+  const txt='Une plaque rectangulaire de «'+W+'» mm sur «'+H+'» mm est percée de «'+n+'» trous circulaires identiques de rayon «'+r+'» mm (entièrement dans la plaque). ';
+  if(ask==='aire') return mkGeo({svg,mode:'pi',val:pib(W*H,-n*r*r),unit:u,pow:2,text:txt+'Calcule l\'<b>aire de matière</b> (la surface de la plaque sans les trous). Donne la <b>valeur exacte</b>.',ask:'l\'aire de matière (valeur exacte)',placeholder:'rectangle = ...\ntrous = ...\nA = ...',
+    work:['rectangle : '+W+' × '+H+' = '+W*H,'trous : '+n+' × π × '+r+'² = '+kPi(n*r*r),'A = '+W*H+' − '+kPi(n*r*r)+' '+u+'²'],steps:[stp('Rectangle',M(W+' × '+H+' = '+W*H)),stp('Trous',M(n+' × π × '+r+'² = '+kPi(n*r*r))),stp('Matière',M('A = '+W*H+' − '+kPi(n*r*r))+' '+u+'²')],hints:['Aire de matière = rectangle − aire des trous.'],
+    mistakes:[{v:pib(W*H,0),tag:'geo-decomp',msg:'Il faut retirer l\'aire des trous.',w:['A = '+W*H]},{v:pib(W*H,-r*r),tag:'geo-decomp',msg:'Il y a '+n+' trous : multiplie par '+n+'.',w:['A = '+W*H+' − '+kPi(r*r)]},{v:pib(W*H,-n*4*r*r),tag:'geo-rayon',msg:'Le rayon vaut '+r+' (et non le diamètre) dans πr².',w:['A = '+W*H+' − '+n+' × π × '+2*r+'²']},{v:pib(W*H,-2*n*r),tag:'geo-aire-pi',msg:'Une aire utilise πr² (pas 2πr).',w:['A = '+W*H+' − '+n+' × 2π × '+r]}].filter(m=>Math.abs(m.v.b+n*r*r)>1e-9)});
+  return mkGeo({svg,mode:'pi',val:pib(2*(W+H),2*n*r),unit:u,pow:1,text:txt+'Calcule la longueur totale du <b>contour</b> à usiner : le bord extérieur de la plaque et le bord des trous. Donne la <b>valeur exacte</b>.',ask:'le contour total (valeur exacte)',placeholder:'extérieur = ...\ntrous = ...\nP = ...',
+    work:['extérieur : 2 × ('+W+' + '+H+') = '+2*(W+H),'trous : '+n+' × 2π × '+r+' = '+kPi(2*n*r),'P = '+2*(W+H)+' + '+kPi(2*n*r)+' '+u],steps:[stp('Bord extérieur',M('2 × ('+W+' + '+H+') = '+2*(W+H))),stp('Bord des trous',M(n+' × 2π × '+r+' = '+kPi(2*n*r))),stp('Total',M('P = '+2*(W+H)+' + '+kPi(2*n*r))+' '+u)],hints:['Chaque trou ajoute la longueur de son cercle (2πr).'],
+    mistakes:[{v:pib(2*(W+H),0),tag:'geo-perim-cote',msg:'Le bord des trous est aussi à usiner.',w:['P = '+2*(W+H)]},{v:pib(2*(W+H),n*r),tag:'geo-perim-cote',msg:'La longueur d\'un cercle est 2πr (avec le 2).',w:['P = '+2*(W+H)+' + '+n+' × π × '+r]},{v:pib(2*(W+H),r*r*n),tag:'geo-aire-pi',msg:'πr² est une aire. La longueur du cercle est 2πr.',w:['P = '+2*(W+H)+' + '+n+' × π × '+r+'²']},{v:pib(2*(W+H),2*r),tag:'geo-decomp',msg:'Il y a '+n+' trous.',w:['P = '+2*(W+H)+' + '+kPi(2*r)]}].filter(m=>Math.abs(m.v.b-2*n*r)>1e-9)});
+}
+
+/* ----- gang-3b : polygones réguliers ----- */
+function genPolyReg(){
+  const n=pick([5,6,8,9,10,12]), ask=pick(['somme','interieur','centre','exterieur']), nm={5:'pentagone',6:'hexagone',8:'octogone',9:'ennéagone',10:'décagone',12:'dodécagone'}[n];
+  const svg=figure([[-1.2,-1.2],[1.2,1.2]],f=>{
+    const V=[...Array(n)].map((_,i)=>f([Math.cos(Math.PI/2+2*Math.PI*i/n),Math.sin(Math.PI/2+2*Math.PI*i/n)])), O=f([0,0]);
+    let out=g.poly(V)+g.seg(O,V[0],'g-dash')+g.seg(O,V[1],'g-dash')+g.dot(O);
+    if(ask==='centre'||ask==='exterieur'){ const rad=22, u1=vunit(vsub(V[0],O)), u2=vunit(vsub(V[1],O)), a1=vadd(O,vmul(u1,rad)), a2=vadd(O,vmul(u2,rad)), bs=vunit(vadd(u1,u2)); out+='<path class="g-mark" d="M'+gf(a1[0])+' '+gf(a1[1])+arcM(a1,a2,vadd(O,vmul(bs,rad)),rad)+'"/>'+g.text(vadd(O,vmul(bs,rad+14)),'?','g-u'); }
+    if(ask==='interieur'){ const P=V[1], rad=20, u1=vunit(vsub(V[0],P)), u2=vunit(vsub(V[2%n],P)), a1=vadd(P,vmul(u1,rad)), a2=vadd(P,vmul(u2,rad)), bs=vunit(vadd(u1,u2)); out+='<path class="g-mark" d="M'+gf(a1[0])+' '+gf(a1[1])+arcM(a1,a2,vadd(P,vmul(bs,rad)),rad)+'"/>'+g.text(vadd(P,vmul(bs,rad+14)),'?','g-u'); }
+    return out;
+  },'Polygone régulier à '+n+' côtés',{H:220,pad:26});
+  const ex=(n-2)*180, it=ex/n, ce=360/n;
+  const T='Un '+nm+' régulier a «'+n+'» côtés égaux et «'+n+'» angles égaux. ';
+  if(ask==='somme') return mkGeo({svg,val:ex,unit:'°',text:T+'Calcule la <b>somme</b> de ses angles intérieurs.',ask:'la somme des angles intérieurs',placeholder:'S = (n − 2) × 180°',work:['S = ('+n+' − 2) × 180 = '+ex+'°'],steps:[stp('Découpe en triangles','Depuis un sommet, on trace les diagonales : on obtient '+M(n+' − 2 = '+(n-2))+' triangles, chacun de somme d\'angles 180°.'),stp('Somme',M('S = ('+n+' − 2) × 180 = '+ex)+'°')],hints:['Un polygone à n côtés se découpe en n − 2 triangles.'],mistakes:[{v:n*180,tag:'geo-angle-somme',msg:'Un polygone à n côtés se découpe en n − 2 triangles (pas n).',w:['S = '+n+' × 180']},{v:(n-1)*180,tag:'geo-angle-somme',msg:'Il y a n − 2 triangles, pas n − 1.',w:['S = ('+n+' − 1) × 180']},{v:360,tag:'geo-angle-somme',msg:'360° est la somme des angles d\'un quadrilatère, pas de ce polygone.',w:['S = 360']}].filter(m=>m.v!==ex)});
+  if(ask==='interieur') return mkGeo({svg,val:it,unit:'°',text:T+'Calcule l\'<b>angle intérieur</b> en un sommet.',ask:'l\'angle intérieur',placeholder:'somme = ...\nangle = somme / n',work:['somme = ('+n+' − 2) × 180 = '+ex,'angle = '+ex+' / '+n+' = '+it+'°'],steps:[stp('Somme des angles',M('('+n+' − 2) × 180 = '+ex)+'°.'),stp('Un angle','Les '+n+' angles sont égaux :',M(ex+' / '+n+' = '+it)+'°')],hints:['Somme des angles intérieurs = (n − 2) × 180°, à partager entre les n angles égaux.'],mistakes:[{v:ce,tag:'geo-angle-somme',msg:'360 / n est l\'angle au centre, pas l\'angle intérieur au sommet.',w:['angle = 360 / '+n]},{v:ex/(n-2),tag:'geo-angle-somme',msg:'Il faut partager la somme entre les n angles.',w:['angle = '+ex+' / '+(n-2)]},{v:180-it,tag:'geo-angle-somme',msg:'180° − angle intérieur est l\'angle extérieur.',w:['angle = 180 − '+it]}].filter(m=>Math.abs(m.v-it)>1e-9)});
+  if(ask==='centre') return mkGeo({svg,val:ce,unit:'°',text:T+'Calcule l\'<b>angle au centre</b> ∠AOB entre deux sommets consécutifs (le centre O est à égale distance de tous les sommets).',ask:'l\'angle au centre',placeholder:'angle = 360 / n',work:['angle = 360 / '+n+' = '+ce+'°'],steps:[stp('Tour complet','Les '+n+' angles au centre sont égaux et leur somme vaut 360° :',M('360 / '+n+' = '+ce)+'°')],hints:['Autour du centre, on fait un tour complet : 360°.'],mistakes:[{v:it,tag:'geo-angle-somme',msg:'C\'est l\'angle intérieur au sommet. L\'angle au centre vaut 360 / n.',w:['angle = '+ex+' / '+n]},{v:180/n,tag:'geo-angle-somme',msg:'Un tour complet vaut 360° (pas 180°).',w:['angle = 180 / '+n]},{v:360/(n-2),tag:'geo-angle-somme',msg:'On divise par le nombre de côtés n.',w:['angle = 360 / '+(n-2)]}].filter(m=>Math.abs(m.v-ce)>1e-9)});
+  return mkGeo({svg,val:ce,unit:'°',text:T+'L\'<b>angle extérieur</b> (en prolongeant un côté) est le supplément de l\'angle intérieur. Calcule-le.',ask:'l\'angle extérieur',placeholder:'intérieur = ...\nextérieur = 180 − intérieur',work:['intérieur = '+it+'°','extérieur = 180 − '+it+' = '+ce+'°'],steps:[stp('Angle intérieur',M('(('+n+' − 2) × 180) / '+n+' = '+it)+'°'),stp('Supplément',M('180 − '+it+' = '+ce)+'° (c\'est aussi 360 / n).')],hints:['Intérieur + extérieur = 180°.'],mistakes:[{v:it,tag:'geo-angle-somme',msg:'C\'est l\'angle intérieur. L\'extérieur est son supplément : 180° − intérieur.',w:['extérieur = '+it]},{v:ex,tag:'geo-angle-somme',msg:'La somme des angles intérieurs n\'est pas l\'angle extérieur.',w:['extérieur = '+ex]}].filter(m=>Math.abs(m.v-ce)>1e-9)});
+}
+TOPICS['gt-3b']={kind:'gtri',level:3,label:'Triangle : valeur manquante',gen:genTriInv};
+TOPICS['gt-5b']={kind:'gtri',level:5,label:'Aire avec deux côtés et l\'angle',gen:genTriSin};
+TOPICS['gq-3b']={kind:'gquad',level:3,label:'Parallélogramme : deux hauteurs',gen:genParaH};
+TOPICS['gq-4b']={kind:'gquad',level:4,label:'Losange : côté et diagonale',gen:genLosD};
+TOPICS['gq-5b']={kind:'gquad',level:5,label:'Trapèze isocèle',gen:genTrapIso};
+TOPICS['gp-3b']={kind:'gpyth',level:3,label:'Distance dans un repère',gen:genDistPts};
+TOPICS['gp-4b']={kind:'gpyth',level:4,label:'Diagonale d\'un pavé',gen:genDiagPave};
+TOPICS['gh-2b']={kind:'gthal',level:2,label:'Thalès : ombre et hauteur',gen:genOmbre};
+TOPICS['gh-5b']={kind:'gthal',level:5,label:'Agrandissement et réduction',gen:genAgrand};
+TOPICS['gc-3b']={kind:'gcirc',level:3,label:'Arc de cercle et secteur',gen:genArcSect};
+TOPICS['gc-4b']={kind:'gcirc',level:4,label:'Corde et distance au centre',gen:genCorde};
+TOPICS['gm-3b']={kind:'gcomp',level:3,label:'Couronne circulaire',gen:genCouronne};
+TOPICS['gm-4b']={kind:'gcomp',level:4,label:'Plaque percée (usinage)',gen:genPlaque};
+TOPICS['gang-3b']={kind:'gang',level:3,label:'Polygones réguliers : angles',gen:genPolyReg};
+
 /* ===== Corrige la copie : une copie d'élève à diagnostiquer ===== */
 const COPY_NAMES=['Léo','Emma','Noah','Mila','Luca','Zoé','Nathan','Léa','Elias','Chloé','Gabriel','Lina','Arthur','Julie'];
 /* conseils trop généraux pour désigner une erreur précise : jamais proposés comme commentaire */
@@ -4809,7 +6001,7 @@ function copyAnswer(ex,m){
     if(G.mode==='fn'){ if(m&&m.s===undefined) return null; const s=G.fn.lhs+' = '+(m?m.s:G.fn.exact); return {plain:s,lines:[M(s)]}; }
     if(!m) return {plain:ex.expectedStr,lines:[ex.expectedHtml]};
     if(!m.v) return null;
-    const us=G.unit==='°'?'°':(G.unit?' '+G.unit+(G.pow===2?'²':''):'');
+    const us=G.unit==='°'?'°':(G.unit?' '+G.unit+(G.pow===2?'²':G.pow===3?'³':''):'');
     const core=G.mode==='round'?NF(Math.round((m.v.a+m.v.b*Math.PI)*Math.pow(10,G.d))/Math.pow(10,G.d)):niceGeoPair(m.v);
     if(core==null) return null;
     return {plain:core+us,lines:[M(core)+esc(us)]};
@@ -5198,14 +6390,14 @@ function dvLineHTML(ex,d,l,i){
 /* ===== Interface : entraînement ===== */
 const $=id=>document.getElementById(id);
 let TOTAL=10;
-const KIND_LABEL={expand:'Développer',factor:'Factoriser',solve:'Résoudre',problem:'Problèmes',quad:'Second degré',system:'Systèmes',gtri:'Triangles',gquad:'Quadrilatères',gpyth:'Pythagore',gthal:'Thalès',gcirc:'Cercles',gcomp:'Figures composées',gang:'Angles'};
+const KIND_LABEL={expand:'Développer',factor:'Factoriser',solve:'Résoudre',problem:'Problèmes',quad:'Second degré',system:'Systèmes',gtri:'Triangles',gquad:'Quadrilatères',gpyth:'Pythagore',gthal:'Thalès',gcirc:'Cercles',gcomp:'Figures composées',gang:'Angles',gsol:'Solides et volumes',gtrig:'Trigonométrie'};
 const HINT_ALG='Écris une étape par ligne, ou sépare-les par =. La dernière ligne est ta réponse finale. Chaque ligne est vérifiée, ce qui permet de repérer l\'étape fautive.';
 const HINT_PB='Première ligne : l\'équation qui traduit l\'énoncé. Ensuite une ligne par étape de résolution. Termine par la solution, par exemple x = 7 ; si l\'équation a deux solutions, garde celle qui convient au problème.';
 const HINT_EQ='Écris une équation par ligne : chaque ligne doit avoir les mêmes solutions que la précédente. Termine par la solution, par exemple x = 2 (pour deux solutions : x = 2 ou x = -3 ; sinon « aucune solution » ou « tous les réels »). Fractions autorisées dans la solution : x = 3/2.';
 const RES_LABEL={clean:'Sans aide',helped:'Avec aide',shown:'Solution vue'};
 const S={mode:'mix',level:1,ex:null,n:0,results:[],log:[],status:'idle',tries:0,hints:0,recent:[],seriesErrs:{},pool:null,stepCount:1,domain:'alg',view:'train',combo:0,gxp:0,boss:null,bossNext:false};
-const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang']};
-const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']]};
+const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang','gsol','gtrig']};
+const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']]};
 const DOM_TITLE={alg:'Développer <span class="amp">&amp;</span> Factoriser',eq:'Équations',geo:'Géométrie'};
 const DOM_KICK={alg:'Algèbre · calcul littéral',eq:'Algèbre · équations, systèmes, problèmes',geo:'Géométrie plane · figures, aires et théorèmes'};
 const DOMSTORE={alg:{mode:'mix',level:1},eq:{mode:'solve',level:1},geo:{mode:'gtri',level:1}};
@@ -5255,11 +6447,17 @@ function renderSetup0(){
   $('seg-mode').innerHTML=MODES[S.domain].map(m=>'<button type="button" data-v="'+m[0]+'" aria-pressed="'+(m[0]===S.mode)+'">'+m[1]+(m[0]==='srs'&&srsDueIds(S.domain).length?' ('+srsDueIds(S.domain).length+')':'')+'</button>').join('');
   const mx=maxLevel(); if(mx&&S.level>mx) S.level=mx;
   $('seg-level').innerHTML=[0].concat(Array.from({length:mx},(_,i)=>i+1)).map(n=>'<button type="button" data-v="'+n+'" aria-pressed="'+(n===S.level)+'"'+((S.mode==='review'||S.mode==='srs'||!!S.pool)?' disabled':'')+'>'+(n?n:'Tous')+'</button>').join('');
+  const canTopic=!(S.pool||S.mode==='srs'||S.mode==='review'||S.mode==='copy');
+  const tids=canTopic?Object.keys(TOPICS).filter(id=>(S.mode==='mix'?DKINDS[S.domain].includes(TOPICS[id].kind):TOPICS[id].kind===S.mode)&&(!S.level||TOPICS[id].level===S.level)):[];
+  if(S.only&&!tids.includes(S.only)) S.only='';
+  $('field-topic').hidden=!(canTopic&&tids.length>1);
+  $('sel-topic').innerHTML='<option value="">Tous les thèmes ('+tids.length+')</option>'+tids.map(id=>'<option value="'+id+'"'+(id===S.only?' selected':'')+'>'+esc(TOPICS[id].label)+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)+'</option>').join('');
   if(S.pool){ const u=[...new Set(S.pool)]; $('topics-line').innerHTML='Série ciblée sur tes points faibles : '+u.map(id=>'<b>'+esc(TOPICS[id].label)+'</b> ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+', niv. '+TOPICS[id].level+')').join(', ')+'.'; return; }
   if(S.mode==='srs'){ const n=srsDueIds(S.domain); $('topics-line').innerHTML=n.length?'<b>À revoir</b> (+50 % d\'XP) : '+n.slice(0,6).map(id=>'<b>'+esc(TOPICS[id].label)+'</b>').join(', ')+(n.length>6?' et '+(n.length-6)+' autres':'')+'. Ces thèmes reviennent selon un calendrier (1, 3, 7, 14, 30 jours).':'<b>À revoir</b> : aucun thème n\'est à revoir aujourd\'hui. La série reprend la chasse aux erreurs.'; return; }
   if(S.mode==='copy'){ $('topics-line').innerHTML=copyTopicsLine(); return; }
   if(S.mode==='review'){ $('topics-line').innerHTML='<b>Chasse aux erreurs</b> (+50 % d\'XP) : tous les thèmes de cet onglet, avec une fréquence plus élevée pour ceux où tu as eu besoin d\'aide ou vu la solution. Tant qu\'il n\'y a pas de résultats, les thèmes sont tirés à égalité.'; return; }
-  const ids=Object.keys(TOPICS).filter(id=>(S.mode==='mix'?DKINDS[S.domain].includes(TOPICS[id].kind):TOPICS[id].kind===S.mode)&&(!S.level||TOPICS[id].level===S.level));
+  if(S.only){ $('topics-line').innerHTML='Thème travaillé : <b>'+esc(TOPICS[S.only].label)+'</b> (niv. '+TOPICS[S.only].level+').'; return; }
+  const ids=tids;
   $('topics-line').innerHTML='Thèmes travaillés : '+ids.map(id=>'<b>'+esc(TOPICS[id].label)+'</b>'+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)).join(', ')+'.';
 }
 
@@ -5270,7 +6468,7 @@ function newSeries(){
   nextExercise(true);
 }
 function nextExercise(quiet){
-  S.ex=S.mode==='copy'?copyExercise(S.pool):newExercise((S.mode==='review'||S.mode==='srs')?'mix':S.mode,S.level,S.recent,S.pool||(S.mode==='review'?reviewPool():S.mode==='srs'?(srsPool()||reviewPool()):null),S.domain);
+  S.ex=S.mode==='copy'?copyExercise(S.pool):newExercise((S.mode==='review'||S.mode==='srs')?'mix':S.mode,S.level,S.recent,S.pool||(S.only&&!S.boss?[S.only]:(S.mode==='review'?reviewPool():S.mode==='srs'?(srsPool()||reviewPool()):null)),S.domain);
   S.recent.push(S.ex.statement); if(S.recent.length>14) S.recent.shift();
   S.status='open'; S.tries=0; S.hints=0; S.stepCount=1;
   S.gold=!S.boss&&!running()&&(G.compass>0||Math.random()<GOLD_RATE+pv('luck')); if(S.gold&&G.compass>0) G.compass--; S.bet=0; S.betDone=false; S.stepUsed=false;
@@ -5295,7 +6493,7 @@ function renderExercise(quiet){
   $('feedback').className='fb';
   $('btn-check').hidden=false; $('btn-hint').hidden=false; $('btn-hint').disabled=false;
   $('btn-solution').hidden=false; $('btn-solution').textContent='Voir la solution'; $('btn-next').hidden=true;
-  updatePreview(); renderProgress(); gameRender(); funRender();
+  updatePreview(); renderProgress(); gameRender(); funRender(); attachDraw();
   if(!quiet&&!S.ex.copy) inp.focus({preventScroll:true});
 }
 
@@ -5581,6 +6779,58 @@ function courseGeo(){
   +'<div class="card"><h3>Pièges fréquents</h3>'+tbl(['Erreur fréquente','Correct'],[
       tr('Aire de triangle sans diviser par 2',M('A = b × h / 2')),tr('Périmètre = produit des côtés','Périmètre = somme des côtés'),tr('Prendre le côté oblique comme hauteur','La hauteur est perpendiculaire à la base'),
       tr('Oublier la racine dans Pythagore',M('c = √(a² + b²)')),tr('Rayon = diamètre',M('r = d / 2')),tr('Compter un segment intérieur dans le périmètre','Seul le contour compte'),tr('Cm au lieu de cm² pour une aire','Une aire s\'écrit en unités carrées')])+'</div>';
+}
+
+/* ===== Dessin sur la figure : crayon, ligne (accrochée aux sommets), gomme ===== */
+const DRAW_COL=[['#d9480f','Rouge'],['#1971c2','Bleu'],['#2f9e44','Vert']];
+const DRAW_CFG={tool:'',col:0};
+function attachDraw(){
+  document.querySelectorAll('#statement .geofig').forEach(fig=>{
+    const svg=fig.querySelector('svg'); if(!svg||fig.querySelector('.drawbar')) return;
+    const NS='http://www.w3.org/2000/svg', strokes=[];
+    const layer=document.createElementNS(NS,'g'); layer.setAttribute('class','draw-layer'); svg.appendChild(layer);
+    const bar=document.createElement('div'); bar.className='drawbar'; bar.setAttribute('role','toolbar'); bar.setAttribute('aria-label','Outils de dessin sur la figure');
+    bar.innerHTML='<span class="dlbl">Dessiner</span>'
+      +'<button type="button" data-t="pen" aria-pressed="false" title="Crayon : trait libre">Crayon</button>'
+      +'<button type="button" data-t="line" aria-pressed="false" title="Ligne droite, accrochée aux sommets de la figure">Ligne</button>'
+      +'<button type="button" data-t="erase" aria-pressed="false" title="Gomme : touche un trait pour le supprimer">Gomme</button>'
+      +DRAW_COL.map((c,i)=>'<button type="button" class="dcol" data-c="'+i+'" aria-pressed="false" aria-label="'+c[1]+'" title="'+c[1]+'" style="--dc:'+c[0]+'"></button>').join('')
+      +'<button type="button" data-a="undo" title="Annuler le dernier trait">Annuler</button><button type="button" data-a="clear" title="Tout effacer">Effacer</button>';
+    fig.appendChild(bar);
+    const sync=()=>{ bar.querySelectorAll('[data-t]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.t===DRAW_CFG.tool))); bar.querySelectorAll('[data-c]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.c===DRAW_CFG.col))); svg.classList.toggle('drawing',!!DRAW_CFG.tool); };
+    const el=s=>{ const p=document.createElementNS(NS,'path'); p.setAttribute('class','draw-s'); p.setAttribute('stroke',s.c); p.setAttribute('d',s.pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ')+(s.pts.length===1?' l0.1 0':'')); layer.appendChild(p); s.el=p; };
+    const pt=e=>{ const r=svg.getBoundingClientRect(), vb=svg.viewBox&&svg.viewBox.baseVal; if(!vb||!r.width) return [e.clientX,e.clientY]; const sc=Math.min(r.width/vb.width,r.height/vb.height), ox=(r.width-vb.width*sc)/2, oy=(r.height-vb.height*sc)/2; return [(e.clientX-r.left-ox)/sc+vb.x,(e.clientY-r.top-oy)/sc+vb.y]; };
+    const verts=()=>[...svg.querySelectorAll('.g-d')].map(c=>[+c.getAttribute('cx'),+c.getAttribute('cy')]);
+    const snap=q=>{ let b=null,bd=13; verts().forEach(v=>{ const d=Math.hypot(v[0]-q[0],v[1]-q[1]); if(d<bd){ bd=d; b=v; } }); return b?[b[0],b[1]]:q; };
+    const dseg=(p,a,b)=>{ const dx=b[0]-a[0], dy=b[1]-a[1], l=dx*dx+dy*dy, t=l?Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/l)):0; return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy); };
+    const eraseAt=q=>{ for(let i=strokes.length-1;i>=0;i--){ const s=strokes[i], P=s.pts; let d=1e9; if(P.length===1) d=Math.hypot(P[0][0]-q[0],P[0][1]-q[1]); for(let k=1;k<P.length;k++) d=Math.min(d,dseg(q,P[k-1],P[k])); if(d<10){ s.el.remove(); strokes.splice(i,1); return; } } };
+    let cur=null;
+    svg.addEventListener('pointerdown',e=>{
+      if(!DRAW_CFG.tool||(e.button!=null&&e.button>0)) return; e.preventDefault();
+      try{ svg.setPointerCapture(e.pointerId); }catch(x){}
+      let q=pt(e);
+      if(DRAW_CFG.tool==='erase'){ cur={erase:true}; eraseAt(q); return; }
+      if(DRAW_CFG.tool==='line') q=snap(q);
+      cur={t:DRAW_CFG.tool,c:DRAW_COL[DRAW_CFG.col][0],pts:[q]}; if(cur.t==='line') cur.pts.push(q.slice()); el(cur);
+    });
+    svg.addEventListener('pointermove',e=>{
+      if(!cur) return; const q=pt(e);
+      if(cur.erase){ eraseAt(q); return; }
+      if(cur.t==='pen') cur.pts.push(q); else cur.pts[1]=snap(q);
+      cur.el.setAttribute('d',cur.pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' '));
+    });
+    const end=()=>{ if(!cur) return; if(!cur.erase){ if(cur.t==='line'&&Math.hypot(cur.pts[0][0]-cur.pts[1][0],cur.pts[0][1]-cur.pts[1][1])<3) cur.el.remove(); else strokes.push(cur); } cur=null; };
+    svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+    bar.addEventListener('click',e=>{
+      const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.t) DRAW_CFG.tool=DRAW_CFG.tool===b.dataset.t?'':b.dataset.t;
+      else if(b.dataset.c){ DRAW_CFG.col=+b.dataset.c; if(!DRAW_CFG.tool||DRAW_CFG.tool==='erase') DRAW_CFG.tool='pen'; }
+      else if(b.dataset.a==='undo'){ const s=strokes.pop(); if(s) s.el.remove(); }
+      else if(b.dataset.a==='clear'){ strokes.splice(0).forEach(s=>s.el.remove()); }
+      document.querySelectorAll('#statement .geofig').forEach(f=>f.__sync&&f.__sync());
+    });
+    fig.__sync=sync; sync();
+  });
 }
 
 /* ===== Couche de jeu : XP, rangs, combo, boss, badges, boutique, records ===== */
@@ -6959,7 +8209,7 @@ function levelAdvice(kind){
   return 'les '+MX+' niveaux sont validés.';
 }
 function levelAdviceCard(){
-  const K=[['expand','Développer'],['factor','Factoriser'],['solve','Équations à une inconnue'],['system','Systèmes'],['problem','Problèmes'],['quad','Second degré'],['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités']];
+  const K=[['expand','Développer'],['factor','Factoriser'],['solve','Équations à une inconnue'],['system','Systèmes'],['problem','Problèmes'],['quad','Second degré'],['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie']];
   return '<div class="card"><h3>Où continuer</h3><ul class="plain" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">'+K.map(k=>'<li><b>'+k[1]+'</b> : '+levelAdvice(k[0])+'</li>').join('')+'</ul><p class="note">Un niveau est validé à partir de 5 exercices terminés dont 70 % réussis sans aide.</p></div>';
 }
 function init(){
@@ -6974,6 +8224,7 @@ function init(){
   });
   $('seg-mode').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; S.mode=b.dataset.v; S.pool=null; renderSetup(); newSeries(); });
   $('seg-level').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; if(b.disabled) return; S.level=+b.dataset.v; S.pool=null; renderSetup(); newSeries(); });
+  $('sel-topic').addEventListener('change',e=>{ S.only=e.target.value; S.pool=null; renderSetup(); newSeries(); });
   $('form').addEventListener('submit',e=>{ e.preventDefault(); onCheck(); });
   $('answer').addEventListener('input',updatePreview);
   $('answer').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); onCheck(); } });
