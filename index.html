@@ -5956,6 +5956,251 @@ TOPICS['gm-3b']={kind:'gcomp',level:3,label:'Couronne circulaire',gen:genCouronn
 TOPICS['gm-4b']={kind:'gcomp',level:4,label:'Plaque percée (usinage)',gen:genPlaque};
 TOPICS['gang-3b']={kind:'gang',level:3,label:'Polygones réguliers : angles',gen:genPolyReg};
 
+/* ===== Figures composées inspirées d'exercices de synthèse (vague, parallèles, billard, tunnel, pavage, parallélogramme, allumettes, médianes) ===== */
+Object.assign(TAGS,{
+  'geo-compensation':{label:'Parties qui se compensent',tip:'Quand une partie est ajoutée d\'un côté et retirée de l\'autre avec la même forme, les aires s\'annulent : on peut déplacer mentalement un morceau pour retrouver une figure simple.'},
+  'geo-rebond':{label:'Rebond : angles égaux',tip:'À la bande, l\'angle d\'arrivée est égal à l\'angle de départ. Les deux triangles rectangles formés sont semblables : leurs côtés sont proportionnels.'},
+  'geo-corde-tangente':{label:'Corde tangente au petit cercle',tip:'Si la corde est tangente au petit cercle, le rayon du petit cercle est perpendiculaire à la corde et la coupe en son milieu. Le triangle rectangle utilise la <b>moitié</b> de la corde.'},
+  'geo-mediane':{label:'Médianes d\'un triangle',tip:'Les trois médianes se coupent en un point G (centre de gravité). G est situé aux 2/3 de chaque médiane en partant du sommet, donc au 1/3 en partant du milieu du côté.'},
+  'geo-allumettes':{label:'Allumettes : triangles isocèles',tip:'Chaque allumette ferme un triangle isocèle : l\'angle avec la demi-droite augmente de α à chaque allumette (α, 2α, 3α…).'}
+});
+const thickQ=s=>s.replace('/>',' style="stroke-width:3.4"/>');
+
+/* ----- gm-7a : vague, lentille, carré moins quart de disque ----- */
+function genVagueQ(){
+  const t=pick(['vague','lentille','carre']), u=uP();
+  if(t==='vague'){
+    const k=rnd(2,5), W=4*k, Hh=2*k, A=W*k;
+    const svg=figure([[0,0],[W,Hh]],f=>{
+      const p=(x,y)=>f([x,y]), R=k*f.s, P0=p(0,0), P1=p(W,0), P2=p(W,k), P3=p(2*k,k), P4=p(0,k), ctr=p(W/2,k);
+      let out=g.poly([P0,P1,p(W,Hh),p(0,Hh)]);
+      out+=g.path(mv(P0)+LQ(P1)+LQ(P2)+arcM(P2,P3,p(3*k,0),R)+arcM(P3,P4,p(k,2*k),R)+' Z','g-f g-hl');
+      out+=g.len(P0,P1,String(W),ctr,10)+g.len(P1,p(W,Hh),String(Hh),ctr,10);
+      return out;
+    },'Rectangle partagé par une courbe formée de deux demi-cercles',{H:200,pad:34});
+    return mkGeo({svg,val:A,unit:u,pow:2,text:'Un rectangle mesure «'+W+'» '+u+' sur «'+Hh+'» '+u+'. La courbe qui le traverse est formée de deux demi-cercles de diamètre «'+Hh+'» '+u+' : l\'un bombe vers le haut, l\'autre vers le bas. Calcule l\'aire de la partie grisée, sous la courbe.',ask:'l\'aire grisée',placeholder:'demi-disque en plus = ...\ndemi-disque en moins = ...\nA = ...',
+      work:['Le demi-disque ajouté en haut et le demi-disque retiré en bas sont identiques (rayon '+k+').','A = moitié du rectangle = '+W+' × '+k+' = '+A+' '+u+'²'],
+      steps:[stp('Observer','La partie grisée = la moitié inférieure du rectangle ('+M(W+' × '+k)+'), <b>plus</b> un demi-disque en haut, <b>moins</b> un demi-disque en bas.'),stp('Compenser','Les deux demi-disques ont le même rayon '+M(k)+' : ils s\'annulent, il n\'y a pas de π.',M('A = '+W+' × '+k+' = '+A)+' '+u+'².')],hints:['Compare le demi-disque ajouté et le demi-disque retiré : sont-ils égaux ?'],
+      mistakes:[{v:{a:A,b:k*k/2},tag:'geo-compensation',msg:'Le demi-disque du bas est retiré : il compense celui du haut.',w:['A = '+W+' × '+k+' + π × '+k+'² / 2']},{v:{a:A,b:-k*k/2},tag:'geo-compensation',msg:'Le demi-disque du haut est ajouté : il compense celui du bas.',w:['A = '+W+' × '+k+' − π × '+k+'² / 2']},{v:W*Hh,tag:'geo-decomp',msg:'Tu as pris tout le rectangle : la partie grisée n\'en est que la moitié.',w:['A = '+W+' × '+Hh]}]});
+  }
+  const a=pick([2,4,6,8,10]);
+  const mid1=[a*Math.SQRT1_2,a*Math.SQRT1_2], mid2=[a-a*Math.SQRT1_2,a-a*Math.SQRT1_2];
+  if(t==='lentille'){
+    const ex=(a*a/2)+'π − '+(a*a);
+    const svg=figure([[0,0],[a,a]],f=>{
+      const p=(x,y)=>f([x,y]), R=a*f.s, A_=p(0,0), B_=p(a,0), C_=p(a,a), D_=p(0,a), ctr=p(a/2,a/2);
+      let out=g.poly([A_,B_,C_,D_])+g.path(mv(B_)+arcM(B_,D_,p(mid1[0],mid1[1]),R)+arcM(D_,B_,p(mid2[0],mid2[1]),R)+' Z','g-f g-hl');
+      out+=g.dot(A_)+g.dot(C_)+g.vert(A_,'A',ctr,13)+g.vert(B_,'B',ctr,13)+g.vert(C_,'C',ctr,13)+g.vert(D_,'D',ctr,13)+g.len(A_,B_,String(a),ctr,10);
+      return out;
+    },'Carré ABCD et deux quarts de cercle de centres A et C formant une lentille',{H:230,pad:36});
+    return mkGeo({svg,mode:'pi',exact:ex,val:{a:-a*a,b:a*a/2},unit:u,pow:2,text:'ABCD est un carré de côté «'+a+'» '+u+'. Un arc de cercle de centre A passe par B et D ; un arc de cercle de centre C passe aussi par B et D. Calcule l\'aire de la <b>lentille</b> grisée. Donne la <b>valeur exacte</b>.',ask:'l\'aire de la lentille (valeur exacte)',placeholder:'quart de disque = ...\ncarré = ...\nA = 2 × quart − carré',
+      work:['quart de disque = π × '+a+'² / 4 = '+(a*a/4)+'π','A = 2 × '+(a*a/4)+'π − '+a+'² = '+ex+' '+u+'²'],
+      steps:[stp('Deux quarts de disque','Chaque arc délimite un quart de disque de rayon '+M(a)+' : '+M('π × '+a+'² / 4 = '+(a*a/4)+'π')+'.'),stp('Le carré est compté deux fois','Les deux quarts de disque recouvrent le carré, et la lentille est la partie comptée <b>deux fois</b> :',M('A = 2 × '+(a*a/4)+'π − '+a+'² = '+ex)+' '+u+'².')],hints:['Additionne les deux quarts de disque : tu recouvres le carré, et la lentille est comptée deux fois.'],
+      mistakes:[{v:{a:0,b:a*a/2},tag:'geo-decomp',msg:'Les deux quarts de disque recouvrent aussi le carré : il faut retirer son aire.',w:['A = 2 × π × '+a+'² / 4']},{v:{a:-a*a,b:a*a/4},tag:'geo-arc-secteur',msg:'Il y a deux quarts de disque (un par arc), pas un seul.',w:['A = π × '+a+'² / 4 − '+a+'²']},{v:{a:-a*a,b:a*a},tag:'geo-arc-secteur',msg:'Deux quarts de disque font un demi-disque (πr²/2), pas un disque entier.',w:['A = π × '+a+'² − '+a+'²']},{v:{a:a*a,b:-a*a/2},tag:'geo-decomp',msg:'Le résultat est positif : (deux quarts de disque) − carré.',w:['A = '+a+'² − 2 × π × '+a+'² / 4']}]});
+  }
+  const ex=a*a+' − '+(a*a/4)+'π';
+  const svg=figure([[0,0],[a,a]],f=>{
+    const p=(x,y)=>f([x,y]), R=a*f.s, A_=p(0,0), B_=p(a,0), C_=p(a,a), D_=p(0,a), ctr=p(a/2,a/2);
+    let out=g.poly([A_,B_,C_,D_])+g.path(mv(B_)+arcM(B_,D_,p(mid1[0],mid1[1]),R)+LQ(C_)+' Z','g-f g-hl');
+    out+=g.dot(A_)+g.vert(A_,'A',ctr,13)+g.vert(B_,'B',ctr,13)+g.vert(C_,'C',ctr,13)+g.vert(D_,'D',ctr,13)+g.len(A_,B_,String(a),ctr,10);
+    return out;
+  },'Carré ABCD avec un quart de disque de centre A',{H:230,pad:36});
+  return mkGeo({svg,mode:'pi',exact:ex,val:{a:a*a,b:-a*a/4},unit:u,pow:2,text:'ABCD est un carré de côté «'+a+'» '+u+'. L\'arc de cercle de centre A passe par B et D. Calcule l\'aire de la partie <b>grisée</b>, entre l\'arc et le sommet C. Donne la <b>valeur exacte</b>.',ask:'l\'aire grisée (valeur exacte)',placeholder:'carré = ...\nquart de disque = ...\nA = carré − quart',
+    work:['carré = '+a+'² = '+(a*a),'quart de disque = π × '+a+'² / 4 = '+(a*a/4)+'π','A = '+ex+' '+u+'²'],
+    steps:[stp('Carré et quart de disque',M(a+'² = '+(a*a))+' et '+M('π × '+a+'² / 4 = '+(a*a/4)+'π')+'.'),stp('Soustraire','La partie grisée est le carré privé du quart de disque :',M('A = '+ex)+' '+u+'².')],hints:['Aire grisée = aire du carré − aire du quart de disque de rayon '+a+'.'],
+    mistakes:[{v:{a:0,b:a*a/4},tag:'geo-decomp',msg:'C\'est l\'aire du quart de disque, pas de la partie grisée.',w:['A = π × '+a+'² / 4']},{v:{a:a*a,b:-a*a/2},tag:'geo-arc-secteur',msg:'Un quart de disque vaut πr²/4 (pas πr²/2).',w:['A = '+a+'² − π × '+a+'² / 2']},{v:{a:a*a,b:-a*a},tag:'geo-arc-secteur',msg:'L\'arc ne découpe qu\'un quart de disque, pas le disque entier.',w:['A = '+a+'² − π × '+a+'²']},{v:{a:-a*a,b:a*a/4},tag:'geo-decomp',msg:'Le résultat est positif : carré − quart de disque.',w:['A = π × '+a+'² / 4 − '+a+'²']}]});
+}
+
+/* ----- gm-7b : droites parallèles et papillon (Thalès) ----- */
+function genPapillonQ(){
+  const [p,q]=pick([[2,3],[3,2],[1,2],[2,1],[3,4],[4,3],[3,5],[5,3],[4,5],[5,4]]), k=p/q, u=uP(), ask=pick(['x','y']);
+  let m,n,tt; do{ m=rnd(1,4); n=rnd(1,4); tt=rnd(1,4); }while(!(m+n>tt&&m+tt>n&&n+tt>m));
+  const OA=q*m, OD=p*m, OB=q*n, OC=p*n, AB=q*tt, CD=p*tt;
+  const ax=-(0.9+Math.random()*0.6), bx=0.7+Math.random()*0.6;
+  const A=[ax,1], B=[bx,1], D=[-k*ax,-k], C=[-k*bx,-k], O=[0,0];
+  const svg=figure([A,B,C,D,[ax-0.5,1],[bx+0.5,1],[-k*bx-0.5,-k],[-k*ax+0.5,-k]],f=>{
+    const a=f(A),b=f(B),c=f(C),d=f(D),o=f(O), cx=cen([a,b,c,d]);
+    const x1=Math.min(a[0],b[0])-22, x2=Math.max(a[0],b[0])+22, y1=a[1], x3=Math.min(c[0],d[0])-22, x4=Math.max(c[0],d[0])+22, y2=c[1];
+    let out=g.seg([x1,y1],[x2,y1],'g-thin')+g.seg([x3,y2],[x4,y2],'g-thin')+g.text([x2+3,y1-11],'d1','g-t','start')+g.text([x4+3,y2+11],'d2','g-t','start');
+    out+=g.seg(a,d,'')+g.seg(b,c,'')+g.seg(a,b,'')+g.seg(c,d,'')+g.par(a,b,1)+g.par(c,d,1);
+    out+=g.dot(a)+g.dot(b)+g.dot(c)+g.dot(d)+g.dot(o);
+    out+=g.vert(a,'A',o,13)+g.vert(b,'B',o,13)+g.vert(c,'C',o,13)+g.vert(d,'D',o,13)+g.text(vadd(o,[11,-1]),'O','g-v','start');
+    out+=g.len(o,a,String(OA),b,9)+g.len(o,d,String(OD),c,9);
+    if(ask==='x'){ out+=g.len(o,b,String(OB),a,9)+g.len(o,c,'?',d,9,'g-u'); }
+    else { out+=g.len(a,b,String(AB),o,8)+g.len(c,d,'?',o,8,'g-u'); }
+    return out;
+  },'Deux droites parallèles coupées par deux droites sécantes en O (configuration en papillon)',{H:250,pad:40});
+  const kt=p+'/'+q, base='Les droites (d1) et (d2) sont <b>parallèles</b>. Les droites (AD) et (BC) se coupent en O, avec A et B sur (d1), C et D sur (d2). ';
+  if(ask==='x') return mkGeo({svg,val:OC,unit:u,text:base+'On a OA = «'+OA+'» '+u+', OD = «'+OD+'» '+u+' et OB = «'+OB+'» '+u+'. Calcule OC.',ask:'OC',placeholder:'OD / OA = OC / OB',
+    work:['OD / OA = OC / OB','OC = '+OD+' × '+OB+' / '+OA+' = '+OC+' '+u],steps:[stp('Thalès (papillon)','Comme (AB) ∥ (CD), les triangles OAB et ODC ont des côtés proportionnels :',M('OD / OA = OC / OB')),stp('Calcul',M('OC = '+OD+' × '+OB+' / '+OA+' = '+OC)+' '+u)],hints:['Associe bien OD avec OA, et OC avec OB : le rapport est le même.'],
+    mistakes:[{v:OB+(OD-OA),tag:'geo-thales-additif',msg:'Les longueurs sont proportionnelles (on multiplie), elles ne s\'additionnent pas.',w:['OC = '+OB+' + ('+OD+' − '+OA+')']},{v:OB*OA/OD,tag:'geo-thales-inverse',msg:'Tu as inversé le rapport : OC et OD sont du même côté.',w:['OC = '+OB+' × '+OA+' / '+OD]},{v:OD*OA/OB,tag:'geo-thales-inverse',msg:'OC est associé à OB, pas à OA.',w:['OC = '+OD+' × '+OA+' / '+OB]}].filter(m_=>Math.abs(m_.v-OC)>1e-6)});
+  return mkGeo({svg,val:CD,unit:u,text:base+'On a OA = «'+OA+'» '+u+', OD = «'+OD+'» '+u+' et AB = «'+AB+'» '+u+'. Calcule CD.',ask:'CD',placeholder:'OD / OA = CD / AB',
+    work:['OD / OA = CD / AB','CD = '+OD+' × '+AB+' / '+OA+' = '+CD+' '+u],steps:[stp('Thalès (papillon)','Comme (AB) ∥ (CD), le rapport des longueurs est le même :',M('OD / OA = CD / AB')),stp('Calcul',M('CD = '+OD+' × '+AB+' / '+OA+' = '+CD)+' '+u)],hints:['Le rapport OD / OA est le même que CD / AB.'],
+    mistakes:[{v:AB+(OD-OA),tag:'geo-thales-additif',msg:'Les longueurs sont proportionnelles (on multiplie), elles ne s\'additionnent pas.',w:['CD = '+AB+' + ('+OD+' − '+OA+')']},{v:AB*OA/OD,tag:'geo-thales-inverse',msg:'Tu as inversé le rapport : CD et OD sont du même côté.',w:['CD = '+AB+' × '+OA+' / '+OD]},{v:OD,tag:'geo-thales-inverse',msg:'CD n\'est pas égal à OD : calcule le rapport OD / OA et applique-le à AB.',w:['CD = '+OD]}].filter(m_=>Math.abs(m_.v-CD)>1e-6)});
+}
+
+/* ----- gm-7c : billard, rebond sur la bande ----- */
+function genBillardQ(){
+  let p,q; do{ p=rnd(1,5); q=rnd(1,5); }while(p===q);
+  const s=p+q, mm=s<=5?2:((s<=8&&Math.random()<0.4)?2:1), a=10*p, b=10*q, D=10*s*mm, x=10*p*mm, Ht=Math.max(a,b)*1.25+10, e=0.09*D;
+  const svg=figure([[-e,0],[D+e,Ht],[0,-Ht*0.55]],f=>{
+    const Hf=f([0,0]), Kf=f([D,0]), Pf=f([x,0]), Af=f([0,a]), Bf=f([D,b]), tl=f([-e,Ht]), tr=f([D+e,Ht]), bl=f([-e,0]), br=f([D+e,0]), ctr=f([D/2,a/2]);
+    let out=g.poly([bl,br,tr,tl])+g.seg(bl,br,'').replace('/>',' style="stroke-width:3.6"/>');
+    out+=g.seg(Hf,Af,'g-dash')+g.seg(Kf,Bf,'g-dash')+thickQ(g.seg(Af,Pf,''))+thickQ(g.seg(Pf,Bf,''));
+    out+=g.right(Hf,Af,Pf,8)+g.right(Kf,Bf,Pf,8)+g.arc(Pf,Af,Hf,15)+g.arc(Pf,Af,Hf,19)+g.arc(Pf,Bf,Kf,15)+g.arc(Pf,Bf,Kf,19);
+    out+=g.dot(Pf)+g.dot(Af)+g.dot(Bf)+g.text(vadd(Af,[0,-12]),'A','g-v')+g.text(vadd(Bf,[0,-12]),'B','g-v')+g.text(vadd(Hf,[-9,12]),'H','g-v')+g.text(vadd(Kf,[9,12]),'K','g-v')+g.text(vadd(Pf,[0,13]),'P','g-v');
+    out+=g.text(vadd(vmid(Hf,Af),[-9,0]),String(a),'g-t','end')+g.text(vadd(vmid(Kf,Bf),[9,0]),String(b),'g-t','start');
+    out+=g.dim(Hf,Pf,'x',Af,30,'g-u')+g.dim(Hf,Kf,String(D),Af,52);
+    return out;
+  },'Table de billard : une bille rebondit sur la bande en P',{H:240,pad:26});
+  const u='cm';
+  return mkGeo({svg,val:x,unit:u,text:'Sur une table de billard, la bille A est à «'+a+'» cm de la bande du bas ; la bille B est à «'+b+'» cm de cette même bande. H et K sont les pieds des perpendiculaires à la bande issues de A et de B, avec HK = «'+D+'» cm. La bille A part, touche la bande en P, puis atteint B : à la bande, l\'angle d\'arrivée est égal à l\'angle de départ. Calcule x = HP.',ask:'x = HP',placeholder:'x / (D − x) = a / b',
+    work:['Triangles AHP et BKP semblables : HP / KP = AH / BK','x / ('+D+' − x) = '+a+' / '+b,x+' = '+D+' × '+a+' / ('+a+' + '+b+') = '+x+' cm'].slice(0,3),
+    steps:[stp('Triangles semblables','Les triangles AHP et BKP ont un angle droit et des angles égaux en P (rebond) : ils sont semblables.'),stp('Proportion',M('HP / KP = AH / BK')+', soit '+M('x / ('+D+' − x) = '+a+' / '+b)+'.'),stp('Résoudre',M(b+'x = '+a+'('+D+' − x)')+', donc '+M('x = '+D+' × '+a+' / ('+a+' + '+b+') = '+x)+' cm.')],hints:['Les deux triangles rectangles sont semblables : HP / KP = AH / BK, avec KP = HK − x.'],
+    mistakes:[{v:D/2,tag:'geo-rebond',msg:'P n\'est le milieu que si les deux billes sont à la même distance de la bande.',w:['x = '+D+' / 2']},{v:D*b/(a+b),tag:'geo-thales-inverse',msg:'Tu as inversé le rapport : P est plus proche de la bille la plus proche de la bande.',w:['x = '+D+' × '+b+' / ('+a+' + '+b+')']},{v:D*a/b,tag:'geo-thales-inverse',msg:'Le rapport est a / (a + b), car x + (D − x) = D.',w:['x = '+D+' × '+a+' / '+b]},{v:a,tag:'geo-rebond',msg:'x n\'est pas égal à la distance AH : il faut utiliser la proportionnalité des triangles.',w:['x = '+a]}].filter(m_=>Math.abs(m_.v-x)>1e-6)});
+}
+
+/* ----- gm-7d : tunnel à voûte semi-circulaire ----- */
+function genTunnelQ(){
+  const [R,hw,h]=pick([[5,3,4],[5,4,3],[10,6,8],[10,8,6],[13,5,12],[13,12,5],[6.5,2.5,6],[6.5,6,2.5],[7.5,4.5,6],[7.5,6,4.5]]), w=2*hw, e=R-hw, v=pick(['larg','marge']);
+  const svg=figure([[-R,0],[R,R]],f=>{
+    const O=f([0,0]), Rp=R*f.s, L0=f([-R,0]), R0=f([R,0]), top=f([0,R]), v0=f([-hw,0]), v1=f([hw,0]), v2=f([hw,h]), v3=f([-hw,h]), ctr=f([0,h]);
+    let out=g.path(mv(L0)+arcM(L0,R0,top,Rp)+' Z','g-f')+g.poly([v0,v1,v2,v3],'g-hl')+g.seg(O,v2,'g-dash')+g.dot(O);
+    const u1=vunit(vsub(v2,O)), mid=vmid(O,v2), nr=vmul(vperp(u1),11);
+    out+=g.text(vadd(vadd(O,vmul(vsub(v2,O),0.55)),nr),String(R),'g-t');
+    out+=g.text(f([-hw*0.45,h*0.55]),'h = ?','g-u');
+    out+=v==='larg'?g.dim(v0,v1,String(w),ctr,20):g.dim(L0,v0,String(NF(e)),ctr,20);
+    return out;
+  },'Tunnel à voûte semi-circulaire et véhicule rectangulaire',{H:230,pad:36});
+  const txt='La section d\'un tunnel est formée d\'un sol plat et d\'une voûte en demi-cercle de rayon «'+NF(R)+'» m. Un véhicule de section rectangulaire roule au centre ; il passe <b>tout juste</b> : ses deux coins supérieurs touchent la voûte. ';
+  const q1=v==='larg'?'Sa largeur est de «'+NF(w)+'» m. Calcule sa hauteur maximale h.':'Il reste «'+NF(e)+'» m entre chaque côté du véhicule et la paroi, au niveau du sol. Calcule sa hauteur maximale h.';
+  const pre=v==='larg'?[]:['demi-largeur = '+NF(R)+' − '+NF(e)+' = '+NF(hw)];
+  const mis=[{v:R-hw,tag:'geo-pyth-cote',msg:'Tu as soustrait les longueurs au lieu d\'utiliser Pythagore.',w:['h = '+NF(R)+' − '+NF(hw)]},{v:Math.sqrt(R*R+hw*hw),tag:'geo-pyth-cote',msg:'Le rayon R est l\'hypoténuse : h² = R² − (demi-largeur)², pas une somme.',w:['h = √('+NF(R)+'² + '+NF(hw)+'²)']},{v:R,tag:'geo-pyth-cote',msg:'La hauteur de la voûte au centre vaut R, mais le véhicule touche la voûte sur les côtés, plus bas.',w:['h = '+NF(R)]}];
+  if(v==='larg') mis.push({v:Math.sqrt(R*R-w*w),tag:'geo-racine',msg:'Dans le triangle rectangle, le côté horizontal est la <b>moitié</b> de la largeur.',w:['h = √('+NF(R)+'² − '+NF(w)+'²)']});
+  else mis.push({v:Math.sqrt(R*R-e*e),tag:'geo-racine',msg:'Le côté horizontal est la demi-largeur du véhicule, R − '+NF(e)+', pas la marge.',w:['h = √('+NF(R)+'² − '+NF(e)+'²)']});
+  return mkGeo({svg,val:h,unit:'m',text:txt+q1,ask:'la hauteur h',placeholder:'demi-largeur = ...\nh² + demi-largeur² = R²',
+    work:pre.concat(['h² = '+NF(R)+'² − '+NF(hw)+'² = '+NF(R*R-hw*hw),'h = √'+NF(R*R-hw*hw)+' = '+NF(h)+' m']),
+    steps:(v==='larg'?[stp('Demi-largeur',M(NF(w)+' / 2 = '+NF(hw)))]:[stp('Demi-largeur',M(NF(R)+' − '+NF(e)+' = '+NF(hw)))]).concat([stp('Pythagore','Le centre du sol O, le coin du véhicule et sa projection sur le sol forment un triangle rectangle d\'hypoténuse '+M('R = '+NF(R))+'.',M('h² = '+NF(R)+'² − '+NF(hw)+'² = '+NF(R*R-hw*hw))),stp('Racine',M('h = √'+NF(R*R-hw*hw)+' = '+NF(h))+' m')]),
+    hints:['Trace le rayon jusqu\'au coin du véhicule : il forme un triangle rectangle avec la demi-largeur et la hauteur.'],mistakes:mis.filter(m_=>Math.abs(m_.v-h)>1e-6)});
+}
+
+/* ----- gm-7e : surface pavée (corde tangente au petit cercle) ----- */
+function genPaveeQ(){
+  const ask=pick(['aire','aire','rayon']), u=pick(['m','m','cm']);
+  if(ask==='aire'){
+    const hh=pick([3,4,5,6,8,10,12,15]), c=2*hh, r0=hh*0.7, R0=Math.sqrt(r0*r0+hh*hh);
+    const svg=figure([[-R0,-R0],[R0,R0]],f=>{
+      const O=f([0,0]), A=f([-hh,r0]), B=f([hh,r0]), Mp=f([0,r0]);
+      let out=g.circle(O,R0*f.s,'g-circle')+g.circle(O,r0*f.s,'g-hole')+g.seg(A,B,'')+g.seg(O,Mp,'g-dash')+g.right(Mp,O,B,8)+g.dot(O)+g.dot(Mp)+g.dot(A)+g.dot(B);
+      out+=g.text(vadd(O,[9,10]),'O','g-v')+g.text(vadd(Mp,[0,-12]),'M','g-v')+g.len(A,B,String(c),O,32)+g.text(vadd(A,[-10,-10]),'A','g-v')+g.text(vadd(B,[10,-10]),'B','g-v');
+      return out;
+    },'Anneau et corde du grand cercle tangente au petit cercle',{H:240,pad:36});
+    return mkGeo({svg,mode:'pi',val:{a:0,b:hh*hh},unit:u,pow:2,text:'Une allée circulaire est comprise entre deux cercles de même centre O. La corde [AB] du grand cercle mesure «'+c+'» '+u+' et elle est <b>tangente</b> au petit cercle en M. Calcule l\'aire de l\'allée (la couronne). Donne la <b>valeur exacte</b>.',ask:'l\'aire de la couronne (valeur exacte)',placeholder:'AM = ...\nR² − r² = AM²\nA = π(R² − r²)',
+      work:['M est le milieu de [AB] : AM = '+c+' / 2 = '+hh,'Dans OMA : R² = r² + AM², donc R² − r² = '+hh+'² = '+(hh*hh),'A = π(R² − r²) = '+(hh*hh)+'π '+u+'²'],
+      steps:[stp('Demi-corde','La corde est tangente au petit cercle : '+M('OM ⊥ AB')+' et M est le milieu de [AB]. '+M('AM = '+c+' / 2 = '+hh)),stp('Pythagore dans OMA',M('OA² = OM² + AM²')+', c\'est-à-dire '+M('R² = r² + '+hh+'²')+', donc '+M('R² − r² = '+(hh*hh))+'. (On ne connaît ni R ni r, mais on n\'en a pas besoin.)'),stp('Aire de la couronne',M('A = πR² − πr² = π(R² − r²) = '+(hh*hh)+'π')+' '+u+'².')],hints:['Trace OA et OM : le triangle OMA est rectangle en M. Que vaut R² − r² ?'],
+      mistakes:[{v:{a:0,b:c*c},tag:'geo-corde-tangente',msg:'Dans le triangle rectangle, on utilise la <b>moitié</b> de la corde (AM), pas la corde entière.',w:['A = π × '+c+'²']},{v:{a:0,b:hh},tag:'geo-aire-pi',msg:'Une aire donne un carré : R² − r² = AM² = '+(hh*hh)+', et non AM.',w:['A = π × '+hh]},{v:{a:0,b:2*hh},tag:'geo-aire-pi',msg:'Ce n\'est pas un périmètre : l\'aire de la couronne est π(R² − r²) = π × AM².',w:['A = π × '+c]},{v:{a:0,b:hh*hh/4},tag:'geo-corde-tangente',msg:'AM = '+hh+' (moitié de la corde) et on le met au carré : '+(hh*hh)+'.',w:['A = π × ('+hh+' / 2)²']}]});
+  }
+  const [r,hh,R]=pick([[3,4,5],[5,12,13],[6,8,10],[8,6,10],[12,5,13],[9,12,15],[4,3,5]]), c=2*hh;
+  const rd=r*0.55*1.0, hd=hh*0.55, Rd=Math.sqrt(rd*rd+hd*hd);
+  const svg=figure([[-Rd,-Rd],[Rd,Rd]],f=>{
+    const O=f([0,0]), A=f([-hd,rd]), B=f([hd,rd]), Mp=f([0,rd]);
+    let out=g.circle(O,Rd*f.s,'g-circle')+g.circle(O,rd*f.s,'g-hole')+g.seg(A,B,'')+g.seg(O,Mp,'g-dash')+g.seg(O,A,'g-dash')+g.right(Mp,O,B,8)+g.dot(O)+g.dot(Mp)+g.dot(A)+g.dot(B);
+    out+=g.text(vadd(O,[9,10]),'O','g-v')+g.text(vadd(Mp,[0,-12]),'M','g-v')+g.len(A,B,String(c),O,32)+g.text(vadd(vmid(O,Mp),[9,2]),String(r),'g-t','start')+g.text(vadd(vmid(O,A),[-9,8]),'?','g-u','end')+g.text(vadd(A,[-10,-10]),'A','g-v')+g.text(vadd(B,[10,-10]),'B','g-v');
+    return out;
+  },'Anneau, corde tangente au petit cercle et rayon du grand cercle',{H:240,pad:36});
+  return mkGeo({svg,val:R,unit:u,text:'Deux cercles ont le même centre O. Le petit a pour rayon «'+r+'» '+u+'. La corde [AB] du grand cercle mesure «'+c+'» '+u+' et elle est <b>tangente</b> au petit cercle en M. Calcule le rayon R du grand cercle.',ask:'le rayon R du grand cercle',placeholder:'AM = ...\nR² = OM² + AM²',
+    work:['M milieu de [AB] : AM = '+c+' / 2 = '+hh,'R² = '+r+'² + '+hh+'² = '+(r*r+hh*hh),'R = √'+(r*r+hh*hh)+' = '+R+' '+u],
+    steps:[stp('Demi-corde',M('OM ⊥ AB')+' et M est le milieu de [AB] : '+M('AM = '+c+' / 2 = '+hh)),stp('Pythagore dans OMA',M('R² = OM² + AM² = '+r+'² + '+hh+'² = '+(r*r+hh*hh))),stp('Racine',M('R = √'+(r*r+hh*hh)+' = '+R)+' '+u)],hints:['Le triangle OMA est rectangle en M ; son hypoténuse est le rayon OA.'],
+    mistakes:[{v:r+hh,tag:'geo-pyth-somme',msg:'Pythagore s\'applique aux carrés : R² = r² + AM², pas R = r + AM.',w:['R = '+r+' + '+hh]},{v:Math.sqrt(r*r+c*c),tag:'geo-corde-tangente',msg:'Il faut la moitié de la corde (AM = '+hh+'), pas la corde entière.',w:['R = √('+r+'² + '+c+'²)']},{v:Math.sqrt(Math.abs(hh*hh-r*r)),tag:'geo-pyth-cote',msg:'Le rayon R est l\'hypoténuse : on additionne les carrés des deux côtés de l\'angle droit.',w:['R = √('+hh+'² − '+r+'²)']}].filter(m_=>Math.abs(m_.v-R)>1e-6&&m_.v>0)});
+}
+
+/* ----- gm-7f : triangles semblables dans un parallélogramme ----- */
+function genParaSembQ(){
+  const [p,q]=pick([[1,2],[2,1],[1,3],[3,1],[2,3],[3,2],[1,1]]), t=rnd(1,4), u=uP(), ask=pick(['CF','BF']);
+  const ab=q*rnd(2,4), ce=p*(ab/q), bc=(ab+ce)*t, FC=ce*t, FB=ab*t;
+  const sk=ab*0.35, hh=ab*0.8;
+  const A=[0,0], B=[ab,0], D=[sk,hh], C=[ab+sk,hh], E=[ab+sk+ce,hh], F=[ab+sk*ab/(ab+ce),hh*ab/(ab+ce)];
+  const svg=figure([A,B,C,D,E],f=>{
+    const a=f(A),b=f(B),c=f(C),d=f(D),e_=f(E),ff=f(F), ct=cen([a,b,c,d]);
+    let out=g.poly([a,b,c,d])+g.seg(c,e_,'')+g.seg(a,e_,'g-dash')+g.par(a,b,1)+g.par(d,c,1);
+    out+=g.dot(a)+g.dot(b)+g.dot(c)+g.dot(d)+g.dot(e_)+g.dot(ff);
+    out+=g.vert(a,'A',ct,13)+g.vert(b,'B',ct,13)+g.vert(d,'D',ct,13)+g.text(vadd(c,[2,-13]),'C','g-v')+g.vert(e_,'E',ct,13)+g.text(vadd(ff,[-11,9]),'F','g-v','end');
+    out+=g.len(a,b,String(ab),ct,10)+g.len(c,e_,String(ce),a,8)+g.len(b,c,String(bc),a,16);
+    return out;
+  },'Parallélogramme ABCD, point E sur le prolongement de [DC] et point F sur [BC]',{H:240,pad:38});
+  const base='ABCD est un parallélogramme. Le point E est sur le prolongement de [DC], au-delà de C. La droite (AE) coupe le côté [BC] en F. On donne AB = «'+ab+'» '+u+', CE = «'+ce+'» '+u+' et BC = «'+bc+'» '+u+'. (Les triangles FAB et FEC sont semblables, car (AB) ∥ (CE).) ';
+  const sol=ask==='CF'?FC:FB, nm=ask==='CF'?'CF':'BF';
+  const mis=ask==='CF'?[{v:bc*ce/ab,tag:'geo-thales-additif',msg:'FC et FB sont les deux parties de BC : FB + FC = BC. Le rapport est CE / (AB + CE).',w:['CF = '+bc+' × '+ce+' / '+ab]},{v:bc*ab/(ab+ce),tag:'geo-thales-inverse',msg:'Tu as calculé BF : CF correspond à CE (côté de E), BF à AB.',w:['CF = '+bc+' × '+ab+' / ('+ab+' + '+ce+')']},{v:bc/2,tag:'geo-rebond',msg:'F n\'est le milieu de [BC] que si CE = AB.',w:['CF = '+bc+' / 2']},{v:ce,tag:'geo-thales-inverse',msg:'CF n\'est pas égal à CE : ce sont des côtés homologues, il faut le rapport.',w:['CF = '+ce]}]
+    :[{v:bc*ab/ce,tag:'geo-thales-additif',msg:'FB et FC sont les deux parties de BC : le rapport est AB / (AB + CE).',w:['BF = '+bc+' × '+ab+' / '+ce]},{v:bc*ce/(ab+ce),tag:'geo-thales-inverse',msg:'Tu as calculé CF : BF correspond à AB, CF à CE.',w:['BF = '+bc+' × '+ce+' / ('+ab+' + '+ce+')']},{v:bc/2,tag:'geo-rebond',msg:'F n\'est le milieu de [BC] que si CE = AB.',w:['BF = '+bc+' / 2']},{v:ab,tag:'geo-thales-inverse',msg:'BF n\'est pas égal à AB : il faut appliquer le rapport.',w:['BF = '+ab]}];
+  const num=ask==='CF'?ce:ab;
+  return mkGeo({svg,val:sol,unit:u,text:base+'Calcule '+nm+'.',ask:nm,placeholder:'FC / FB = CE / AB\nFB + FC = BC',
+    work:['FC / FB = CE / AB = '+ce+' / '+ab,'FB + FC = '+bc,nm+' = '+bc+' × '+num+' / ('+ab+' + '+ce+') = '+sol+' '+u],
+    steps:[stp('Triangles semblables','(AB) ∥ (CE), donc FAB et FEC sont semblables :',M('FC / FB = CE / AB = '+ce+' / '+ab)),stp('Partager BC','F est sur [BC] : '+M('FB + FC = '+bc)+'. Les parties sont dans le rapport '+M(ab+' : '+ce)+', c\'est-à-dire que BC est partagé en '+M(ab+' + '+ce+' = '+(ab+ce))+' parts égales de '+M(bc+' / '+(ab+ce)+' = '+t)+' '+u+'.'),stp('Résultat',M(nm+' = '+num+' × '+t+' = '+sol)+' '+u)],
+    hints:['Dans des triangles semblables, FC / FB = CE / AB. Ajoute la condition FB + FC = BC.'],mistakes:mis.filter(m_=>Math.abs(m_.v-sol)>1e-6)});
+}
+
+/* ----- gm-7g : allumettes et angle α ----- */
+function genAllumQ(){
+  const m=pick([3,4,5,6,8]), al=90/m, r=al*Math.PI/180, d1=[1,0], d2=[Math.cos(r),Math.sin(r)];
+  const pts=[[0,0],d1]; let mx=1;
+  for(let j=2;j<=m;j++){ const ray=j%2?d1:d2, P=pts[j-1], b=ray[0]*P[0]+ray[1]*P[1], disc=b*b-(P[0]*P[0]+P[1]*P[1])+1, tt=b+Math.sqrt(Math.max(0,disc)); pts.push([ray[0]*tt,ray[1]*tt]); mx=Math.max(mx,tt); }
+  const rl=mx*1.1;
+  const svg=figure(pts.concat([[d1[0]*rl,0],[d2[0]*rl,d2[1]*rl]]),f=>{
+    const O=f([0,0]), P=pts.map(f);
+    let out=g.seg(O,f([d1[0]*rl,0]),'g-thin g-dash')+g.seg(O,f([d2[0]*rl,d2[1]*rl]),'g-thin g-dash');
+    for(let j=1;j<=m;j++) out+=thickQ(g.seg(P[j-1],P[j],''));
+    out+=g.right(P[m-1],P[m],O,9)+g.dot(O)+g.arc(O,f(d1),f(d2),24)+g.text(vadd(O,[-9,-3]),'α','g-u','end');
+    return out;
+  },m+' allumettes de même longueur posées en zigzag entre deux demi-droites',{H:220,pad:30});
+  const ex=NF(al);
+  return mkGeo({svg,val:al,unit:'°',text:'«'+m+'» allumettes de <b>même longueur</b> sont posées en zigzag entre deux demi-droites qui forment un angle α. La première allumette est posée le long de la première demi-droite, à partir de leur point commun O ; chaque allumette suivante a une extrémité sur la demi-droite opposée. La dernière allumette forme un <b>angle droit</b> avec la demi-droite sur laquelle elle prend appui à son départ. Calcule α.',ask:'l\'angle α',placeholder:'α + (m − 1)α + 90° = 180°',
+    work:['Dernier triangle : angle en O = α, angle à l\'arrivée = '+(m-1)+'α, angle droit au départ','α + '+(m-1)+'α + 90° = 180°',''+m+'α = 90° donc α = 90 / '+m+' = '+ex+'°'],
+    steps:[stp('Triangles isocèles','Deux allumettes consécutives ont la même longueur : chaque triangle est isocèle. L\'angle de la 2e allumette avec la demi-droite vaut α, celui de la 3e vaut 2α, celui de la 4e vaut 3α…'),stp('Dernier triangle','Pour la '+m+'e allumette : angle en O = α, angle à l\'arrivée = '+M((m-1)+'α')+', angle droit au départ. La somme vaut 180° :',M('α + '+(m-1)+'α + 90 = 180')+', donc '+M(m+'α = 90')),stp('Calcul',M('α = 90 / '+m+' = '+ex)+'°')],
+    hints:['Dans le triangle formé avec la dernière allumette, la somme des angles vaut 180°.'],
+    mistakes:[{v:90/(m-1),tag:'geo-allumettes',msg:'Il y a '+m+' fois l\'angle α dans la somme : α + '+(m-1)+'α = '+m+'α.',w:['α = 90 / '+(m-1)]},{v:90/(m+1),tag:'geo-allumettes',msg:'α + '+(m-1)+'α fait '+m+'α, pas '+(m+1)+'α.',w:['α = 90 / '+(m+1)]},{v:180/m,tag:'geo-allumettes',msg:'Un angle droit vaut 90° : la somme des deux autres angles est 90°, pas 180°.',w:['α = 180 / '+m]},{v:90*m,tag:'geo-allumettes',msg:'On divise 90° par m, on ne le multiplie pas.',w:['α = 90 × '+m]}].filter(m_=>Math.abs(m_.v-al)>1e-6)});
+}
+
+/* ----- gm-7h : vol d'oiseau (médianes et centre de gravité) ----- */
+function genMedianeQ(){
+  const ask=pick(['AG','GI','AI','somme']), thing=pick(['hélicoptères','drones','bateaux']), u=pick(['km','km','m']), tA=rnd(4,20), tB=rnd(4,20);
+  const AI=3*tA, BJ=3*tB;
+  const A=[0,0], B=[5.2,0], C=[1.6+Math.random()*2.8,3.6+Math.random()*0.8], I=vmid(B,C), J=vmid(A,C), G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];
+  const svg=figure([A,B,C],f=>{
+    const a=f(A),b=f(B),c=f(C),i=f(I),j=f(J),gg=f(G), ct=cen([a,b,c]);
+    const place=(P,Q,frac,lab,away)=>{ const m=vadd(P,vmul(vsub(Q,P),frac)); let n=vunit(vperp(vsub(Q,P))); if(vdot(n,vsub(m,away))<0) n=vmul(n,-1); return g.text(vadd(m,vmul(n,12+String(lab).length*3)),lab,'g-t'); };
+    let out=g.poly([a,b,c])+thickQ(g.seg(a,i,''))+thickQ(g.seg(b,j,''))+g.tick(b,i,1)+g.tick(i,c,1)+g.tick(a,j,2)+g.tick(j,c,2);
+    out+=g.dot(a)+g.dot(b)+g.dot(c)+g.dot(i)+g.dot(j)+g.dot(gg)+g.vert(a,'A',ct,13)+g.vert(b,'B',ct,13)+g.vert(c,'C',ct,13)+g.vert(i,'I',ct,13)+g.vert(j,'J',ct,13)+g.text(vadd(gg,[0,15]),'G','g-v');
+    if(ask==='AG'||ask==='GI') out+=place(a,i,0.4,String(AI),c);
+    else if(ask==='AI') out+=place(a,gg,0.5,String(2*tA),c);
+    else out+=place(a,i,0.4,String(AI),c)+place(b,j,0.4,String(BJ),c);
+    return out;
+  },'Triangle ABC avec ses médianes (AI) et (BJ) qui se coupent en G',{H:250,pad:38});
+  const base='Un terrain triangulaire ABC est survolé par deux '+thing+' : l\'un part de A et rejoint le milieu I du côté [BC], l\'autre part de B et rejoint le milieu J du côté [AC]. Leurs trajets (AI) et (BJ) se croisent en G. ';
+  const mkSteps=(l)=>[stp('Médianes','(AI) et (BJ) sont deux <b>médianes</b> du triangle ; G est leur point d\'intersection (centre de gravité).'),stp('Propriété','G est aux '+M('2/3')+' de chaque médiane en partant du sommet : '+M('AG = (2/3) × AI')+' et '+M('GI = (1/3) × AI')+'.')].concat(l);
+  if(ask==='AG') return mkGeo({svg,val:2*tA,unit:u,text:base+'On a AI = «'+AI+'» '+u+'. Calcule la distance AG.',ask:'AG',placeholder:'AG = 2/3 × AI',
+    work:['AG = (2/3) × AI = (2/3) × '+AI+' = '+2*tA+' '+u],steps:mkSteps([stp('Calcul',M('AG = (2/3) × '+AI+' = '+2*tA)+' '+u)]),hints:['G se trouve aux deux tiers de la médiane, en partant du sommet A.'],
+    mistakes:[{v:AI/2,tag:'geo-mediane',msg:'G n\'est pas le milieu de [AI] : il est aux 2/3 en partant de A.',w:['AG = '+AI+' / 2']},{v:AI/3,tag:'geo-mediane',msg:'1/3 est la distance GI (depuis le milieu I). AG vaut les 2/3.',w:['AG = '+AI+' / 3']},{v:AI*2,tag:'geo-mediane',msg:'AG est une partie de AI : elle est plus courte que AI.',w:['AG = 2 × '+AI]}].filter(m_=>Math.abs(m_.v-2*tA)>1e-6)});
+  if(ask==='GI') return mkGeo({svg,val:tA,unit:u,text:base+'On a AI = «'+AI+'» '+u+'. Calcule la distance GI.',ask:'GI',placeholder:'GI = 1/3 × AI',
+    work:['GI = (1/3) × AI = '+AI+' / 3 = '+tA+' '+u],steps:mkSteps([stp('Calcul',M('GI = (1/3) × '+AI+' = '+tA)+' '+u)]),hints:['G est au tiers de la médiane en partant du milieu I.'],
+    mistakes:[{v:AI/2,tag:'geo-mediane',msg:'G n\'est pas le milieu de [AI].',w:['GI = '+AI+' / 2']},{v:2*AI/3,tag:'geo-mediane',msg:'Les 2/3 correspondent à AG (depuis le sommet). GI est le tiers restant.',w:['GI = (2/3) × '+AI]}].filter(m_=>Math.abs(m_.v-tA)>1e-6)});
+  if(ask==='AI') return mkGeo({svg,val:AI,unit:u,text:base+'On a AG = «'+(2*tA)+'» '+u+'. Calcule la longueur du trajet complet AI.',ask:'AI',placeholder:'AG = 2/3 × AI',
+    work:['AG = (2/3) × AI, donc AI = (3/2) × AG = (3/2) × '+2*tA+' = '+AI+' '+u],steps:mkSteps([stp('Calcul à l\'envers',M('AI = (3/2) × AG = (3/2) × '+2*tA+' = '+AI)+' '+u)]),hints:['AG représente 2 tiers de AI : un tiers vaut AG / 2.'],
+    mistakes:[{v:4*tA,tag:'geo-mediane',msg:'G n\'est pas le milieu de [AI] : AI n\'est pas le double de AG.',w:['AI = 2 × '+2*tA]},{v:tA,tag:'geo-mediane',msg:'Tu as calculé GI. AI = AG + GI.',w:['AI = '+2*tA+' / 2']},{v:(2*tA)*2/3,tag:'geo-mediane',msg:'AI est plus long que AG : on multiplie par 3/2, on ne prend pas les 2/3.',w:['AI = (2/3) × '+2*tA]}].filter(m_=>Math.abs(m_.v-AI)>1e-6)});
+  const S=2*tA+2*tB;
+  return mkGeo({svg,val:S,unit:u,text:base+'On a AI = «'+AI+'» '+u+' et BJ = «'+BJ+'» '+u+'. Les deux '+thing+' avancent jusqu\'à G, puis s\'arrêtent. Calcule la distance <b>totale</b> parcourue par les deux '+thing+' (AG + BG).',ask:'AG + BG',placeholder:'AG = 2/3 × AI\nBG = 2/3 × BJ',
+    work:['AG = (2/3) × '+AI+' = '+2*tA,'BG = (2/3) × '+BJ+' = '+2*tB,'AG + BG = '+S+' '+u],steps:mkSteps([stp('Les deux parcours',M('AG = (2/3) × '+AI+' = '+2*tA)+' et '+M('BG = (2/3) × '+BJ+' = '+2*tB)),stp('Total',M('AG + BG = '+2*tA+' + '+2*tB+' = '+S)+' '+u)]),hints:['Calcule AG et BG séparément (aux 2/3 de chaque médiane), puis additionne.'],
+    mistakes:[{v:AI+BJ,tag:'geo-mediane',msg:'Les '+thing+' s\'arrêtent en G, pas en I et en J.',w:['AI + BJ = '+(AI+BJ)]},{v:(AI+BJ)/2,tag:'geo-mediane',msg:'G n\'est pas au milieu des médianes : il est aux 2/3.',w:['(AI + BJ) / 2']},{v:tA+tB,tag:'geo-mediane',msg:'1/3 est la distance depuis le milieu du côté. Depuis le sommet, G est aux 2/3.',w:['(1/3) × AI + (1/3) × BJ']}].filter(m_=>Math.abs(m_.v-S)>1e-6)});
+}
+
+TOPICS['gm-7a']={kind:'gcomp',level:5,label:'Vague, lentille et quart de disque',gen:genVagueQ};
+TOPICS['gm-7b']={kind:'gcomp',level:4,label:'Droites parallèles : papillon',gen:genPapillonQ};
+TOPICS['gm-7c']={kind:'gcomp',level:5,label:'Billard : rebond sur la bande',gen:genBillardQ};
+TOPICS['gm-7d']={kind:'gcomp',level:5,label:'Tunnel à voûte semi-circulaire',gen:genTunnelQ};
+TOPICS['gm-7e']={kind:'gcomp',level:5,label:'Surface pavée : corde tangente',gen:genPaveeQ};
+TOPICS['gm-7f']={kind:'gcomp',level:5,label:'Parallélogramme et triangles semblables',gen:genParaSembQ};
+TOPICS['gm-7g']={kind:'gcomp',level:6,label:'Allumettes et angle α',gen:genAllumQ};
+TOPICS['gm-7h']={kind:'gcomp',level:4,label:'Vol d\'oiseau : médianes',gen:genMedianeQ};
+
 /* ===== Corrige la copie : une copie d'élève à diagnostiquer ===== */
 const COPY_NAMES=['Léo','Emma','Noah','Mila','Luca','Zoé','Nathan','Léa','Elias','Chloé','Gabriel','Lina','Arthur','Julie'];
 /* conseils trop généraux pour désigner une erreur précise : jamais proposés comme commentaire */
