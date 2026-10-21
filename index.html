@@ -243,6 +243,14 @@ ol.steps strong{display:block; font-weight:600}
 .g-grid{stroke:var(--line); stroke-width:1}
 .g-axis{stroke:var(--ink-2); stroke-width:1.6}
 .g-thick{stroke-width:4}
+.gvis{margin:12px 0 4px; border:1px solid var(--line); border-radius:10px; padding:8px 12px; background:var(--card-2)}
+.gvis summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--accent)}
+.gvis .lbl{display:block; margin-bottom:2px}
+.gvis-fig{margin:6px 0 0; display:flex; justify-content:center}
+.gvis .geo-svg{width:100%; max-width:360px; height:auto}
+.gvis .gvpanel+.gvpanel{margin-top:14px; padding-top:10px; border-top:1px dashed var(--line)}
+.gvis .gvt{font-weight:600; font-size:13px; margin:6px 0 0; color:var(--ink)}
+.gvis .gvcap{font-size:14px; line-height:1.5; margin:6px 0 2px; color:var(--ink-2)}
 .g-t{font:500 15px var(--f-body); fill:var(--ink)}
 .g-v{font:italic 600 17px var(--f-math); fill:var(--ink)}
 .g-a{fill:var(--accent); font-weight:700; font-size:14px}
@@ -6643,6 +6651,302 @@ function dvLineHTML(ex,d,l,i){
   return s.split(/\s+ou\s+/).map(x=>M(x)).join(' ou ');
 }
 
+/* ===== Géométrie : schémas explicatifs (un par notion, associés aux thèmes) ===== */
+const GVA='fill:var(--accent);fill-opacity:.28', GVG='fill:var(--ink-3);fill-opacity:.35';
+const gvP=(pts,sty,cls)=>'<polygon class="g-f '+(cls||'')+'" '+(sty?'style="'+sty+'" ':'')+'points="'+pts.map(p=>p[0]+','+p[1]).join(' ')+'"/>';
+const gvD=(a,b)=>g.seg(a,b,'g-dash');
+const gvT=(x,y,s,c,a)=>g.text([x,y],s,c||'',a);
+const gvU=(x,y,s,a)=>g.text([x,y],s,'g-u',a);
+const gvC=(x,y,r,sty,cls)=>'<circle class="g-f '+(cls||'')+'" '+(sty?'style="'+sty+'" ':'')+'cx="'+x+'" cy="'+y+'" r="'+r+'"/>';
+const gvPath=(d,sty,cls)=>'<path class="g-f '+(cls||'')+'" '+(sty?'style="'+sty+'" ':'')+'d="'+d+'"/>';
+const gvCp=(cx,cy,r,deg)=>[Math.round((cx+r*Math.cos(deg*Math.PI/180))*10)/10,Math.round((cy-r*Math.sin(deg*Math.PI/180))*10)/10];
+const gvMid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+const gvDots=pts=>pts.map(p=>g.dot(p)).join('');
+const gvRect=(x,y,w,h,sty,cls)=>gvP([[x,y],[x+w,y],[x+w,y+h],[x,y+h]],sty,cls);
+const GV={};
+
+/* ---- triangles ---- */
+GV.aireTri=()=>({s:g.poly([[50,135],[230,135],[230,35],[50,35]],'g-dash')+gvP([[50,135],[230,135],[150,35]],GVA)+gvD([150,35],[150,135])+g.right([150,135],[150,35],[230,135],9)+gvDots([[150,35]])+gvT(140,153,'base b')+gvU(158,92,'h','start'),
+  cap:'Un triangle est la <b>moitié</b> d\'un rectangle de même base et de même hauteur : <b>A = b × h ÷ 2</b>. La hauteur est perpendiculaire à la base (pas un côté penché).'});
+GV.aireSin=()=>{ const O=[50,135],P=[250,135],Q=[158,43]; return {s:g.poly([O,P,Q])+gvD(Q,[158,135])+g.right([158,135],Q,P,9)+g.arc(O,P,Q,28,'γ','g-u')+gvDots([O,P,Q])+gvT(150,153,'côté a')+gvT(92,80,'côté b','g-t','end')+gvT(166,95,'h','g-u','start'),
+  cap:'Avec deux côtés <b>a</b> et <b>b</b> et l\'angle γ compris entre eux, la hauteur est <b>h = b × sin γ</b>, donc <b>A = ½ × a × b × sin γ</b>.'}; };
+GV.pyth=()=>({H:196,s:gvP([[116,140],[180,140],[180,76],[116,76]],GVG)+gvP([[180,140],[228,140],[228,188],[180,188]],GVG)+gvP([[228,140],[180,76],[244,28],[292,92]],GVA)+g.poly([[180,140],[228,140],[180,76]])+g.right([180,140],[228,140],[180,76],9)+gvT(148,108,'4² = 16','g-t')+gvT(204,166,'3² = 9','g-t')+gvT(236,84,'5² = 25','g-u')+gvT(190,152,'')+'',
+  cap:'<b>Pythagore</b> : dans un triangle rectangle, l\'aire du carré de l\'hypoténuse est égale à la somme des aires des deux autres carrés : <b>a² + b² = c²</b> (ici 9 + 16 = 25).'});
+GV.pythrec=()=>{ const t=(x0,pts,l)=>g.poly(pts.map(p=>[x0+p[0],p[1]])); return {s:t(15,[[0,120],[85,120],[0,60]])+g.right([15,120],[15,60],[100,120],9)+t(125,[[0,120],[85,120],[45,52]])+g.arc([170,52],[125,120],[210,120],18)+t(235,[[0,120],[85,120],[40,98]])+g.arc([275,98],[235,120],[320,120],14)+gvT(57,140,'droit','g-u')+gvT(57,158,'c² = a² + b²','g-t')+gvT(168,140,'aigu','g-u')+gvT(168,158,'c² < a² + b²','g-t')+gvT(278,140,'obtus','g-u')+gvT(278,158,'c² > a² + b²','g-t')+gvT(170,22,'c = le plus grand côté','g-t'),
+  cap:'<b>Réciproque</b> : on compare le carré du plus grand côté (c²) à la somme des carrés des deux autres. Égalité : triangle <b>rectangle</b>. Sinon : il n\'est pas rectangle.'}; };
+GV.isoc=()=>{ const A=[170,24],B=[85,140],C=[255,140],M=[170,140]; return {s:g.poly([A,B,C])+gvD(A,M)+g.right(M,A,C,9)+g.tick(A,B,1)+g.tick(A,C,1)+gvDots([A,B,C,M])+gvT(160,84,'h','g-u','end')+gvT(127,157,'b ÷ 2')+gvT(213,157,'b ÷ 2')+gvT(100,70,'côté','g-t','end'),
+  cap:'La hauteur d\'un triangle <b>isocèle</b> coupe la base en deux parties égales. Dans le triangle rectangle obtenu : <b>h² + (b ÷ 2)² = côté²</b>.'}; };
+GV.equi=()=>{ const A=[170,12],B=[90,146],C=[250,146],M=[170,146]; return {s:g.poly([A,B,C])+gvD(A,M)+g.right(M,A,C,9)+g.tick(A,B,1)+g.tick(A,C,1)+g.tick(B,C,1)+gvT(160,90,'h','g-u','end')+gvT(130,160,'a ÷ 2')+gvT(210,160,'a ÷ 2')+gvT(116,70,'a','g-t','end')+gvT(224,70,'a','g-t','start'),
+  cap:'Triangle <b>équilatéral</b> de côté a : sa hauteur partage la base en a ÷ 2. Pythagore donne <b>h = a√3 ÷ 2</b>, et l\'aire vaut <b>a² √3 ÷ 4</b>.'}; };
+GV.heron=()=>{ const A=[110,30],B=[40,140],C=[290,140]; return {s:g.poly([A,B,C])+gvT(52,76,'b','g-u','end')+gvT(210,76,'c','g-u','start')+gvT(165,158,'a','g-u')+gvT(170,22,'p = (a + b + c) ÷ 2','g-t'),
+  cap:'<b>Formule de Héron</b> (on connaît les trois côtés) : avec le demi-périmètre p = (a + b + c) ÷ 2, <b>A = √[ p (p − a)(p − b)(p − c) ]</b>.'}; };
+
+/* ---- quadrilatères ---- */
+GV.rect=()=>{ let s=''; for(let i=0;i<5;i++) for(let j=0;j<3;j++) s+=gvRect(75+i*36,30+j*36,36,36,i<5?GVA:'');
+  return {s:s+g.poly([[75,30],[255,30],[255,138],[75,138]],'g-thin')+gvT(165,156,'L = 5 carreaux')+gvT(266,84,'l = 3','g-t','start'),
+  cap:'<b>Rectangle</b> : l\'aire est le nombre de carreaux, <b>A = L × l</b> (5 × 3 = 15). Le périmètre est la longueur du contour : <b>P = 2 × (L + l)</b>. Le carré est un rectangle avec L = l.'}; };
+GV.paral=()=>({s:g.poly([[60,135],[220,135],[270,35],[110,35]])+gvP([[60,135],[110,135],[110,35]],GVA)+gvP([[220,135],[270,135],[270,35]],'fill:none','g-dash')+gvD([110,35],[110,135])+g.right([110,135],[110,35],[220,135],9)+gvT(165,153,'base b')+gvT(118,88,'h','g-u','start')+'',
+  cap:'On déplace le triangle de gauche à droite : le <b>parallélogramme</b> devient un rectangle de même base et même hauteur : <b>A = b × h</b>. La hauteur est perpendiculaire à la base (le côté penché n\'est pas la hauteur).'});
+GV.losange=()=>{ const O=[170,85]; return {s:g.poly([[80,30],[260,30],[260,140],[80,140]],'g-dash')+g.poly([[80,85],[170,30],[260,85],[170,140]])+gvP([O,[260,85],[170,30]],GVA)+gvD([80,85],[260,85])+gvD([170,30],[170,140])+g.right(O,[260,85],[170,30],9)+gvT(222,102,'D ÷ 2')+gvT(176,58,'d ÷ 2','g-t','start')+gvT(108,46,'côté','g-u'),
+  cap:'<b>Losange</b> : les diagonales se coupent à angle droit en leur milieu. <b>A = D × d ÷ 2</b> (moitié du rectangle des diagonales), et le côté vient de Pythagore : <b>côté² = (D÷2)² + (d÷2)²</b>.'}; };
+GV.trapeze=()=>({s:g.poly([[210,130],[235,50],[115,50],[140,130]],'g-dash')+gvP([[20,130],[140,130],[115,50],[45,50]],GVA)+gvP([[235,50],[115,50],[140,130],[210,130]],GVG)+gvD([45,50],[45,130])+gvT(80,148,'B')+gvT(80,40,'b')+gvT(175,148,'b')+gvT(175,40,'B')+gvU(53,92,'h','start'),
+  cap:'Deux trapèzes identiques forment un parallélogramme de base B + b : <b>A = (B + b) × h ÷ 2</b>. B et b sont les deux côtés parallèles, h la distance qui les sépare.'});
+GV.trapiso=()=>({s:g.poly([[50,135],[290,135],[240,45],[100,45]])+gvP([[50,135],[100,135],[100,45]],GVA)+gvP([[240,135],[290,135],[240,45]],GVA)+gvD([100,45],[100,135])+gvD([240,45],[240,135])+g.right([100,135],[100,45],[290,135],8)+g.right([240,135],[240,45],[50,135],8)+gvT(170,153,'B')+gvT(170,35,'b')+gvT(75,153,'(B−b)÷2','g-t')+gvT(265,153,'(B−b)÷2','g-t')+gvT(92,92,'h','g-u','end'),
+  cap:'<b>Trapèze isocèle</b> : les deux hauteurs découpent deux triangles rectangles identiques, de base <b>(B − b) ÷ 2</b>. Pythagore donne alors la hauteur h ou le côté oblique.'});
+GV.decoupe=()=>({s:gvP([[60,30],[160,30],[160,80],[280,80],[280,140],[60,140]])+gvP([[60,30],[160,30],[160,80],[60,80]],GVA)+gvP([[60,80],[280,80],[280,140],[60,140]],GVG)+gvT(110,56,'A1','g-u')+gvT(170,112,'A2','g-u')+gvT(170,158,'aire = A1 + A2'),
+  cap:'<b>Figure composée</b> : on la découpe en figures simples (rectangles, triangles, disques…) dont on additionne les aires, ou on retire une partie d\'une figure plus grande. Compte le contour une seule fois.'});
+GV.soustraction=()=>({s:gvRect(60,25,150,120,GVA)+gvC(135,85,40,'fill:var(--card-2);fill-opacity:1')+gvT(135,85,'retiré','g-t')+gvT(265,60,'aire grise','g-u')+gvT(265,80,'=','g-t')+gvT(265,100,'total − retiré','g-t'),
+  cap:'<b>Aire grise</b> = aire de la figure entière <b>moins</b> l\'aire de la partie retirée (trou, encoche, disque). Pour le contour, on compte tous les bords visibles, y compris ceux du trou.'});
+
+/* ---- Pythagore dans l'espace et le plan ---- */
+GV.distrep=()=>({s:g.seg([30,150],[320,150],'g-thin')+g.seg([40,20],[40,160],'g-thin')+gvD([70,120],[250,120])+gvD([250,120],[250,40])+g.poly([[70,120],[250,120],[250,40]])+g.right([250,120],[70,120],[250,40],9)+gvDots([[70,120],[250,40]])+gvT(66,108,'P (x1 ; y1)','g-t','end')+gvT(240,30,'Q (x2 ; y2)','g-t','end')+gvT(160,138,'x2 − x1','g-u')+gvT(262,82,'y2 − y1','g-u','start'),
+  cap:'<b>Distance entre deux points</b> : les écarts horizontal et vertical forment un triangle rectangle. <b>PQ = √[ (x2 − x1)² + (y2 − y1)² ]</b>.'});
+GV.diagpave=()=>({s:g.poly([[60,70],[180,70],[180,140],[60,140]])+gvD([60,70],[120,30])+gvD([180,70],[240,30])+g.seg([180,140],[240,100])+gvD([60,140],[120,100])+g.seg([120,30],[240,30])+g.seg([240,30],[240,100])+gvD([120,30],[120,100])+gvD([120,100],[240,100])+g.seg([60,140],[240,30],'g-mark')+gvD([60,140],[240,100])+gvD([240,100],[240,30])+gvT(150,126,'d (base)','g-t','start')+gvT(150,60,'D','g-u','end')+gvT(120,155,'L')+gvT(255,70,'h','g-t','start'),
+  cap:'<b>Diagonale d\'un pavé</b> : deux fois Pythagore. D\'abord la diagonale de la base, <b>d² = L² + l²</b>, puis <b>D² = d² + h²</b>, soit D = √(L² + l² + h²).'});
+
+/* ---- Thalès et similitude ---- */
+GV.thales=()=>{ const A=[170,15],B=[55,150],C=[285,150],M=[112,82],N=[228,82]; return {s:g.poly([A,B,C])+g.seg(M,N,'g-mark')+g.par(M,N,1)+g.par(B,C,1)+gvDots([A,M,N,B,C])+gvT(170,6,'A','g-v')+gvT(98,86,'M','g-v','end')+gvT(242,86,'N','g-v','start')+gvT(40,155,'B','g-v')+gvT(300,155,'C','g-v')+gvT(170,70,'MN','g-u')+gvT(170,138,'BC','g-u'),
+  cap:'<b>Thalès</b> : si (MN) ∥ (BC), les côtés du petit triangle AMN sont proportionnels à ceux du grand : <b>AM ÷ AB = AN ÷ AC = MN ÷ BC</b>. Écris les rapports « petit sur grand » dans le même sens.'}; };
+GV.papillon=()=>{ const O=[170,85],A=[100,35],B=[240,35],D=[219,120],C=[121,120]; return {s:g.seg([60,35],[280,35],'g-thin')+g.seg([60,120],[280,120],'g-thin')+g.poly([O,A,B],GVA)+g.poly([O,C,D],GVG)+g.seg(A,D,'')+g.seg(B,C,'')+g.par(A,B,1)+g.par(C,D,1)+gvDots([O,A,B,C,D])+gvT(94,26,'A','g-v','end')+gvT(246,26,'B','g-v','start')+gvT(115,132,'C','g-v','end')+gvT(225,132,'D','g-v','start')+gvT(180,92,'O','g-v','start'),
+  cap:'<b>Papillon</b> : si (AB) ∥ (CD) et que (AD) et (BC) se coupent en O, alors <b>OA ÷ OD = OB ÷ OC = AB ÷ CD</b>. Lis la figure « en croix » : OA se compare avec OD, OB avec OC.'}; };
+GV.ombre=()=>({s:g.seg([20,140],[330,140],'g-l')+g.seg([80,140],[80,105],'g-mark')+g.seg([80,105],[125,140],'g-dash')+g.seg([190,140],[190,50],'g-mark')+g.seg([190,50],[306,140],'g-dash')+gvDots([[80,105],[190,50]])+gvT(68,122,'h1','g-u','end')+gvT(102,154,'s1')+gvT(178,95,'h2','g-u','end')+gvT(248,154,'s2')+gvT(95,28,'☀ rayons parallèles','g-t','start'),
+  cap:'<b>Ombre et hauteur</b> : les rayons du soleil sont parallèles, donc les deux triangles rectangles sont semblables et <b>h1 ÷ s1 = h2 ÷ s2</b> (hauteur ÷ ombre est le même rapport).'});
+GV.agrand=()=>({s:gvRect(25,95,40,40,GVA)+gvRect(100,55,80,80,GVG)+g.seg([140,55],[140,135],'g-thin g-dash')+g.seg([100,95],[180,95],'g-thin g-dash')+gvT(45,153,'côté 1')+gvT(140,153,'côté 2')+gvT(45,115,'1','g-t')+gvT(140,76,'4','g-u')+gvT(205,50,'k = 2','g-u','start')+gvT(205,78,'longueurs × 2','g-t','start')+gvT(205,100,'aires × 4','g-t','start')+gvT(205,122,'volumes × 8','g-t','start'),
+  cap:'<b>Agrandissement de rapport k</b> : les longueurs sont multipliées par k, les aires par <b>k²</b>, les volumes par <b>k³</b>. Une réduction a un rapport k plus petit que 1.'});
+
+/* ---- cercles et angles ---- */
+GV.angcentre=()=>{ const O=[170,85],A=gvCp(170,85,65,210),B=gvCp(170,85,65,330),C=gvCp(170,85,65,90); return {s:g.circle(O,65,'g-circle')+g.seg(O,A,'g-mark')+g.seg(O,B,'g-mark')+g.seg(C,A,'')+g.seg(C,B,'')+g.arc(O,A,B,16,'2α','g-u')+g.arc(C,A,B,22,'α','g-u')+gvDots([O,A,B,C])+gvT(178,76,'O','g-v','start')+gvT(A[0]-8,A[1]+8,'A','g-v','end')+gvT(B[0]+8,B[1]+8,'B','g-v','start')+gvT(170,10,'C','g-v'),
+  cap:'<b>Angle inscrit et angle au centre</b> : ils interceptent le même arc AB, et l\'angle au centre est le <b>double</b> de l\'angle inscrit (2α et α).'}; };
+GV.demicercle=()=>{ const O=[170,85],A=[105,85],B=[235,85],C=gvCp(170,85,65,65); return {s:g.circle(O,65,'g-circle')+g.poly([A,B,C],GVA)+g.right(C,A,B,9)+gvDots([A,B,C,O])+gvT(96,92,'A','g-v','end')+gvT(244,92,'B','g-v','start')+gvT(C[0]+6,C[1]-9,'C','g-v','start')+gvT(170,102,'O','g-v')+gvT(170,160,'AB = diamètre','g-t'),
+  cap:'<b>Demi-cercle</b> : un triangle inscrit dont un côté est un <b>diamètre</b> est rectangle (angle droit en C). Réciproquement, l\'hypoténuse d\'un triangle rectangle est un diamètre de son cercle circonscrit.'}; };
+GV.cyclic=()=>{ const A=gvCp(170,85,65,200),B=gvCp(170,85,65,330),C=gvCp(170,85,65,60),D=gvCp(170,85,65,135); return {s:g.circle([170,85],65,'g-circle')+g.poly([A,B,C,D])+g.arc(A,D,B,16,'α','g-u')+g.arc(C,B,D,18,'180° − α','g-u')+gvDots([A,B,C,D])+gvT(A[0]-8,A[1]+6,'A','g-v','end')+gvT(B[0]+8,B[1]+6,'B','g-v','start')+gvT(C[0]+8,C[1]-6,'C','g-v','start')+gvT(D[0]-8,D[1]-6,'D','g-v','end'),
+  cap:'<b>Quadrilatère inscrit</b> : ses angles opposés sont <b>supplémentaires</b> (somme 180°). Deux angles inscrits qui interceptent le même arc sont égaux.'}; };
+GV.tangente=()=>({s:g.circle([150,85],60,'g-circle')+g.seg([210,15],[210,155],'')+g.seg([150,85],[210,85],'g-mark')+gvD([150,85],[210,30])+g.right([210,85],[150,85],[210,30],9)+gvDots([[150,85],[210,85],[210,30]])+gvT(140,92,'O','g-v','end')+gvT(222,92,'T','g-v','start')+gvT(222,28,'A','g-v','start')+gvT(180,100,'rayon','g-t')+gvT(222,150,'tangente','g-u','start'),
+  cap:'<b>Tangente</b> : elle touche le cercle en un seul point T et elle est <b>perpendiculaire au rayon OT</b>. On obtient un triangle rectangle OTA (Pythagore), et OA est son hypoténuse.'});
+GV.tangcorde=()=>({s:g.circle([170,85],75,'g-circle')+g.circle([170,85],45,'g-hole')+g.seg([110,40],[230,40],'')+gvD([170,85],[170,40])+gvD([170,85],[110,40])+g.right([170,40],[170,85],[230,40],8)+gvDots([[170,85],[170,40],[110,40],[230,40]])+gvT(160,92,'O','g-v','end')+gvT(164,28,'M','g-v','end')+gvT(100,38,'A','g-v','end')+gvT(240,38,'B','g-v','start')+gvT(176,66,'r','g-u','start')+gvT(128,70,'R','g-u','end')+gvT(135,54,'AM','g-t'),
+  cap:'<b>Corde tangente au petit cercle</b> : OM ⊥ AB et M est le milieu de [AB]. Dans OMA : <b>R² = r² + AM²</b>, donc <b>R² − r² = AM²</b> et l\'aire de la couronne vaut π × AM².'});
+GV.arcsecteur=()=>{ const O=[110,85],P=[175,85],Q=gvCp(110,85,65,60); return {s:g.circle(O,65,'g-circle')+gvPath('M110 85 L175 85 A65 65 0 0 0 '+Q[0]+' '+Q[1]+' Z',GVA)+g.arc(O,P,Q,22,'α','g-u')+gvT(146,100,'r','g-t')+gvT(200,60,'α = 60°','g-t','start')+gvT(200,82,'= 1/6 du tour','g-t','start'),
+  cap:'<b>Arc et secteur</b> : un angle α au centre représente la fraction <b>α ÷ 360</b> du cercle. Arc = (α ÷ 360) × 2πr ; secteur = (α ÷ 360) × πr².'}; };
+GV.cordedist=()=>({s:g.circle([170,85],65,'g-circle')+g.seg([110,60],[230,60],'')+gvD([170,85],[170,60])+gvD([170,85],[110,60])+g.right([170,60],[170,85],[230,60],8)+gvDots([[170,85],[170,60],[110,60],[230,60]])+gvT(160,95,'O','g-v','end')+gvT(178,76,'d','g-u','start')+gvT(125,82,'r','g-u','end')+gvT(140,52,'c ÷ 2','g-t')+gvT(250,52,'corde c','g-t','start'),
+  cap:'<b>Corde et distance au centre</b> : la perpendiculaire menée du centre O à la corde la coupe en son milieu. Triangle rectangle : <b>r² = d² + (c ÷ 2)²</b> (le rayon est l\'hypoténuse).'});
+GV.disque=()=>({s:g.circle([65,85],45,'g-circle')+g.seg([65,85],[110,85],'g-mark')+gvDots([[65,85]])+gvT(88,76,'r','g-u')+gvPath('M125 100 A45 45 0 0 1 215 100 Z',GVA)+gvPath('M245 130 L290 130 A45 45 0 0 0 245 85 Z',GVA)+gvT(65,152,'πr²')+gvT(170,152,'πr² ÷ 2')+gvT(268,152,'πr² ÷ 4')+gvT(65,20,'périmètre 2πr','g-t'),
+  cap:'<b>Disque</b> : périmètre <b>2πr</b>, aire <b>πr²</b>. Demi-disque et quart de disque : on divise l\'aire par 2 ou par 4. La valeur exacte garde le π (par exemple 25π).'});
+GV.couronne=()=>({s:gvC(170,85,70,GVA)+g.circle([170,85],38,'g-hole')+g.seg([170,85],[240,85],'g-mark')+g.seg([170,85],gvCp(170,85,38,130),'g-mark')+gvDots([[170,85]])+gvT(214,70,'R','g-u')+gvT(136,62,'r','g-u','end'),
+  cap:'<b>Couronne</b> (anneau) entre deux cercles de même centre : <b>A = πR² − πr² = π (R² − r²)</b> (grand disque moins petit disque).'});
+GV.piste=()=>({s:gvPath('M110 40 L230 40 A45 45 0 0 1 230 130 L110 130 A45 45 0 0 1 110 40 Z',GVG)+gvRect(110,40,120,90,GVA)+gvT(170,90,'rectangle','g-t')+gvT(88,90,'demi','g-t')+gvT(252,90,'demi','g-t')+gvT(170,30,'longueur L')+gvT(170,152,'contour = 2L + 2 × demi-cercle','g-t'),
+  cap:'<b>Piste / stade</b> : un rectangle plus deux demi-disques (qui forment un disque entier de diamètre égal à la largeur). Contour = 2 × L + π × diamètre.'});
+GV.rad=()=>({s:g.circle([170,85],55,'g-circle')+g.seg([115,85],[225,85],'g-thin')+g.seg([170,30],[170,140],'g-thin')+gvT(236,85,'0° = 0','g-t','start')+gvT(170,18,'90° = π/2 = 100 gon')+gvT(104,85,'180° = π','g-t','end')+gvT(170,154,'270° = 3π/2')+gvT(170,85,'1 tour','g-u'),
+  cap:'<b>Unités d\'angle</b> : 1 tour = 360° = 2π rad = 400 gon (grades). Degrés → radians : × π ÷ 180. Radians → degrés : × 180 ÷ π.'});
+GV.paralleles=()=>{ const P2=[137.7,120],P1=[202.3,50]; return {s:g.seg([60,50],[300,50],'')+g.seg([60,120],[300,120],'')+g.seg([110,150],[230,20],'g-mark')+g.arc(P2,[P2[0]+50,120],[P2[0]+10,P2[1]-11],24,'α','g-u')+g.arc(P1,[P1[0]-50,50],[P1[0]-10,P1[1]+11],24,'α','g-u')+g.arc(P1,[P1[0]+50,50],[P1[0]+10,P1[1]-11],22,'α','g-u')+gvT(310,50,'d1','g-t','start')+gvT(310,120,'d2','g-t','start')+g.par([100,50],[140,50],1)+g.par([100,120],[140,120],1),
+  cap:'<b>Parallèles et sécante</b> : les angles <b>alternes-internes</b> sont égaux, les angles <b>correspondants</b> aussi. Un angle plat vaut 180° : deux angles côte à côte sur une droite se complètent à 180°.'}; };
+GV.somme180=()=>{ const A=[70,140],B=[270,140],C=[150,42]; return {s:g.poly([A,B,C])+g.seg([30,42],[310,42],'g-dash g-thin')+g.arc(A,B,C,26,'α','g-u')+g.arc(B,A,C,26,'β','g-u')+g.arc(C,[30,42],A,20,'α','g-u')+g.arc(C,B,[310,42],20,'β','g-u')+g.arc(C,A,B,26,'γ','g-u')+gvDots([A,B,C]),
+  cap:'<b>Somme des angles d\'un triangle = 180°</b> : la parallèle à (AB) passant par C montre que α + γ + β forme un angle plat. Dans un triangle rectangle, les deux angles aigus font 90°.'}; };
+GV.polyreg=()=>{ const V=[0,1,2,3,4,5].map(i=>gvCp(170,78,64,90+60*i)); return {s:g.poly(V)+g.seg(V[0],V[2],'g-dash')+g.seg(V[0],V[3],'g-dash')+g.seg(V[0],V[4],'g-dash')+gvDots(V)+gvT(170,163,'hexagone : 4 triangles → 4 × 180° = 720°','g-t'),
+  cap:'<b>Polygone à n côtés</b> : on le découpe en <b>n − 2</b> triangles depuis un sommet, donc somme des angles = (n − 2) × 180°. S\'il est régulier : angle intérieur = somme ÷ n, angle au centre = 360° ÷ n.'}; };
+
+/* ---- solides ---- */
+const gvBox=(f)=>g.poly([[60,70],[180,70],[180,140],[60,140]],f||'')+gvD([60,70],[120,30])+gvD([120,30],[120,100])+gvD([120,100],[60,140])+gvD([120,100],[240,100])+g.seg([180,70],[240,30])+g.seg([180,140],[240,100])+g.seg([120,30],[240,30])+g.seg([240,30],[240,100]);
+GV.pave=()=>({s:gvBox()+gvP([[180,70],[240,30],[240,100],[180,140]],GVG)+gvP([[60,70],[180,70],[240,30],[120,30]],GVA)+gvT(120,155,'L')+gvT(258,70,'l','g-t','start')+gvT(48,105,'h','g-t','end')+gvT(150,13,'face du dessus : L × l','g-t'),
+  cap:'<b>Pavé</b> : <b>V = L × l × h</b> (aire de la base × hauteur). Cube d\'arête a : V = a³. Aire totale = 6 faces, par paires : <b>2 × (L·l + L·h + l·h)</b>.'});
+GV.unites=()=>({s:gvBox()+gvT(120,155,'10 cm','g-u')+gvT(262,70,'10 cm','g-u','start')+gvT(52,105,'10 cm','g-u','end')+gvT(230,150,'= 1 dm³ = 1 L','g-t','start')+gvT(250,12,'1 L = 1000 cm³','g-t'),
+  cap:'<b>Contenances</b> : un cube de 10 cm d\'arête est un cube de 1 dm. <b>1 dm³ = 1 L = 1000 cm³</b>, et 1 m³ = 1000 L. Pour convertir un volume, chaque unité vaut 1000 fois la suivante.'});
+GV.cyl=()=>({s:'<ellipse class="g-f" style="'+GVA+'" cx="170" cy="40" rx="60" ry="16"/>'+g.seg([110,40],[110,130],'')+g.seg([230,40],[230,130],'')+'<path class="g-l" d="M110 130 A60 16 0 0 0 230 130"/>'+'<path class="g-l g-dash" d="M110 130 A60 16 0 0 1 230 130"/>'+g.seg([170,40],[230,40],'g-mark')+gvT(205,32,'r','g-u')+gvT(240,90,'h','g-u','start')+gvT(90,40,'base : πr²','g-t','end'),
+  cap:'<b>Cylindre</b> : <b>V = πr² × h</b> (aire de la base × hauteur). La surface latérale, une fois déroulée, est un rectangle : <b>2πr × h</b>.'});
+GV.cone=()=>({s:g.seg([170,18],[110,130],'')+g.seg([170,18],[230,130],'')+'<path class="g-l" d="M110 130 A60 16 0 0 0 230 130"/><path class="g-l g-dash" d="M110 130 A60 16 0 0 1 230 130"/>'+gvD([170,18],[170,130])+g.seg([170,130],[230,130],'g-mark')+gvDots([[170,18]])+gvT(160,76,'h','g-u','end')+gvT(202,122,'r','g-u')+gvT(250,66,'1/3 du','g-t','start')+gvT(250,84,'cylindre','g-t','start'),
+  cap:'<b>Cône et pyramide</b> : <b>V = ⅓ × aire de la base × hauteur</b>, soit le tiers du cylindre (ou du prisme) de même base et de même hauteur. La hauteur est perpendiculaire à la base.'});
+GV.boule=()=>({s:g.circle([170,85],65,'g-circle')+'<path class="g-l g-dash" d="M105 85 A65 18 0 0 0 235 85"/><path class="g-l" d="M105 85 A65 18 0 0 1 235 85"/>'+g.seg([170,85],[235,85],'g-mark')+gvDots([[170,85]])+gvT(204,76,'r','g-u')+gvT(260,70,'V = 4/3 π r³','g-t','start')+gvT(260,100,'A = 4 π r²','g-t','start'),
+  cap:'<b>Boule et sphère</b> : volume <b>V = 4⁄3 × π × r³</b>, aire de la sphère <b>A = 4 × π × r²</b>. Attention à ne pas confondre rayon et diamètre (r = d ÷ 2).'});
+GV.silo=()=>({s:gvRect(120,70,100,70,GVA)+gvPath('M120 70 A50 50 0 0 1 220 70 Z',GVG)+g.seg([170,70],[220,70],'g-mark')+gvT(170,106,'cylindre','g-t')+gvT(232,48,'demi-boule','g-t','start')+gvT(198,64,'r','g-u','start')+gvT(232,106,'h','g-u','start'),
+  cap:'<b>Pièce composée</b> : on additionne (ou on soustrait) les volumes des solides simples. Ici : V = cylindre + demi-boule = πr²h + ½ × 4⁄3 πr³.'});
+
+/* ---- trigonométrie ---- */
+GV.sohcahtoa=()=>{ const A=[50,140],B=[260,140],C=[260,40]; return {s:g.poly([A,B,C])+g.right(B,A,C,9)+g.arc(A,B,C,30,'α','g-u')+gvDots([A,B,C])+gvT(155,158,'côté adjacent à α','g-t')+gvT(272,90,'opposé','g-t','start')+gvT(140,80,'hypoténuse','g-t','end'),
+  cap:'<b>SOH · CAH · TOA</b> : <b>sin α = opposé ÷ hypoténuse</b> ; <b>cos α = adjacent ÷ hypoténuse</b> ; <b>tan α = opposé ÷ adjacent</b>. Opposé et adjacent dépendent de l\'angle α choisi.'}; };
+GV.trigexact=()=>({s:g.poly([[30,140],[130,140],[130,40]])+g.right([130,140],[30,140],[130,40],9)+gvT(80,156,'1')+gvT(142,90,'1','g-t','start')+gvT(66,80,'√2','g-t','end')+gvT(60,132,'45°','g-u')+g.poly([[200,140],[290,140],[200,88]])+g.right([200,140],[290,140],[200,88],9)+gvT(245,156,'√3')+gvT(190,114,'1','g-t','end')+gvT(258,106,'2','g-t','start')+gvT(268,133,'30°','g-u','end')+gvT(206,108,'60°','g-t','start'),
+  cap:'<b>Valeurs exactes</b> : demi-carré (1 ; 1 ; √2) donne 45°, demi-triangle équilatéral (1 ; √3 ; 2) donne 30° et 60°. Par exemple sin 30° = 1⁄2, cos 45° = √2⁄2, tan 60° = √3.'});
+GV.visees=()=>({s:g.seg([20,140],[320,140],'g-l')+g.seg([270,140],[270,28],'g-mark')+g.seg([50,140],[270,28],'')+g.seg([160,140],[270,28],'')+g.arc([50,140],[320,140],[270,28],34,'α','g-u')+g.arc([160,140],[320,140],[270,28],30,'β','g-u')+gvDots([[50,140],[160,140],[270,28]])+gvT(105,156,'d','g-t')+gvT(280,84,'h','g-u','start')+gvT(215,156,'x','g-t'),
+  cap:'<b>Deux visées</b> : deux triangles rectangles partagent la même hauteur h. <b>h = x × tan β</b> et <b>h = (x + d) × tan α</b> : on égale les deux expressions pour trouver x, puis h.'});
+
+/* ---- configurations des figures de synthèse ---- */
+GV.mediane=()=>{ const A=[50,145],B=[290,145],C=[150,28],I=gvMid(B,C),J=gvMid(A,C),G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3]; return {s:g.poly([A,B,C])+g.seg(A,I,'g-mark')+g.seg(B,J,'g-mark')+g.tick(B,I,1)+g.tick(I,C,1)+g.tick(A,J,2)+g.tick(J,C,2)+gvDots([A,B,C,I,J,G])+gvT(G[0],G[1]+14,'G','g-v')+gvT(A[0]-8,A[1]+6,'A','g-v','end')+gvT(B[0]+8,B[1]+6,'B','g-v','start')+gvT(C[0],C[1]-10,'C','g-v')+gvT(I[0]+8,I[1]-4,'I','g-v','start')+gvT(J[0]-8,J[1]-4,'J','g-v','end')+gvT(170,164,'AG = 2/3 AI  et  GI = 1/3 AI','g-u'),
+  cap:'<b>Médianes</b> : une médiane joint un sommet au milieu du côté opposé. Les trois médianes se coupent en G (centre de gravité), situé aux <b>2⁄3</b> de chaque médiane en partant du sommet.'}; };
+GV.rebond=()=>({H:196,s:g.seg([20,110],[320,110],'g-l')+g.seg([70,70],[150,110],'')+g.seg([150,110],[270,50],'')+gvD([70,70],[270,170])+gvD([270,110],[270,170])+gvD([70,70],[70,110])+gvD([270,50],[270,110])+g.right([70,110],[70,70],[150,110],8)+g.right([270,110],[270,50],[150,110],8)+g.arc([150,110],[70,70],[70,110],18,'','')+g.arc([150,110],[270,50],[270,110],18,'','')+gvDots([[70,70],[270,50],[150,110]])+gvT(62,64,'A','g-v','end')+gvT(278,44,'B','g-v','start')+gvT(150,126,'P','g-v')+gvT(278,176,'B\'','g-v','start')+gvT(110,126,'x','g-u')+gvT(215,102,'D − x','g-t')+gvT(58,92,'a','g-t','end')+gvT(282,82,'b','g-t','start'),
+  cap:'<b>Rebond</b> : angle d\'arrivée = angle de départ, donc les triangles rectangles AHP et BKP sont <b>semblables</b> : x ÷ (D − x) = a ÷ b. Astuce : le symétrique B\' de B par rapport à la bande est aligné avec A et P.'});
+GV.vague=()=>({s:gvRect(50,25,240,120,'fill:none')+gvPath('M50 145 L290 145 L290 85 A60 60 0 0 1 170 85 A60 60 0 0 0 50 85 Z',GVA)+gvD([50,85],[290,85])+gvT(110,62,'+ ajouté','g-u')+gvT(230,112,'− retiré','g-t')+gvT(170,160,'ils se compensent'),
+  cap:'<b>Parties qui se compensent</b> : le demi-disque ajouté en haut et le demi-disque retiré en bas ont la même forme. Il reste la moitié du rectangle, sans π.'});
+GV.allum=()=>{ const u=90,o=[40,140],pt=(x,y)=>[o[0]+u*x,o[1]-u*y], A1=pt(1,0),A2=pt(1.5,0.866),A3=pt(2,0); return {s:g.seg(o,pt(3.1,0),'g-thin g-dash')+g.seg(o,pt(2.6,1.5),'g-thin g-dash')+g.seg(o,A1,'g-l g-thick')+g.seg(A1,A2,'g-l g-thick')+g.seg(A2,A3,'g-l g-thick')+g.arc(o,A1,A2,26,'α','g-u')+g.arc(A2,o,A1,22,'α','g-u')+g.arc(A3,A2,o,22,'2α','g-u')+g.right(A2,A3,o,8)+gvDots([o,A1,A2,A3]),
+  cap:'<b>Allumettes de même longueur</b> : chaque triangle est isocèle, donc les angles avec la demi-droite valent α, 2α, 3α… Dans le dernier triangle : <b>α + (m − 1)α + 90° = 180°</b>, donc m × α = 90°.'}; };
+
+/* ---- correspondance thème → schéma ---- */
+const GVMAP={'gt-1':'aireTri','gt-2':'pyth','gt-3':'aireTri','gt-4':'isoc','gt-5':'equi','gt-6':'heron','gt-3b':'aireTri','gt-5b':'aireSin',
+ 'gq-1':'rect','gq-2':'paral','gq-3':'losange','gq-4':'trapeze','gq-5':'decoupe','gq-6':'papillon','gq-3b':'paral','gq-4b':'losange','gq-5b':'trapiso',
+ 'gp-1':'pyth','gp-2':'pyth','gp-3':'pyth','gp-4':'pythrec','gp-5':'pyth','gp-6':'pyth','gp-6b':'pyth','gp-6c':'pyth','gp-3b':'distrep','gp-4b':'diagpave',
+ 'gh-1':'thales','gh-2':'thales','gh-3':'thales','gh-4':'papillon','gh-5':'thales','gh-6':'thales','gh-2b':'ombre','gh-5b':'agrand',
+ 'gc-1':'angcentre','gc-2':'angcentre','gc-3':'demicercle','gc-4':'cyclic','gc-5':'tangente','gc-6':'tangente','gc-6b':'disque','gc-6c':'disque','gc-6d':'soustraction','gc-6e':'tangente','gc-3b':'arcsecteur','gc-4b':'cordedist',
+ 'gm-1':'decoupe','gm-2':'decoupe','gm-3':'disque','gm-4':'piste','gm-5':'soustraction','gm-6':'couronne','gm-6b':'disque','gm-6c':'disque','gm-6d':'decoupe','gm-6e':'soustraction','gm-6f':'disque','gm-6g':'decoupe','gm-6h':'disque','gm-6i':'soustraction','gm-6j':'decoupe','gm-6k':'decoupe','gm-6l':'decoupe',
+ 'gm-3b':'couronne','gm-4b':'soustraction','gm-7a':'vague','gm-7b':'papillon','gm-7c':'rebond','gm-7d':'cordedist','gm-7e':'tangcorde','gm-7f':'papillon','gm-7g':'allum','gm-7h':'mediane',
+ 'gang-1':'rad','gang-2':'rad','gang-3':'paralleles','gang-4':'somme180','gang-3b':'polyreg',
+ 'gs-1':'pave','gs-2':'unites','gs-3':'cyl','gs-4':'cone','gs-5':'boule','gs-6':'silo',
+ 'gr-1':'sohcahtoa','gr-2':'sohcahtoa','gr-3':'sohcahtoa','gr-4':'trigexact','gr-5':'sohcahtoa','gr-6':'visees'};
+function geoVisual(topic,open){
+  let ks=GVMAP[topic]; if(!ks) return ''; if(!Array.isArray(ks)) ks=[ks];
+  const fig=ks.filter(k=>GV[k]).map(k=>{ const d=GV[k](), H=d.H||170;
+    return '<div class="gvpanel">'+(d.t?'<p class="gvt">'+d.t+'</p>':'')+'<figure class="gvis-fig"><svg class="geo-svg" viewBox="0 0 340 '+H+'" role="img" aria-label="Schéma explicatif">'+d.s+'</svg></figure><p class="gvcap">'+d.cap+'</p></div>'; }).join('');
+  if(!fig) return '';
+  return open?'<div class="gvis gvis-open"><span class="lbl">Schéma pour comprendre</span>'+fig+'</div>':'<details class="gvis"><summary>Schéma pour comprendre</summary>'+fig+'</details>';
+}
+
+/* ===== Schémas dédiés : un schéma propre à chaque type d'exercice ===== */
+const gvLU=(s,x,y,a)=>(s&&s[0]==='?')?gvU(x,y,s,a):gvT(x,y,s,'g-t',a);
+const gvTk=s=>thickQ(s);
+const gvWith=(k,t)=>()=>Object.assign(GV[k](),{t});
+const gvRT=(la,lb,lc,hi,ang)=>{ const R=[80,140],P=[250,140],Q=[80,36]; let o=g.poly([R,P,Q])+g.right(R,P,Q,10);
+  if(hi==='a') o+=gvTk(g.seg(R,P,'g-mark')); if(hi==='b') o+=gvTk(g.seg(R,Q,'g-mark')); if(hi==='c') o+=gvTk(g.seg(P,Q,'g-mark'));
+  if(ang) o+=g.arc(P,R,Q,28,ang,'g-u');
+  return o+gvLU(la,165,158)+gvLU(lb,68,90,'end')+gvLU(lc,182,76,'start'); };
+const gvLos=(l1,l2,l3)=>{ const O=[170,85]; return gvP([[80,85],[170,30],[260,85],[170,140]])+gvP([O,[260,85],[170,30]],GVA)+gvD([80,85],[260,85])+gvD([170,30],[170,140])+g.right(O,[260,85],[170,30],9)+gvLU(l1,222,100)+gvLU(l2,178,60,'start')+gvLU(l3,236,48,'start'); };
+const gvTri3=(la,lb,lc,extra)=>{ const A=[150,34],B=[50,140],C=[290,140]; return g.poly([A,B,C])+(extra||'')+gvLU(lb,92,80,'end')+gvLU(lc,226,80,'start')+gvLU(la,170,158); };
+
+/* triangles */
+GV.perimTri=()=>({s:gvTri3('c','a','b'),cap:'<b>Périmètre</b> = longueur du contour = somme des trois côtés : <b>P = a + b + c</b>. On additionne des longueurs, sans hauteur.'});
+GV.aireTriT=gvWith('aireTri','Aire : base × hauteur ÷ 2');
+GV.perimTriT=gvWith('perimTri','Périmètre : somme des côtés');
+GV.bonneHauteur=()=>{ const A=[110,36],B=[50,140],C=[280,140],H=[110,140]; return {s:g.poly([A,B,C])+gvD(A,H)+g.right(H,A,C,9)+gvDots([A,B,C,H])+gvT(70,82,'AB = 13','g-t','end')+gvT(170,157,'BC = 16')+gvU(120,92,'h = 5','start')+gvT(176,60,'côté penché','g-t','start')+gvT(176,78,'≠ hauteur','g-u','start'),
+  cap:'<b>Bonne hauteur</b> : la hauteur est perpendiculaire à la base (angle droit), elle n\'est pas un côté du triangle. Ici <b>A = BC × h ÷ 2 = 16 × 5 ÷ 2 = 40</b>. Le côté AB = 13 est une donnée inutile pour l\'aire.'}; };
+GV.aireInv=()=>({s:g.poly([[60,140],[250,140],[250,36],[60,36]],'g-dash')+gvP([[60,140],[250,140],[150,36]],GVA)+gvD([150,36],[150,140])+g.right([150,140],[150,36],[250,140],9)+gvT(150,157,'base b = 5')+gvU(160,90,'h = ?','start')+gvT(262,70,'A = 22,5','g-t','start'),
+  cap:'<b>Valeur manquante</b> : on part de <b>A = b × h ÷ 2</b> et on isole l\'inconnue : <b>h = 2A ÷ b</b> (ou <b>b = 2A ÷ h</b>). Ici h = 2 × 22,5 ÷ 5 = 9.'});
+GV.perimInv=()=>({s:gvTri3('?','10','5'),cap:'<b>Côté manquant</b> : le périmètre est connu, donc <b>c = P − a − b</b> (on retire les deux côtés connus). Exemple : P = 24, a = 10, b = 5 → c = 9.'});
+GV.perimInvT=gvWith('perimInv','Périmètre connu, côté manquant');
+GV.aireInvT=gvWith('aireInv','Aire connue, base ou hauteur manquante');
+GV.pythPerim=()=>({s:gvRT('3','4','?','c'),cap:'<b>Triangle rectangle et périmètre</b> : le côté manquant est l\'hypoténuse, c² = 3² + 4² = 25 donc c = 5. Ensuite seulement <b>P = 3 + 4 + 5 = 12</b>.'});
+
+/* Pythagore */
+GV.hypo=()=>({s:gvRT('12','5','?','c'),cap:'<b>Calculer l\'hypoténuse</b> (le côté en face de l\'angle droit, le plus long) : <b>c = √(a² + b²)</b>. Ici c = √(5² + 12²) = √169 = 13.'});
+GV.cote=()=>({s:gvRT('?','5','13','a'),cap:'<b>Calculer un côté de l\'angle droit</b> : on soustrait. <b>a = √(c² − b²)</b>, avec c l\'hypoténuse. Ici a = √(13² − 5²) = √144 = 12.'});
+GV.racine=()=>({s:gvRT('8','2','?','c'),cap:'<b>Racine non entière</b> : c² = 2² + 8² = 68, et 68 n\'est pas un carré parfait. Valeur exacte : √68 = 2√17. Valeur approchée (calculatrice) : c ≈ 8,2.'});
+GV.diagRect=()=>({t:'Diagonale d\'un rectangle',s:g.poly([[70,40],[250,40],[250,140],[70,140]])+g.seg([70,140],[250,40],'g-mark')+g.right([250,140],[70,140],[250,40],9)+gvT(160,157,'8')+gvT(262,90,'6','g-t','start')+gvU(140,82,'?','end'),
+  cap:'La diagonale d\'un rectangle est l\'hypoténuse du triangle rectangle formé par deux côtés : <b>d = √(L² + l²)</b>. Ici d = √(8² + 6²) = 10.'});
+GV.echelle=()=>({t:'Échelle contre un mur',s:g.seg([60,20],[60,142],'g-l g-thick')+g.seg([30,142],[300,142],'g-l')+gvTk(g.seg([200,142],[60,40],'g-mark'))+g.right([60,142],[60,40],[200,142],9)+gvT(130,150,'pied à 3 m','g-t')+gvT(48,92,'?','g-u','end')+gvT(142,80,'échelle 5 m','g-t','start')+gvT(25,30,'mur','g-t','start'),
+  cap:'Mur vertical + sol horizontal = angle droit. L\'échelle est l\'<b>hypoténuse</b> : hauteur = √(longueur² − distance au mur²). Ici √(5² − 3²) = 4.'});
+GV.pythEq=()=>({s:gvRT('x + 2','x','x + 4','c'),cap:'<b>Pythagore et équation</b> : on écrit x² + (x + 2)² = (x + 4)², on développe : 2x² + 4x + 4 = x² + 8x + 16, donc <b>x² − 4x − 12 = 0</b>, soit (x − 6)(x + 2) = 0. Longueur positive : x = 6 (triangle 6-8-10).'});
+GV.triplet=()=>({s:gvRT('c','n','n + 1','c'),cap:'<b>Loi générale</b> : c² = (n + 1)² − n² = <b>2n + 1</b>, donc c = √(2n + 1). Le côté c est entier seulement si 2n + 1 est un carré parfait : n = 4 → c = 3 (3-4-5) ; n = 12 → c = 5 (5-12-13).'});
+GV.hautRect=()=>{ const A=[40,140],B=[66,140],C=[118,140],D=[274,140],E=[66,66]; return {s:g.seg(A,D,'g-l')+gvP([E,B,C],GVA)+g.seg(A,E,'')+g.seg(E,D,'')+gvD(E,B)+gvPath('M66 66 A78 78 0 0 1 118 140','fill:none','g-dash')+g.right(B,E,D,8)+g.right(E,A,D,8)+gvDots([A,B,C,D,E])+gvT(34,150,'A','g-v','end')+gvT(66,153,'B','g-v')+gvT(118,153,'C','g-v')+gvT(282,153,'D','g-v','start')+gvT(66,56,'E','g-v')+gvT(40,96,'3','g-t','end')+gvT(196,153,'CD = 6','g-t'),
+  cap:'<b>Hauteur dans un triangle rectangle</b> : AED est rectangle en E et [EB] est sa hauteur. L\'arc centré en A donne <b>AC = AE</b>. Relations utiles : AE² = AB × AD et EB² = AB × BD. Aire grise = BC × EB ÷ 2.'}; };
+
+/* quadrilatères */
+GV.paralH=()=>({s:g.poly([[50,140],[210,140],[270,52],[110,52]])+gvP([[50,140],[110,140],[110,52]],GVA)+gvD([110,52],[110,140])+g.right([110,140],[110,52],[210,140],9)+gvT(130,157,'AB = 12')+gvT(240,92,'AD = 15','g-t','start')+gvU(120,96,'h = 12','start'),
+  cap:'<b>Aire d\'un parallélogramme</b> = côté × <b>hauteur relative à ce côté</b> : A = 12 × 12 = 144. Le côté penché (15) n\'est pas la hauteur : il ne sert pas pour l\'aire.'});
+GV.paral2h=()=>{ const P0=[40,140],P1=[200,140],P2=[260,50],P3=[100,50],F=[89.3,66.1]; return {s:g.poly([P0,P1,P2,P3])+gvD(P3,[100,140])+g.right([100,140],P3,P1,8)+gvD(P1,F)+g.right(F,P1,P3,8)+gvT(120,157,'b1')+gvU(106,100,'h1','start')+gvT(66,80,'b2','g-t','end')+gvU(148,110,'h2','start'),
+  cap:'<b>Deux hauteurs, une seule aire</b> : <b>A = b1 × h1 = b2 × h2</b>. On calcule l\'aire avec le côté dont on connaît la hauteur, puis on divise par l\'autre côté : h2 = A ÷ b2.'}; };
+GV.losPerim=()=>({s:gvLos('6','8','?'),cap:'<b>Losange et diagonales</b> : elles se coupent à angle droit en leur milieu. Pour des diagonales de 12 et 16 : demi-diagonales 6 et 8, côté = √(6² + 8²) = 10, <b>P = 4 × 10 = 40</b>.'});
+GV.losCote=()=>({s:gvLos('12','?','13'),cap:'<b>Côté et diagonale connus</b> : on cherche la demi-autre diagonale : √(13² − 12²) = 5, donc l\'autre diagonale vaut 10. Le périmètre est <b>P = 4 × côté = 52</b> (ne dépend pas de la diagonale).'});
+GV.quadDecoupe=()=>({s:gvP([[60,140],[60,50],[200,50]],GVA)+gvP([[60,140],[200,50],[208,123]],GVG)+g.poly([[60,140],[60,50],[200,50],[208,123]],'fill:none')+g.right([60,50],[60,140],[200,50],9)+g.right([208,123],[200,50],[60,140],9)+gvT(50,52,'B','g-v','end')+gvT(50,148,'A','g-v','end')+gvT(206,40,'C','g-v')+gvT(220,128,'D','g-v','start')+gvT(145,102,'AC','g-u'),
+  cap:'<b>Quadrilatère à deux angles droits</b> : la diagonale AC le coupe en deux triangles rectangles. Pythagore donne AC (ou un côté manquant), puis <b>A = AB × BC ÷ 2 + AD × DC ÷ 2</b>.'});
+GV.trapDiag=()=>({s:gvP([[94.7,77.5],[40,60],[110,60]],GVA)+gvP([[94.7,77.5],[40,140],[290,140]],GVG)+g.poly([[40,140],[290,140],[110,60],[40,60]],'fill:none')+g.seg([40,60],[290,140],'g-dash')+g.seg([110,60],[40,140],'g-dash')+g.right([40,140],[40,60],[290,140],9)+gvDots([[40,60],[110,60],[40,140],[290,140],[94.7,77.5]])+gvT(40,50,'A','g-v','end')+gvT(114,50,'B','g-v','start')+gvT(34,150,'C','g-v','end')+gvT(296,150,'D','g-v','start')+gvT(106,92,'E','g-v','start')+gvT(75,52,'AB')+gvT(165,157,'CD'),
+  cap:'<b>Trapèze et diagonales</b> : (AB) ∥ (CD), donc les triangles EAB et EDC sont semblables (papillon) : <b>EA ÷ ED = EB ÷ EC = AB ÷ CD</b>. Avec AB = 8 et CD = 32 : EB ÷ EC = 1 ÷ 4, donc EC = 4⁄5 × BC.'});
+
+/* Thalès */
+const gvTh=(hi,legend)=>{ const A=[170,14],B=[55,140],C=[285,140],M=[112,77],N=[228,77]; let o=g.poly([A,B,C])+g.seg(M,N,'g-mark')+g.par(M,N,1)+g.par(B,C,1);
+  const seg={AM:[A,M],AN:[A,N],MN:[M,N],AB:[A,B],AC:[A,C],BC:[B,C],MB:[M,B],NC:[N,C]};
+  hi.split(' ').forEach(k=>{ if(seg[k]) o+=gvTk(g.seg(seg[k][0],seg[k][1],'g-mark')); });
+  return o+gvDots([A,M,N,B,C])+gvT(170,6,'A','g-v')+gvT(98,80,'M','g-v','end')+gvT(242,80,'N','g-v','start')+gvT(42,146,'B','g-v')+gvT(298,146,'C','g-v')+gvT(170,172,legend.replace(/ {2,}/g,'   ·   '),'g-t'); };
+GV.thPetit=()=>({s:gvTh('AM AN AB AC','AM = 2    AB = 6    AC = 12    AN = ?'),cap:'<b>Thalès, petit segment</b> : (MN) ∥ (BC) donc AM ÷ AB = AN ÷ AC. On cherche AN : <b>AN = AC × AM ÷ AB</b> = 12 × 2 ÷ 6 = 4.'});
+GV.thGrand=()=>({s:gvTh('AM AB MN BC','AM = 1,5    AB = 3    MN = 2    BC = ?'),cap:'<b>Thalès, grand segment</b> : AM ÷ AB = MN ÷ BC. On cherche BC : <b>BC = MN × AB ÷ AM</b> = 2 × 3 ÷ 1,5 = 4. Le résultat est plus grand que MN (grand triangle).'});
+GV.thPartiel=()=>({s:gvTh('AM MB AN AC','AM = 3    MB = 9    AN = 1    AC = ?'),cap:'<b>Segments partiels</b> : attention, AB n\'est pas donné. On le reconstruit : <b>AB = AM + MB</b> = 12. Puis AM ÷ AB = AN ÷ AC donne AC = 1 × 12 ÷ 3 = 4.'});
+GV.papAC=()=>{ const O=[170,85],A=[95,38],C=[245,132],B=[245,38],D=[95,132]; return {s:g.poly([O,A,B],GVA)+g.poly([O,C,D],GVG)+g.seg(A,C,'')+g.seg(B,D,'')+g.seg(A,D,'g-mark')+g.seg(B,C,'g-mark')+gvDots([O,A,B,C,D])+gvT(86,32,'A','g-v','end')+gvT(254,32,'B','g-v','start')+gvT(254,138,'C','g-v','start')+gvT(86,138,'D','g-v','end')+gvT(180,90,'O','g-v','start'),
+  cap:'<b>Papillon, cas de la figure en X</b> : les droites (AB) et (CD) se coupent en O et (AC) ∥ (BD). Les triangles OAC et OBD sont semblables : <b>OA ÷ OB = OC ÷ OD = AC ÷ BD</b>. Lis en croix : A↔B, C↔D.'}; };
+GV.recip=()=>{ const A=[170,14],B=[55,140],C=[285,140],M=[112,77],N=[210,50]; return {t:'Réciproque : (MN) est-elle parallèle à (BC) ?',s:g.poly([A,B,C])+g.seg(M,N,'g-mark')+gvDots([A,M,N,B,C])+gvT(170,6,'A','g-v')+gvT(98,80,'M','g-v','end')+gvT(220,46,'N','g-v','start')+gvT(42,146,'B','g-v')+gvT(298,146,'C','g-v')+gvT(170,172,'AM÷AB = 1÷3   ·   AN÷AC = 2÷3','g-t'),
+  cap:'<b>Réciproque de Thalès</b> : on calcule AM ÷ AB et AN ÷ AC (même sens). Si les deux rapports sont <b>égaux</b>, (MN) ∥ (BC). Sinon, elles ne sont pas parallèles (ici 1⁄3 ≠ 2⁄3).'}; };
+GV.ombreT=gvWith('ombre','Application : ombres et hauteurs');
+GV.thGrille=()=>{ let o=''; for(let i=0;i<=4;i++) o+=g.seg([100+i*32,20],[100+i*32,148],'g-thin')+g.seg([100,20+i*32],[228,20+i*32],'g-thin'); return {s:o+g.poly([[100,20],[228,20],[228,148],[100,148]],'fill:none')+g.seg([100,148],[228,20],'g-mark')+gvTk(g.seg([196,20],[196,52],'g-mark'))+gvDots([[196,52]])+gvT(190,36,'?','g-u','end')+gvT(196,162,'ligne 3','g-t')+gvT(240,60,'diagonale','g-t','start'),
+  cap:'<b>Quadrillage</b> : la diagonale coupe la ligne verticale numéro k à la hauteur <b>H × k ÷ n</b> (n colonnes, H hauteur totale). Le segment gras vaut <b>H − H × k ÷ n</b>. Exemple : 4 colonnes, H = 12, k = 3 → 12 − 9 = 3.'}; };
+GV.paraSemb=()=>{ const A=[50,140],B=[150,140],D=[110,60],C=[210,60],E=[300,60],F=[181.6,97.9]; return {s:gvP([F,A,B],GVA)+gvP([F,C,E],GVG)+g.poly([A,B,C,D],'fill:none')+g.seg(C,E,'')+g.seg(A,E,'g-dash')+g.par(A,B,1)+g.par(D,C,1)+gvDots([A,B,C,D,E,F])+gvT(42,146,'A','g-v','end')+gvT(150,152,'B','g-v')+gvT(104,52,'D','g-v','end')+gvT(210,52,'C','g-v')+gvT(308,56,'E','g-v','start')+gvT(190,108,'F','g-v','start'),
+  cap:'<b>Parallélogramme et triangles semblables</b> : (AB) ∥ (CE), donc FAB et FEC sont semblables : <b>FC ÷ FB = CE ÷ AB</b>. F est sur [BC] : FB + FC = BC, ce qui permet de calculer chacune des deux parties.'}; };
+
+/* cercles et angles */
+GV.angCentre1=()=>{ const d=GV.angcentre(); return {s:d.s,cap:'<b>Angle inscrit → angle au centre</b> : l\'angle au centre est le <b>double</b> de l\'angle inscrit qui intercepte le même arc : ∠AOB = 2 × ∠ACB. Ici 2 × 45° = 90°.'}; };
+GV.angCentre2=()=>{ const d=GV.angcentre(); return {s:d.s,cap:'<b>Angle au centre → angle inscrit</b> : l\'angle inscrit est la <b>moitié</b> de l\'angle au centre : ∠ACB = ∠AOB ÷ 2. Ici 90° ÷ 2 = 45°.'}; };
+GV.tangIsoc=()=>{ const O=[150,80],A=[150,140],B=gvCp(150,80,60,-40),C=gvCp(150,80,60,125),T=[270,140]; return {s:g.circle(O,60,'g-circle')+g.seg([50,140],[290,140],'')+g.seg(O,A,'g-dash')+g.seg(O,B,'g-dash')+g.seg(A,B,'g-mark')+g.seg(C,A,'g-thin')+g.seg(C,B,'g-thin')+g.right(A,O,T,9)+g.arc(O,A,B,18,'','')+g.arc(A,B,T,34,'','g-u')+gvT(236,134,'∠BAT','g-u','start')+gvDots([O,A,B,C])+gvT(140,74,'O','g-v','end')+gvT(144,154,'A','g-v','end')+gvT(B[0]+8,B[1]-2,'B','g-v','start')+gvT(C[0]-8,C[1]-4,'C','g-v','end')+gvT(280,150,'T','g-v','start'),
+  cap:'<b>Tangente et triangle isocèle</b> : OA ⊥ (AT), et OAB est isocèle (OA = OB). Donc ∠OAB = (180° − ∠AOB) ÷ 2, puis <b>∠BAT = 90° − ∠OAB = ∠AOB ÷ 2</b>. Avec ∠AOB = 110° : ∠BAT = 55°. Avec un angle inscrit ∠ACB = 70° : ∠AOB = 140°, ∠OAB = 20°.'}; };
+GV.tangAngle=()=>{ const O=[150,85],A=[150,140],B=gvCp(150,85,55,-35),C=gvCp(150,85,55,110); return {s:g.circle(O,55,'g-circle')+g.seg([60,140],[290,140],'')+g.poly([A,B,C],'fill:none')+g.arc(A,[240,140],B,28,'α','g-u')+g.arc(C,A,B,22,'α','g-u')+gvDots([A,B,C])+gvT(144,152,'A','g-v','end')+gvT(B[0]+8,B[1]-2,'B','g-v','start')+gvT(C[0]-8,C[1]-4,'C','g-v','end')+gvT(270,152,'T','g-v'),
+  cap:'<b>Tangente, corde et angle inscrit</b> : l\'angle entre la tangente et la corde est égal à l\'angle inscrit qui intercepte le même arc : ∠TAB = ∠ACB. Ensuite, la somme des angles de ABC vaut 180° : ∠ABC = 180° − ∠BAC − ∠ACB.'}; };
+GV.reuleaux=()=>({s:gvPath('M110 140 A120 120 0 0 0 230 140 A120 120 0 0 0 170 36.1 A120 120 0 0 0 110 140 Z',GVA)+g.poly([[110,140],[230,140],[170,36.1]],'fill:none g-dash')+gvDots([[110,140],[230,140],[170,36.1]])+gvT(100,148,'A','g-v','end')+gvT(240,148,'B','g-v','start')+gvT(170,26,'C','g-v')+gvT(170,122,'r','g-u'),
+  cap:'<b>Surface commune à trois disques</b> (chaque cercle passe par les deux autres centres) : trois secteurs de 60° recouvrent le triangle équilatéral, qui est compté 3 fois. <b>A = 3 × πr²⁄6 − 2 × (√3⁄4)r² = (π − √3) r² ÷ 2</b>.'});
+GV.trois3=()=>{ let o=''; for(let i=0;i<=6;i++) o+=g.seg([60+i*40,20],[60+i*40,140],'g-thin'); for(let j=0;j<=3;j++) o+=g.seg([60,20+j*40],[300,20+j*40],'g-thin'); return {s:o+gvC(140,60,40,GVG)+gvC(220,60,40,GVG)+gvC(180,100,40,GVG)+gvDots([[140,60],[220,60],[180,100]])+gvT(305,45,'a','g-u','start'),
+  cap:'<b>Réunion de trois disques</b> sur un quadrillage : les deux disques du haut ne font que se toucher ; le disque du bas coupe chacun d\'eux (centres à a√2). Chaque <b>lentille = deux quarts de disque − un carré = (π⁄2 − 1)a²</b>. Réunion = 3πa² − 2 lentilles = <b>(2π + 2)a²</b>.'}; };
+GV.petalCarre=()=>{ const sq='M100 20 L220 20 L220 140 L100 140 Z'; return {t:'Pétales dans un carré',s:'<defs><clipPath id="gvclip1"><rect x="100" y="20" width="120" height="120"/></clipPath></defs><g clip-path="url(#gvclip1)">'+gvC(100,20,85,GVG)+gvC(220,20,85,GVG)+gvC(220,140,85,GVG)+gvC(100,140,85,GVG)+'</g>'+g.poly([[100,20],[220,20],[220,140],[100,140]],'fill:none')+gvDots([[100,20],[220,20],[220,140],[100,140]])+gvT(160,85,'r','g-u'),
+  cap:'<b>Quatre quarts de disque</b> de rayon r (la demi-diagonale) couvrent le carré. Les zones couvertes deux fois (les pétales) valent : <b>somme des quarts de disque − carré</b> = π r² − c² (avec r² = c² ÷ 2, soit c²(π⁄2 − 1)).'}; };
+GV.petale=()=>({t:'Un pétale = intersection de deux disques',s:gvC(130,85,60,'fill:var(--accent);fill-opacity:.12')+gvC(190,85,60,'fill:var(--accent);fill-opacity:.12')+gvPath('M160 33 A60 60 0 0 0 160 137 A60 60 0 0 0 160 33 Z',GVA)+g.seg([130,85],[190,85],'g-thin')+gvDots([[130,85],[190,85]])+gvT(160,162,'distance des centres = r','g-t'),
+  cap:'<b>Pétale</b> : intersection de deux disques de rayon r dont les centres sont à distance r. Il se calcule par <b>2 secteurs de 120° − 1 losange</b>, ou par soustraction de surfaces connues (disque, polygone).'});
+GV.cerclesTang=()=>({s:g.poly([[170,20],[127.6,140],[212.4,140]])+gvC(170,110,30,'fill:var(--accent);fill-opacity:.15')+gvC(170,65,15,GVA)+g.seg([170,110],[170,65],'g-dash')+gvDots([[170,20],[170,110],[170,65]])+gvT(184,20,'S','g-v','start')+gvT(160,110,'O','g-v','end')+gvT(156,65,'P','g-v','end')+gvT(188,90,'2r','g-t','start')+gvT(186,60,'r','g-t','start'),
+  cap:'<b>Cercles tangents</b> : deux cercles tangents extérieurement ont leurs centres à distance <b>R + r</b> (ici OP = 2r + r = 3r). Un cercle tangent à un côté a son rayon perpendiculaire à ce côté, et son centre sur la bissectrice. Les triangles rectangles semblables relient r, 2r et SP.'});
+
+/* figures composées */
+GV.formeL=()=>({s:gvP([[60,30],[160,30],[160,70],[260,70],[260,140],[60,140]],GVA)+gvP([[160,30],[260,30],[260,70],[160,70]],'fill:none','g-dash')+gvT(160,157,'longueur')+gvT(272,105,'largeur','g-t','start')+gvT(110,20,'a')+gvT(210,60,'enlevé','g-t'),
+  cap:'<b>Figure en L</b> : deux méthodes. (1) rectangle entier − coin enlevé. (2) deux rectangles à additionner. <b>Périmètre</b> : il est égal à celui du rectangle englobant (les côtés rentrants compensent exactement les côtés manquants).'});
+GV.maison=()=>({s:gvRect(60,86,200,54,GVA)+gvP([[60,86],[260,86],[160,26]],GVG)+gvD([160,26],[160,86])+g.right([160,86],[160,26],[260,86],8)+gvT(160,155,'30')+gvT(272,114,'5','g-t','start')+gvT(226,50,'17','g-t','start')+gvU(168,58,'h','start')+gvT(210,98,'15','g-t'),
+  cap:'<b>Rectangle surmonté d\'un triangle isocèle</b> : la hauteur du toit vient de Pythagore (demi-base 15, côté oblique 17) : h = √(17² − 15²) = 8. <b>Périmètre</b> = 30 + 2 × 5 + 2 × 17 = 74 (la base du triangle est à l\'intérieur). <b>Aire</b> = rectangle + triangle.'});
+GV.carreDisque=()=>{ const O=[170,85],V=[45,135,225,315].map(a=>gvCp(170,85,65,a)); return {s:g.circle(O,65,'g-circle')+gvC(170,85,65,GVG)+gvP(V,'fill:var(--card-2);fill-opacity:1')+g.seg(V[0],V[2],'g-dash')+g.seg(V[1],V[3],'g-dash')+gvDots([O])+gvU(190,78,'r','start')+gvT(170,160,'diagonale = 2r','g-t'),
+  cap:'<b>Carré inscrit dans un disque</b> : ses diagonales sont des diamètres (longueur 2r). Aire du carré = d² ÷ 2 = <b>2r²</b>. Partie hachurée = <b>πr² − 2r²</b>. Avec r = 5 : 25π − 50.'}; };
+GV.uShape=()=>({t:'Forme en U',s:gvPath('M110 10 L110 100 A60 60 0 0 0 230 100 L230 10 L200 10 L200 100 A30 30 0 0 1 140 100 L140 10 Z',GVA)+gvT(125,24,'x','g-u')+gvT(215,24,'x','g-u')+gvT(170,50,'2x','g-u')+gvT(100,56,'3x','g-t','end')+gvT(250,140,'demi-couronne','g-t','start'),
+  cap:'<b>Forme en U</b> (x = largeur des bras) : périmètre = bords droits <b>2 × (3x + 3x + x) = 14x</b> + demi-cercle extérieur (π × 2x) + demi-cercle intérieur (π × x), soit <b>14x + 3πx</b>. Aire de la demi-couronne = ½ π ((2x)² − x²).'});
+GV.anneauSecteur=()=>({t:'Anneau privé d\'un secteur',s:gvPath('M170 25 A60 60 0 1 0 230 85 L200 85 A30 30 0 1 1 170 55 Z',GVA)+g.seg([170,85],[230,85],'g-thin')+g.seg([170,85],[170,25],'g-thin')+g.arc([170,85],[200,85],[170,55],20,'α','g-u')+gvDots([[170,85]])+gvT(204,98,'y','g-t')+gvT(246,100,'y + x','g-t','start')+gvT(250,50,'manquant','g-t','start'),
+  cap:'<b>Anneau (rayons y et y + x) privé d\'un secteur d\'angle α</b> : <b>A = ((360° − α) ÷ 360) × π ((y + x)² − y²)</b>. Avec y = 5, x = 1, α = 90° : ¾ × π × 11 = 8,25π.'});
+GV.empilement=()=>{ let o='',r=18; [[52,[100,136,172,208]],[83.2,[118,154,190]],[114.4,[100,136,172,208]]].forEach(row=>row[1].forEach(x=>{ o+=gvC(x,row[0],r,GVG); })); return {s:o+gvD([136,52],[262,52])+gvD([154,83.2],[262,83.2])+g.seg([256,52],[256,83.2],'g-mark')+gvU(266,73,'y√3','start')+gvT(170,160,'centres voisins : 2y','g-t'),
+  cap:'<b>Empilement</b> : entre deux rangées voisines, les centres forment un triangle équilatéral de côté 2y, donc un décalage vertical de <b>y√3</b>. Pour 3 rangées : x = y√3 + y = <b>y(1 + √3)</b> ; pour 5 rangées : x = 2y√3 + y.'}; };
+GV.ogive=()=>({s:g.seg([40,140],[160,140],'g-l')+gvPath('M160 140 A120 120 0 0 0 100 36 A120 120 0 0 0 40 140 Z','fill:var(--accent);fill-opacity:.1')+gvPath('M40 140 A30 30 0 0 1 100 140 Z',GVG)+gvPath('M100 140 A30 30 0 0 1 160 140 Z',GVG)+gvC(100,96,14,GVA)+g.seg([100,96],[70,140],'g-dash')+g.seg([100,96],[40,140],'g-dash')+gvDots([[40,140],[160,140],[100,96]])+gvT(105,116,'y','g-u','start')+gvT(60,100,'x','g-u','end')+gvT(100,26,'ogive','g-t'),
+  cap:'<b>Cercles tangents</b> : la distance entre les centres de deux cercles tangents extérieurs est la <b>somme des rayons</b> ; pour un cercle tangent intérieurement, c\'est la <b>différence</b>. On écrit chaque distance de centres, puis on résout avec Pythagore dans le triangle formé.'});
+GV.encoches=()=>({s:g.poly([[50,30],[290,30],[290,140],[50,140]])+gvPath('M82 30 A28 28 0 0 0 138 30 Z','fill:var(--card-2);fill-opacity:1')+gvPath('M236 140 A14 14 0 0 1 264 140 Z','fill:var(--card-2);fill-opacity:1')+gvDots([[110,30],[250,140]])+gvT(110,76,'r = 4','g-t')+gvT(250,124,'r = 2','g-t'),
+  cap:'<b>Figure à encoches</b> : aire = polygone − demi-disques (πr² ÷ 2 chacun). Pour le <b>périmètre</b>, on retire le diamètre de chaque encoche du bord droit et on ajoute son arc (π r). Les longueurs manquantes viennent de Pythagore ou de Héron.'});
+GV.segmentsDisque=()=>({s:gvC(170,85,65,GVA)+gvPath('M140 55 L200 55 A42.4 42.4 0 0 0 140 55 Z','fill:var(--card-2);fill-opacity:1')+gvPath('M140 115 L200 115 A42.4 42.4 0 0 1 140 115 Z','fill:var(--card-2);fill-opacity:1')+g.seg([170,85],[140,55],'g-dash')+g.seg([170,85],[200,55],'g-dash')+gvDots([[170,85]])+gvT(178,92,'O','g-v','start')+gvT(250,60,'trou','g-t','start'),
+  cap:'<b>Trou en forme de segment</b> : bordé par une corde et un arc centré en O. Aire du trou = <b>secteur − triangle</b> (OAB). Périmètre de la surface = cercle extérieur + (corde + arc) de chaque trou.'});
+GV.rosace=()=>({s:gvPath('M100 20 A60 60 0 0 0 220 20 Z',GVG)+gvPath('M220 20 A60 60 0 0 0 220 140 Z',GVG)+gvPath('M220 140 A60 60 0 0 0 100 140 Z',GVG)+gvPath('M100 140 A60 60 0 0 0 100 20 Z',GVG)+g.poly([[100,20],[220,20],[220,140],[100,140]],'fill:none')+gvT(160,160,'pétales au centre','g-t'),
+  cap:'<b>Quatre demi-disques dans un carré</b> : les pétales sont les points couverts <b>deux fois</b>. Aire des pétales = somme des 4 demi-disques − aire du carré (chaque point du carré est couvert au moins une fois).'});
+GV.hexDemi=()=>{ const V=[0,1,2,3,4,5,6].map(i=>gvCp(170,85,50,60*i)); let d='M'+V[0][0]+' '+V[0][1]; for(let i=1;i<=6;i++) d+=' A25 25 0 0 0 '+V[i][0]+' '+V[i][1]; return {s:gvPath(d+' Z',GVG)+g.poly(V.slice(0,6),GVA)+gvT(170,85,'c','g-u'),
+  cap:'<b>Hexagone et demi-disques extérieurs</b> (côté c) : le contour compte 6 demi-cercles de diamètre c : <b>P = 6 × πc ÷ 2 = 3πc</b> (les côtés de l\'hexagone sont à l\'intérieur). Aire = hexagone <b>3√3c² ÷ 2</b> + 6 demi-disques <b>3πc² ÷ 4</b>.'}; };
+GV.courroie=()=>{ const R=42,r=24,d=130,O1=[90,85],O2=[220,85],c=(R-r)/d,s=Math.sqrt(1-c*c); const T1=[O1[0]+R*c,O1[1]-R*s],T2=[O2[0]+r*c,O2[1]-r*s],T1b=[T1[0],2*85-T1[1]],T2b=[T2[0],2*85-T2[1]];
+  const f=n=>Math.round(n*10)/10; return {s:gvPath('M'+f(T1[0])+' '+f(T1[1])+' L'+f(T2[0])+' '+f(T2[1])+' A'+r+' '+r+' 0 0 1 '+f(T2b[0])+' '+f(T2b[1])+' L'+f(T1b[0])+' '+f(T1b[1])+' A'+R+' '+R+' 0 1 1 '+f(T1[0])+' '+f(T1[1])+' Z','fill:var(--accent);fill-opacity:.12')+g.circle(O1,R,'')+g.circle(O2,r,'')+g.seg(O1,O2,'g-dash')+g.seg(O1,T1,'g-thin')+g.seg(O2,T2,'g-thin')+g.arc(O1,O2,T1,24,'θ','g-u')+gvDots([O1,O2])+gvT(155,100,'d','g-u')+gvT(O1[0]-16,O1[1]+20,'R','g-t')+gvT(O2[0],O2[1]+20,'r','g-t'),
+  cap:'<b>Courroie</b> : longueur = 2 brins droits + 2 arcs. Brin droit = √(d² − (R − r)²). Avec cos θ = (R − r) ÷ d : arc de la petite poulie = <b>2θ</b>, arc de la grande = <b>360° − 2θ</b>. (R = 7, r = 4, d = 6 : θ = 60°, longueur = 6√3 + 12π.)'}; };
+GV.lunules=()=>{ const R_=[100,50],P=[220,50],Q=[100,130]; return {s:gvPath('M100 50 A60 60 0 0 0 220 50 Z',GVA)+gvPath('M100 50 A40 40 0 0 0 100 130 Z',GVA)+gvC(160,90,72.1,'fill:var(--card-2);fill-opacity:1')+g.poly([R_,P,Q],GVG)+g.right(R_,P,Q,9)+gvT(160,42,'a','g-t')+gvT(50,94,'b','g-t','end')+gvT(180,88,'c','g-t','start')+gvT(70,140,'lunule','g-u','end'),
+  cap:'<b>Lunules d\'Hippocrate</b> : avec les demi-disques construits sur les trois côtés, Pythagore donne <b>demi-disque(a) + demi-disque(b) = demi-disque(c)</b>. En retirant le demi-disque de l\'hypoténuse, il reste : <b>aire des deux lunules = aire du triangle rectangle</b>.'}; };
+GV.trapEnc=()=>({s:gvPath('M50 140 L280 140 L230 50 L50 50 Z')+gvPath('M104 50 A36 36 0 0 1 176 50 Z',GVA)+gvPath('M132 140 A28 28 0 0 1 188 140 Z','fill:var(--card-2);fill-opacity:1')+g.right([50,140],[280,140],[50,50],9)+gvT(160,157,'B')+gvT(160,126,'r = 2','g-t')+gvT(140,36,'R = 3','g-t'),
+  cap:'<b>Trapèze rectangle avec encoche et bosse</b> : <b>A = (B + b) × h ÷ 2 − πr² ÷ 2 (encoche) + πR² ÷ 2 (bosse)</b>. Une encoche se soustrait, une bosse s\'ajoute.'});
+GV.facade=()=>({s:gvRect(50,90,240,52,GVA)+gvP([[50,90],[290,90],[170,24]],GVG)+gvRect(155,106,40,36,'fill:var(--card-2);fill-opacity:1')+gvPath('M155 106 A20 20 0 0 1 195 106 Z','fill:var(--card-2);fill-opacity:1')+gvRect(80,106,34,26,'fill:var(--card-2);fill-opacity:1'),
+  cap:'<b>Façade</b> : aire = rectangle + triangle du toit − porte (rectangle + demi-disque) − fenêtre. On calcule chaque morceau séparément, puis on additionne ou on soustrait. Le périmètre peut aussi compter les bords de la porte, selon la question.'});
+GV.triEnc=()=>{ const P=[60,140],Q=[280,140],T=[60,50],M=[170,95], u=vunit(vsub(Q,T)); const a=vadd(M,vmul(u,-22)), b=vadd(M,vmul(u,22)); const nrm=[-u[1],u[0]], mid=vadd(M,vmul(nrm,22)); return {s:g.poly([P,Q,T])+gvPath('M'+gf(a[0])+' '+gf(a[1])+arcM(a,b,mid,22)+' Z','fill:var(--card-2);fill-opacity:1')+gvPath('M115 140 A20 20 0 0 1 155 140 Z','fill:var(--card-2);fill-opacity:1')+g.right(P,Q,T,9)+gvDots([M,[135,140]]),
+  cap:'<b>Triangle rectangle à deux encoches</b> : aire = triangle (base × hauteur ÷ 2) − demi-disques (πr² ÷ 2 chacun). Une encoche centrée sur l\'hypoténuse a son diamètre le long de ce côté.'}; };
+GV.plaque=()=>({s:gvRect(40,30,260,110,GVA)+gvC(110,85,20,'fill:var(--card-2);fill-opacity:1')+gvC(170,85,20,'fill:var(--card-2);fill-opacity:1')+gvC(230,85,20,'fill:var(--card-2);fill-opacity:1')+gvT(170,157,'L')+gvT(312,85,'l','g-t','start')+gvT(170,89,'Ø','g-u'),
+  cap:'<b>Plaque percée</b> : matière restante = plaque entière − trous. <b>Aire = L × l − n × π r²</b> (avec r = Ø ÷ 2). Pour un volume, on multiplie par l\'épaisseur. Attention à ne pas confondre le diamètre Ø et le rayon r.'});
+GV.grades=()=>({s:g.circle([170,85],45,'g-circle')+g.seg([125,85],[215,85],'g-thin')+g.seg([170,40],[170,130],'g-thin')+gvT(170,26,'100 gon = 90°')+gvT(118,89,'200 gon = 180°','g-t','end')+gvT(224,89,'0 / 400 gon','g-t','start')+gvT(170,152,'300 gon = 270°')+gvT(170,66,'1 tour','g-u'),
+  cap:'<b>Grades (gon)</b> : un tour = 360° = 400 grades. Donc <b>100 gon = 90°</b> : degrés = grades × 0,9, et grades = degrés × 10 ÷ 9. Un quart de tour = 100 gon = 90°.'});
+GV.radT=()=>({s:g.circle([170,85],45,'g-circle')+g.seg([125,85],[215,85],'g-thin')+g.seg([170,40],[170,130],'g-thin')+gvT(170,26,'90° = π/2')+gvT(118,89,'180° = π','g-t','end')+gvT(224,89,'0° = 360°','g-t','start')+gvT(170,152,'270° = 3π/2')+gvT(170,66,'1 tour','g-u'),cap:'<b>Radians</b> : π rad = 180°. Degrés → radians : multiplie par π ÷ 180 (270° = 270π ÷ 180 = 3π⁄2). Radians → degrés : multiplie par 180 ÷ π (4π⁄3 = 240°). Pense aux repères : π⁄2 = 90°, π = 180°, 2π = un tour.'});
+GV.angExpr=()=>({s:g.poly([[60,140],[280,140],[150,36]])+gvT(92,128,'x','g-u')+gvT(250,128,'2x + 10°','g-u','end')+gvT(150,62,'3x − 20°','g-u')+gvT(170,160,'x + (2x + 10°) + (3x − 20°) = 180°','g-t'),
+  cap:'<b>Angles avec expressions littérales</b> : la somme des angles d\'un triangle vaut 180°. On écrit l\'équation, on réduit (6x − 10° = 180°) puis on résout : x = 190° ÷ 6. On vérifie que chaque angle est positif.'});
+GV.trigFrac=()=>{ const R=[80,140],P=[250,140],Q=[80,36]; return {s:g.poly([R,P,Q])+g.right(R,P,Q,10)+g.arc(P,R,Q,28,'α','g-u')+gvT(165,158,'adjacent : 15')+gvT(90,95,'opposé : 8','g-t','start')+gvT(182,70,'hypoténuse : 17','g-t','start'),
+  cap:'<b>Fractions trigonométriques</b> (triangle 8-15-17, angle α en bas à droite) : <b>sin α = opposé ÷ hypoténuse = 8⁄17</b> ; <b>cos α = adjacent ÷ hypoténuse = 15⁄17</b> ; <b>tan α = opposé ÷ adjacent = 8⁄15</b>. Repère d\'abord les côtés par rapport à α.'}; };
+GV.trigLong=()=>({s:gvRT('?','','27 cm','a','35°'),cap:'<b>Calculer une longueur</b> : choisis la fonction qui relie le côté <b>connu</b> et le côté <b>cherché</b>. Ici hypoténuse (27) et adjacent : cos 35° = adjacent ÷ 27, donc <b>adjacent = 27 × cos 35° ≈ 22,1</b> (calculatrice en degrés).'});
+GV.trigAngle=()=>({s:gvRT('8','16','','', '?'),cap:'<b>Calculer un angle</b> : on utilise la fonction <b>réciproque</b> (sin⁻¹, cos⁻¹, tan⁻¹). Ici opposé 16 et adjacent 8 : tan α = 16 ÷ 8 = 2, donc <b>α = tan⁻¹(2) ≈ 63,4°</b>.'});
+GV.trigPente=()=>({t:'Pente et rampe',s:gvRT('100 m','5 m','','','α'),cap:'<b>Pente</b> : tan α = dénivelé ÷ distance horizontale = 5 ÷ 100, donc α = tan⁻¹(0,05) ≈ 2,9°. <b>Rampe</b> de longueur L (hypoténuse) : dénivelé = L × sin α ; distance horizontale = L × cos α.'});
+GV.echelleTrig=()=>({t:'Échelle ou perche appuyée',s:g.seg([60,20],[60,142],'g-l')+g.seg([30,142],[300,142],'g-l')+gvTk(g.seg([220,142],[60,40],'g-mark'))+g.right([60,142],[60,40],[220,142],9)+g.arc([220,142],[60,142],[60,40],34,'α','g-u')+gvT(140,154,'h = L × sin α  ·  d = L × cos α','g-t')+gvT(48,92,'h','g-u','end')+gvT(160,70,'L','g-u'),
+  cap:'<b>Échelle</b> de longueur L faisant un angle α avec le sol : <b>hauteur = L × sin α</b>, <b>pied à L × cos α du mur</b>, et tan α = hauteur ÷ distance. Choisis la fonction selon les côtés connus.'});
+GV.tunnel=()=>({s:gvPath('M30 140 A140 140 0 0 1 310 140 Z','fill:var(--accent);fill-opacity:.1')+gvP([[90,140],[250,140],[250,60],[90,60]],GVG)+g.seg([170,140],[250,60],'g-dash')+g.seg([30,140],[310,140],'g-l')+gvDots([[170,140]])+gvT(170,156,'largeur','g-t')+gvU(100,104,'h','start')+gvT(226,118,'R','g-u','start'),
+  cap:'<b>Tunnel à voûte demi-circulaire</b> : un véhicule qui passe tout juste a ses coins supérieurs sur la voûte. Le rayon vers ce coin est l\'hypoténuse : <b>R² = (demi-largeur)² + h²</b>, donc h = √(R² − (demi-largeur)²). La demi-largeur se déduit de la largeur ou de la marge latérale.'});
+
+/* ---- correspondance finale : un schéma propre à chaque thème ---- */
+Object.assign(GVMAP,{
+ 'gt-1':['perimTriT','aireTriT'],'gt-3':'bonneHauteur','gt-3b':['aireInvT','perimInvT'],'gt-2':'pythPerim',
+ 'gp-1':'hypo','gp-2':'cote','gp-3':'racine','gp-5':['diagRect','echelle'],'gp-6':'pythEq','gp-6b':'triplet','gp-6c':'hautRect',
+ 'gq-2':'paralH','gq-3b':'paral2h','gq-3':'losPerim','gq-4b':'losCote','gq-5':'quadDecoupe','gq-6':'trapDiag',
+ 'gh-1':'thPetit','gh-2':'thGrand','gh-3':'thPartiel','gh-4':'papAC','gh-5':['recip','ombreT'],'gh-6':'thGrille',
+ 'gm-7f':'paraSemb','gm-7d':'tunnel',
+ 'gc-1':'angCentre1','gc-2':'angCentre2','gc-5':'tangIsoc','gc-6':'tangAngle','gc-6b':'reuleaux','gc-6c':'trois3','gc-6d':['petalCarre','petale'],'gc-6e':'cerclesTang',
+ 'gm-1':'formeL','gm-2':'maison','gm-5':'carreDisque','gm-6':['uShape','anneauSecteur'],'gm-6b':'empilement','gm-6c':'ogive','gm-6d':'encoches','gm-6e':'segmentsDisque','gm-6f':'rosace','gm-6g':'hexDemi','gm-6h':'courroie','gm-6i':'lunules','gm-6j':'trapEnc','gm-6k':'facade','gm-6l':'triEnc',
+ 'gm-4b':'plaque','gang-1':'grades','gang-2':'radT','gang-3':['paralleles','somme180'],'gang-4':'angExpr',
+ 'gr-1':'trigFrac','gr-2':'trigLong','gr-3':'trigAngle','gr-5':['trigPente','echelleTrig']
+});
+
+['thPetit','thGrand','thPartiel','recip'].forEach(k=>{ const f=GV[k]; GV[k]=()=>Object.assign(f(),{H:184}); });
+
 /* ===== Interface : entraînement ===== */
 const $=id=>document.getElementById(id);
 let TOTAL=10;
@@ -6742,7 +7046,7 @@ function renderExercise(quiet){
   $('answer').placeholder=ex.geo?'réponse = ...':(ex.kind==='expand'||ex.kind==='factor')?'= ...':'x = ...';
   $('btn-check').textContent='Vérifier'; $('btn-step').hidden=false;
   const cx=$('context'); if(ex.context){ cx.innerHTML=ex.context; cx.hidden=false; } else { cx.innerHTML=''; cx.hidden=true; }
-  $('statement').innerHTML=(ex.word||ex.sys||ex.geo)&&ex.html?ex.html:M(ex.statement); $('statement').classList.toggle('word',!!ex.word||!!ex.geo); $('statement').classList.toggle('sys',!!ex.sys&&!ex.word);
+  $('statement').innerHTML=((ex.word||ex.sys||ex.geo)&&ex.html?ex.html:M(ex.statement))+(ex.kind==='geo'&&!running()?geoVisual(ex.topic,false):''); $('statement').classList.toggle('word',!!ex.word||!!ex.geo); $('statement').classList.toggle('sys',!!ex.sys&&!ex.word);
   buildKeys();
   const inp=$('answer'); inp.value=''; inp.disabled=false;
   ['hint','feedback','solution','study-out'].forEach(id=>{ const e=$(id); e.hidden=true; e.innerHTML=''; });
@@ -6846,6 +7150,7 @@ function resolve(kind){
 function solutionHTML(ex){
   return '<div class="sol-final"><span class="lbl">'+(ex.kind==='expand'?'Résultat développé':(ex.geo?'Réponse':ex.word||ex.sys?'Solution':ex.kind==='solve'?'Ensemble des solutions':'Forme factorisée'))+'</span>'+(ex.kind==='solve'||ex.kind==='geo'?ex.expectedHtml:M(ex.expectedStr))+'</div>'
     +'<ol class="steps">'+ex.steps.map(s=>'<li><strong>'+s.t+'</strong>'+s.l.map(l=>'<div class="line">'+l+'</div>').join('')+'</li>').join('')+'</ol>'
+    +(ex.kind==='geo'?geoVisual(ex.topic,true):'')
     +(ex.kind==='factor'?'<p class="note">Plusieurs écritures sont acceptées (ordre des facteurs, signes répartis autrement) tant que la factorisation est complète.</p>':'');
 }
 function showSolution(force){
