@@ -709,7 +709,7 @@ function M(s){ return '<span class="m">'+mFrac(String(s),0)+'</span>'; }
 /* ---------- Analyse d'une saisie ---------- */
 class ParseError extends Error {}
 
-function tokenize(s){
+function tokenize(s,allowDiv){
   s=s.replace(/[−–—]/g,'-').replace(/[×·⋅∙]/g,'*').replace(/ /g,' ').replace(/[\[{]/g,'(').replace(/[\]}]/g,')').replace(/,/g,'.');
   const t=[]; let i=0;
   while(i<s.length){
@@ -724,14 +724,15 @@ function tokenize(s){
     if(c==='²'){ t.push({k:'sup',v:2}); i++; continue; }
     if(c==='³'){ t.push({k:'sup',v:3}); i++; continue; }
     if('+-*^()'.includes(c)){ t.push({k:c}); i++; continue; }
+    if((c==='/'||c==='÷')&&allowDiv){ t.push({k:'/'}); i++; continue; }
     if(c==='/'||c==='÷') throw new ParseError("La division n'est pas utilisée ici : écris ton résultat avec des produits et des sommes.");
     throw new ParseError('Caractère non reconnu : « '+c+' ».');
   }
   return t;
 }
 
-function parse(str){
-  const toks=tokenize(str);
+function parse(str,allowDiv){
+  const toks=tokenize(str,allowDiv);
   if(!toks.length) throw new ParseError('Écris ton expression dans la zone de saisie.');
   for(let i=0;i<toks.length-1;i++){
     const a=toks[i], b=toks[i+1];
@@ -754,6 +755,7 @@ function parse(str){
     let left=unary();
     while(peek()){
       if(peek().k==='*'){ next(); left={t:'mul',a:left,b:unary()}; }
+      else if(peek().k==='/'){ next(); left={t:'div',a:left,b:unary()}; }
       else if(startsAtom(peek())){ left={t:'mul',a:left,b:power()}; }
       else break;
     }
@@ -810,6 +812,28 @@ function toPoly(n){
   return r;
 }
 function parsePoly(str){ const ast=parse(str); return {ast, poly:toPoly(ast)}; }
+/* équations : division autorisée (par un nombre ou une expression) ; chaque côté est une fraction N/D de polynômes */
+function pSame(a,b){ const ka=Object.keys(a),kb=Object.keys(b); return ka.length===kb.length&&ka.every(k=>a[k]===b[k]); }
+function toRat(n){
+  switch(n.t){
+    case 'num': case 'var': return {N:toPoly(n),D:pconst(1)};
+    case 'add': case 'sub': { const a=toRat(n.a), b=toRat(n.b), sg=n.t==='add'?1:-1; const bn=sg>0?b.N:pneg(b.N);
+      if(pSame(a.D,b.D)) return {N:padd(a.N,bn),D:a.D};
+      return {N:padd(pmul(a.N,b.D),pmul(bn,a.D)),D:pmul(a.D,b.D)}; }
+    case 'neg': { const a=toRat(n.a); return {N:pneg(a.N),D:a.D}; }
+    case 'mul': { const a=toRat(n.a), b=toRat(n.b); return {N:pmul(a.N,b.N),D:pmul(a.D,b.D)}; }
+    case 'pow': { const a=toRat(n.a); return {N:ppow(a.N,n.n),D:ppow(a.D,n.n)}; }
+    case 'div': { const a=toRat(n.a), b=toRat(n.b);
+      if(!Object.keys(b.N).length) throw new ParseError('Division par zéro : le diviseur vaut 0.');
+      return {N:pmul(a.N,b.D),D:pmul(a.D,b.N)}; }
+  }
+}
+function ratEq(strL,strR){
+  const aL=parse(strL,true), aR=parse(strR,true), L=toRat(aL), R=toRat(aR);
+  const P=psub(pmul(L.N,R.D),pmul(R.N,L.D));
+  if(polyDeg(P)>14) throw new ParseError('Expression trop grande pour cet exercice.');
+  return {L:{ast:aL},R:{ast:aR},P};
+}
 
 /* ---------- Affichage de l'arbre tel qu'il a été saisi ---------- */
 function astStr(n,ctx){
@@ -818,6 +842,7 @@ function astStr(n,ctx){
     case 'num': return String(n.v);
     case 'var': return n.n;
     case 'pow': return astStr(n.a,'powBase')+'^'+n.n;
+    case 'div': { let d=astStr(n.b,'divR'); if(!/^[0-9a-z]+$/.test(d)&&!/^\(.*\)$/.test(d)) d='('+d+')'; const s=astStr(n.a,'divL')+'/'+d; return (ctx==='powBase'||ctx==='negArg'||ctx==='mulL'||ctx==='mulR'||ctx==='divL'||ctx==='divR')?'('+s+')':s; }
     case 'neg': { const s='-'+astStr(n.a,'negArg'); return (ctx==='top'||ctx==='mulL') ? s : '('+s+')'; }
     case 'add': case 'sub': {
       const s=astStr(n.a,'addL')+(n.t==='add'?' + ':' - ')+astStr(n.b,'addR');
@@ -3536,9 +3561,8 @@ function parseEqPart(str){
   const halves=str.split('=');
   if(halves.length!==2) throw new ParseError(halves.length<2?'Il manque le signe « = » : écris une équation, par exemple 3x = 6.':'Une seule égalité par ligne : écris chaque étape sur sa propre ligne.');
   let L,R;
-  try{ L=parsePoly(halves[0]); R=parsePoly(halves[1]); }
-  catch(e){ if(e instanceof ParseError&&/division/i.test(e.message)) throw new ParseError('Pas de fraction dans une équation : multiplie d\'abord les deux membres, ou écris la solution sous la forme x = 3/2.'); throw e; }
-  return {L,R,P:psub(L.poly,R.poly),html:M(astStr(L.ast)+' = '+astStr(R.ast))};
+  const rq=ratEq(halves[0],halves[1]); L=rq.L; R=rq.R;
+  return {L,R,P:rq.P,html:M(astStr(L.ast)+' = '+astStr(R.ast))};
 }
 const isNumericSeg=seg=>!/[a-zA-Zα-ωΔ]/.test(seg.replace(/sqrt|racine|rac/gi,''));
 function parseLine(line,v,ex){
