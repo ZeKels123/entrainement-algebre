@@ -472,11 +472,73 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
 .shop-nav{display:flex; flex-wrap:wrap; gap:6px}
 .shop-nav .btn{min-height:34px; padding:6px 12px}
 .deal{border-left:4px solid var(--gold,var(--accent))}
+
+/* Branches de maturité */
+.homebtn{display:inline-block; background:none; border:1px solid var(--line); border-radius:999px; padding:7px 14px; min-height:36px; margin-bottom:12px; cursor:pointer; font:600 14px/1 var(--f-body); color:var(--ink-2)}
+.homebtn:hover{background:var(--card-2); color:var(--ink)}
+.homebtn[hidden]{display:none}
+.tabs[hidden]{display:none}
+.hsec{margin:22px 0 10px; font:600 15px/1 var(--f-head); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+.hrank{font:600 14px/1.2 var(--f-body); color:var(--accent)}
+.homeintro{margin:16px 0 14px; color:var(--ink-2)}
+.hgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px}
+.hcard{display:flex; flex-direction:column; gap:6px; text-align:left; padding:16px; min-height:112px; background:var(--card); border:1px solid var(--line); border-top:3px solid var(--accent); border-radius:8px; cursor:pointer; color:var(--ink); font-family:var(--f-body)}
+.hcard:hover{background:var(--card-2); border-color:var(--ink-3); border-top-color:var(--accent)}
+.hname{font:600 24px/1.1 var(--f-head); letter-spacing:.05em; text-transform:uppercase}
+.hsub{font-size:14px; color:var(--ink-2); line-height:1.35}
+.hprog{margin-top:auto; font-size:13px; color:var(--ink-3)}
+.brstats{display:flex; flex-wrap:wrap; gap:12px 32px}
+.brstats>div{display:flex; flex-direction:column; gap:4px}
+.brstats b{font:600 22px/1 var(--f-head)}
+.brstats .lbl{font:600 13px/1 var(--f-head); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+
+.app.nomath .tabs:not(#brtabs),.app.nomath #subnav,#tab-shop,#tab-lb{display:none!important}
+.app[data-br=anglais] .tabs:not(#brtabs) .tab:not(#tab-stats),.app[data-br=francais] .tabs:not(#brtabs) #tab-alg,.app[data-br=francais] .tabs:not(#brtabs) #tab-eq,.app[data-br=francais] .tabs:not(#brtabs) #tab-geo,.app:not([data-br=francais]) #tab-fr,.app:not([data-br=francais]) #tab-ff,.app:not([data-br=francais]) #tab-fs{display:none!important}
+.en-gap{display:inline-block;min-width:64px;border-bottom:2px solid var(--muted,#888);margin:0 2px}
+.app.nogame .gbar,.app.nogame .syncbar{display:none!important}
+.branchbar{display:flex; gap:6px; overflow-x:auto; padding:10px 0 0; scrollbar-width:thin}
+.bbtn{flex:0 0 auto; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:8px 14px; min-height:40px; cursor:pointer; font:600 15px/1 var(--f-body); color:var(--ink-2)}
+.bbtn:hover{background:var(--card-2)}
+.bbtn[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.brbody{display:flex; flex-direction:column; gap:14px; margin-top:14px}
+.brempty p{margin:0}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin:0}
+.chip{border:1px solid var(--line); background:var(--card-2); border-radius:999px; padding:5px 12px; font-size:14px; color:var(--ink-2)}
+.brflip{display:flex; flex-direction:column; gap:8px; justify-content:center; text-align:left; min-height:150px; padding:18px; border:1px solid var(--line); border-radius:8px; background:var(--card-2); color:var(--ink); font:500 19px/1.4 var(--f-body); cursor:pointer}
+.brflip .lbl{font:600 13px/1 var(--f-head); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.brqt{font:600 18px/1.4 var(--f-body); margin:0}
+.bropts{display:flex; flex-direction:column; gap:8px}
+.bropt{text-align:left; min-height:44px; padding:10px 14px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); font:500 16px/1.4 var(--f-body); cursor:pointer}
+.bropt:hover:not(:disabled){background:var(--card-2)}
+.bropt.ok{border-color:var(--ok); background:var(--ok-soft)}
+.bropt.bad{border-color:var(--bad); background:var(--bad-soft)}
+.bropt:disabled{cursor:default; color:var(--ink)}
+.brexp{margin:0; padding:10px 12px; border-radius:6px}
+.brexp.ok{background:var(--ok-soft)} .brexp.bad{background:var(--bad-soft)}
+.brfiche h3{margin:0; font:600 20px/1.2 var(--f-head); letter-spacing:.04em; text-transform:uppercase}
+.brmodes{display:flex; flex-wrap:wrap; gap:8px}
+.brexi{margin:0; color:var(--ink-2)}
+.brexs{margin:6px 0 0; font:500 20px/1.4 var(--f-body)}
+.brform{display:flex; flex-direction:column; gap:12px; margin-top:10px}
+.brinput{font:500 18px/1.3 var(--f-body); padding:10px 12px; min-height:46px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); width:100%; box-sizing:border-box}
+.brinput:focus{outline:2px solid var(--accent); outline-offset:1px}
+.brhint{margin:0; padding:8px 12px; border-left:3px solid var(--warn); background:var(--warn-soft); border-radius:4px}
+.brmiss{margin:6px 0 0; padding-left:20px}
+.brinput{display:block; width:100%; min-height:52px; padding:10px 14px; font:500 20px/1.4 var(--f-body); background:var(--card); color:var(--ink); border:2px solid var(--line); border-radius:6px}
+.brinput:focus{border-color:var(--accent); outline:none; box-shadow:0 0 0 3px var(--accent-soft)}
+.brinput:disabled{background:var(--card-2); color:var(--ink-2)}
+.brqopts{padding:4px 20px 8px}
+.brxsetup .seg{align-self:stretch}
+.brhtml{line-height:1.55}
+.brhtml p{margin:10px 0 0}
+.brhtml ul{margin:6px 0 0; padding-left:20px}
+.brhtml li{margin:3px 0}
 </style>
 
 <div class="app">
   <header class="top">
     <div class="brand">
+      <button type="button" class="homebtn" id="homebtn" hidden>← Toutes les branches</button>
       <p class="kicker" id="brand-kicker">Algèbre · calcul littéral</p>
       <h1 id="brand-title">Développer <span class="amp">&amp;</span> Factoriser</h1>
     </div>
@@ -484,10 +546,14 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
       <button class="tab" role="tab" id="tab-alg" data-domain="alg" aria-selected="true">Développer &amp; factoriser</button>
       <button class="tab" role="tab" id="tab-eq" data-domain="eq" aria-selected="false">Équations</button>
       <button class="tab" role="tab" id="tab-geo" data-domain="geo" aria-selected="false">Géométrie</button>
+      <button class="tab" role="tab" id="tab-fr" data-domain="fr" aria-selected="false">Registres de langue</button>
+      <button class="tab" role="tab" id="tab-ff" data-domain="ff" aria-selected="false">Figures de style</button>
+      <button class="tab" role="tab" id="tab-fs" data-domain="fs" aria-selected="false">Sémantique</button>
       <button class="tab" role="tab" id="tab-stats" data-tab="stats" aria-selected="false" aria-controls="view-stats">Bilan</button>
       <button class="tab" role="tab" id="tab-shop" data-tab="shop" aria-selected="false" aria-controls="view-shop">Boutique</button>
       <button class="tab" role="tab" id="tab-lb" data-tab="lb" aria-selected="false" aria-controls="view-lb">Classement</button>
     </nav>
+    <nav class="tabs" id="brtabs" role="tablist" aria-label="Sections de la branche" hidden></nav>
   </header>
 
   <div class="gbar" id="gamebar" role="button" tabindex="0"></div>
@@ -517,7 +583,7 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
             <div class="seg" id="seg-level" role="group" aria-labelledby="lbl-level"></div>
           </div>
           <div class="field" id="field-topic" hidden>
-            <label class="lbl" for="sel-topic">Thème</label>
+            <label class="lbl" for="sel-topic">Exercice</label>
             <select id="sel-topic" class="sel"></select>
           </div>
           <div class="field" id="boss-field" hidden>
@@ -571,6 +637,8 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
     <section id="view-stats" role="tabpanel" aria-labelledby="tab-stats" hidden></section>
     <section id="view-shop" role="tabpanel" aria-labelledby="tab-shop" hidden></section>
     <section id="view-lb" role="tabpanel" aria-labelledby="tab-lb" hidden></section>
+    <section id="view-home" aria-label="Toutes les branches" hidden></section>
+    <section id="view-branch" aria-label="Contenu de la branche" hidden></section>
   </main>
   <div id="toasts" class="toasts" role="status" aria-live="polite"></div><div id="fx" class="fx" aria-hidden="true"></div>
   <footer id="foot-note">Tes résultats sont conservés dans ce navigateur, sur cet appareil uniquement.</footer>
@@ -1517,7 +1585,7 @@ const TOPICS={
   'ctx-fact':{kind:'factor',level:4,label:'Applications : aires',gen:genCtxFact}
 };
 const LEVEL_NAMES={1:'Niveau 1',2:'Niveau 2',3:'Niveau 3',4:'Niveau 4',5:'Niveau 5'};
-const domainOf=kind=>(kind==='expand'||kind==='factor')?'alg':(/^g/.test(kind)?'geo':'eq');
+const domainOf=kind=>(kind==='expand'||kind==='factor')?'alg':(/^g/.test(kind)?'geo':/^en/.test(kind)?'ang':/^frf/.test(kind)?'ff':/^fs/.test(kind)?'fs':/^fr/.test(kind)?'fr':'eq');
 function newExercise(mode,level,avoid,pool,domain){
   const ids=pool&&pool.length?pool:Object.keys(TOPICS).filter(id=>(mode==='mix'?domainOf(TOPICS[id].kind)===(domain||'alg'):TOPICS[id].kind===mode)&&(!level||TOPICS[id].level===level));
   let ex;
@@ -3446,6 +3514,7 @@ function stepsList(parsed,bad){
 function checkWork(ex,input){
   if(ex.kind==='solve') return checkSolveWork(ex,input);
   if(ex.kind==='geo') return checkGeoWork(ex,input);
+  if(ex.kind==='txt') return checkTxt(ex,input);
   const lines=splitSteps(input);
   if(lines.length<=1) return checkAnswer(ex,lines[0]||input);
   const parsed=[];
@@ -6581,6 +6650,724 @@ TOPICS['gc-7b']={kind:'gcirc',level:6,label:'Cercle inscrit dans un triangle rec
 TOPICS['gc-7c']={kind:'gcirc',level:6,label:'Triangle rectangle inscrit : hypoténuse = diamètre',gen:genHypoDiamR};
 TOPICS['gc-7d']={kind:'gcirc',level:6,label:'Surface entre trois ou quatre disques tangents',gen:genVideDisquesR};
 
+/* ===== Anglais : present simple / present continuous, exercices du moteur (domaine « ang ») ===== */
+const enPick=a=>a[Math.floor(Math.random()*a.length)];
+const enNorm=s=>String(s).replace(/[’‘`´]/g,"'").replace(/\s+/g,' ').trim().toLowerCase().replace(/[.?!\s]+$/,'');
+const EN={
+  s3(v){ if(v==='have') return 'has'; if(/(s|sh|ch|x|z|o)$/.test(v)) return v+'es'; if(/[^aeiou]y$/.test(v)) return v.slice(0,-1)+'ies'; return v+'s'; },
+  ing(v){ if(/ie$/.test(v)) return v.slice(0,-2)+'ying'; if(/[^aeiouy]e$/.test(v)&&!/ee$/.test(v)) return v.slice(0,-1)+'ing'; if(EN.DBL.indexOf(v)>=0) return v+v.slice(-1)+'ing'; return v+'ing'; },
+  DBL:['run','sit','stop','swim','get','put','plan','shop','cut','hit'],
+  whyS3(v){ if(v==='have') return ' (have est irrégulier : has)'; const m=v.match(/(sh|ch|s|x|z|o)$/); if(m) return ' (verbe en -'+m[1]+' : on ajoute -es)'; if(/[^aeiou]y$/.test(v)) return ' (consonne + y : y devient -ies)'; return ' (on ajoute -s)'; },
+  whyIng(v){ if(/ie$/.test(v)) return ' (ie devient ying)'; if(/[^aeiouy]e$/.test(v)&&!/ee$/.test(v)) return ' (le e final muet disparaît)'; if(EN.DBL.indexOf(v)>=0) return ' (verbe court consonne-voyelle-consonne : on double la consonne)'; return ' (on ajoute simplement -ing)'; },
+  S:[{s:'I',q:'I',g:'1',c:"I'm"},{s:'You',q:'you',g:'p',c:"you're"},{s:'He',q:'he',g:'3',c:"he's"},{s:'She',q:'she',g:'3',c:"she's"},{s:'We',q:'we',g:'p',c:"we're"},{s:'They',q:'they',g:'p',c:"they're"},
+     {s:'My brother',q:'my brother',g:'3'},{s:'Our teacher',q:'our teacher',g:'3'},{s:'The children',q:'the children',g:'p'},{s:'Tom and Anna',q:'Tom and Anna',g:'p'},{s:'The train',q:'the train',g:'3'},{s:'My sister',q:'my sister',g:'3'}],
+  VP:[['play','football'],['watch','TV'],['study','French'],['go','to school'],['wash','the car'],['cook','dinner'],['read','a book'],['drink','coffee'],['open','the window'],['fix','the bike'],['help','at home'],['speak','German'],['write','emails'],['clean','the kitchen'],['drive','to work'],['eat','an apple'],['swim','in the lake'],['teach','maths'],['buy','bread'],['carry','the bags'],['fly','to Paris'],['stay','at home'],['live','in Jura'],['finish','work at five'],['have','a shower'],['walk','to the station'],['pass','the salt'],['run','in the park'],['sit','on the sofa'],['make','a cake'],['take','the bus'],['dance','in the hall']],
+  STAT:[['know','the answer'],['like','this song'],['want','a coffee'],['need','help'],['understand','the question'],['love','this film']],
+  be:S=>S.g==='1'?'am':S.g==='3'?'is':'are',
+  aux:S=>S.g==='3'?'does':'do',
+  vf:(S,v)=>S.g==='3'?EN.s3(v):v
+};
+const enSubj=()=>enPick(EN.S);
+function enBase(topic,level,instr,statement,answers,hint,solution,mist){ const an=answers.map(enNorm); return {topic,level,instr,statement,answers,hint,solution,mist:(mist||[]).filter(m=>an.indexOf(enNorm(m[0]))<0)}; }
+
+const ENGEN={
+ 'ps-3s':()=>{ const v=enPick(['go','do','have','watch','wash','fix','pass','study','carry','cry','fly','play','buy','stay','teach','finish','enjoy','try','miss','push','relax','say','read']);
+   const r=EN.s3(v);
+   return enBase('ps-3s',1,'Écris la 3e personne du singulier','he / she / it  +  « '+v+' »  →  ______',[r],
+     'Verbes en -s, -sh, -ch, -x, -z, -o : -es. Consonne + y : -ies. Sinon : -s. Cas particulier : have → has.',
+     v+' → <b>'+r+'</b>'+EN.whyS3(v)+'.',[[v,'À la 3e personne du singulier il faut ajouter la terminaison.'],[v+'s','Vérifie la règle d\'orthographe de la terminaison (-es, -ies ou -s).']]); },
+ 'ps-fill':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], useAdv=Math.random()<0.5, adv=enPick(['always','usually','often','sometimes','never']), time=enPick(['every day','every morning','on Sundays','every weekend','twice a week']);
+   const r=EN.vf(S,v), st=S.s+' '+(useAdv?adv+' ':'')+'___ ('+v+') '+vp[1]+(useAdv?'':' '+time)+'.';
+   const mist=S.g==='3'?[[v,'Sujet à la 3e personne du singulier : il faut le -s / -es (ici « '+r+' »).']]:[[EN.s3(v),'Avec « '+S.s+' » il n\'y a pas de -s : le verbe reste à la base.']];
+   mist.push([EN.be(S)+' '+EN.ing(v),'« '+(useAdv?adv:time)+' » indique une habitude : c\'est le present simple, pas le continuous.']);
+   return enBase('ps-fill',1,'Complète au present simple',st,[r],
+     (useAdv?'« '+adv+' »':'« '+time+' »')+' = habitude → present simple. '+(S.g==='3'?'Sujet à la 3e personne du singulier : -s / -es.':'Sujet « '+S.s+' » : verbe à la base.'),
+     'Habitude → present simple. '+(S.g==='3'?v+' → <b>'+r+'</b>'+EN.whyS3(v)+'.':'Avec « '+S.s+' » : verbe à la base, <b>'+v+'</b>.'),mist); },
+ 'pc-ing':()=>{ const v=enPick(['make','run','sit','write','stop','swim','lie','play','dance','get','come','study','take','have','see','plan','hit','cut','ride','die','use','shop','read','go']);
+   const r=EN.ing(v);
+   return enBase('pc-ing',1,'Écris la forme en -ing','« '+v+' »  →  ______',[r],
+     'e muet : il disparaît. Verbe court consonne-voyelle-consonne : on double la consonne. ie → ying.',
+     v+' → <b>'+r+'</b>'+EN.whyIng(v)+'.',[[v+'ing','Vérifie l\'orthographe : e muet, consonne doublée ou ie → ying.']]); },
+ 'pc-fill':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], m=enPick([['Look!','',1],['Listen!','',1],['','at the moment',0],['','now',0],['','right now',0]]);
+   const b=EN.be(S), ing=EN.ing(v), r=b+' '+ing, st=(m[0]?m[0]+' ':'')+S.s+' ___ ('+v+') '+vp[1]+(m[1]?' '+m[1]:'')+'.';
+   const ans=[r,S.s+' '+r]; if(S.c) ans.push(S.c+' '+ing);
+   if(b==='am') ans.push("'m "+ing); else if(b==='is') ans.push("'s "+ing); else ans.push("'re "+ing);
+   const mist=[[ing,'Il manque am / is / are devant le verbe en -ing.'],[v,'Present continuous : am / is / are + verbe en -ing.'],[EN.s3(v),'Present continuous : am / is / are + verbe en -ing.']];
+   ['am','is','are'].forEach(x=>{ if(x!==b) mist.push([x+' '+ing,'Avec « '+S.s+' » on utilise « '+b+' ».']); });
+   return enBase('pc-fill',1,'Complète au present continuous',st,ans,
+     '« '+(m[0]||m[1])+' » : action en cours → am / is / are + verbe-ing. Avec « '+S.s+' » : '+b+'.',
+     'Action en cours → <b>'+r+'</b> ('+b+' + '+ing+').'+EN.whyIng(v).replace(/^ \(/,' Orthographe : ').replace(/\)$/,'.'),mist); },
+ 'ps-neg':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], st=S.s+' '+EN.vf(S,v)+' '+vp[1]+'.', ax=EN.aux(S);
+   const a1=S.s+' '+ax+"n't "+v+' '+vp[1], a2=S.s+' '+ax+' not '+v+' '+vp[1];
+   const mist=S.g==='3'?[[S.s+" doesn't "+EN.s3(v)+' '+vp[1],'Après doesn\'t / does not, le verbe reste à la base : pas de -s.'],[S.s+' not '+EN.s3(v)+' '+vp[1],'Il faut l\'auxiliaire does : does not / doesn\'t + verbe à la base.']]:[[S.s+" don't "+EN.s3(v)+' '+vp[1],'Pas de -s après don\'t.'],[S.s+' not '+v+' '+vp[1],'Il faut l\'auxiliaire do : do not / don\'t + verbe à la base.']];
+   return enBase('ps-neg',2,'Mets la phrase au négatif',st,[a1,a2],
+     'Négation du present simple : do not (don\'t) / does not (doesn\'t) + verbe à la base.',
+     'Négation : <b>'+a1+'.</b> (ou « '+a2+' »). Après '+ax+' not, le verbe est à la base.',mist); },
+ 'ps-q':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], st=S.s+' '+EN.vf(S,v)+' '+vp[1]+'.', ax=EN.aux(S);
+   const a=(ax==='does'?'Does ':'Do ')+S.q+' '+v+' '+vp[1]+'?';
+   const mist=S.g==='3'?[['Does '+S.q+' '+EN.s3(v)+' '+vp[1]+'?','Après Does, le verbe reste à la base : pas de -s.']]:[];
+   return enBase('ps-q',2,'Transforme en question',st,[a],
+     'Question au present simple : Do / Does + sujet + verbe à la base.',
+     'Question : <b>'+a+'</b> (Do/Does + sujet + base verbale).',mist); },
+ 'pc-neg':()=>{ const S=enSubj(), vp=enPick(EN.VP.filter(x=>['play','watch','study','go','cook','read','eat','walk','run','make','take'].indexOf(x[0])>=0)), v=vp[0], b=EN.be(S), ing=EN.ing(v);
+   const st=S.s+' '+b+' '+ing+' '+vp[1]+'.', neg=b==='am'?'am not':b==='is'?"isn't":"aren't", full=b+' not';
+   const ans=[S.s+' '+neg+' '+ing+' '+vp[1], S.s+' '+full+' '+ing+' '+vp[1]];
+   if(S.c){ ans.push(S.c+' not '+ing+' '+vp[1]); }
+   const mist=[[S.s+" don't "+ing+' '+vp[1],'Present continuous : la négation se fait avec be + not, pas avec don\'t.'],[S.s+" doesn't "+ing+' '+vp[1],'Present continuous : la négation se fait avec be + not, pas avec doesn\'t.']];
+   return enBase('pc-neg',2,'Mets la phrase au négatif',st,ans,
+     'Négation du present continuous : am not / isn\'t / aren\'t + verbe-ing.',
+     'Négation : <b>'+ans[0]+'.</b> On place not après am / is / are.',mist); },
+ 'pc-q':()=>{ const S=enSubj(), vp=enPick(EN.VP.filter(x=>['play','watch','study','go','cook','read','eat','walk','run','make','take'].indexOf(x[0])>=0)), v=vp[0], b=EN.be(S), ing=EN.ing(v);
+   const st=S.s+' '+b+' '+ing+' '+vp[1]+'.', a=(b==='am'?'Am':b==='is'?'Is':'Are')+' '+S.q+' '+ing+' '+vp[1]+'?';
+   return enBase('pc-q',2,'Transforme en question',st,[a],
+     'Question du present continuous : am / is / are + sujet + verbe-ing.',
+     'Question : <b>'+a+'</b> (on inverse le sujet et am / is / are).',[]); },
+ 'mix-sc':()=>{ const t=enPick(['ps','pc','stat','have']);
+   if(t==='stat'){ const S=enPick(EN.S.filter(x=>x.g!=='1'||true)), vp=enPick(EN.STAT), v=vp[0], r=EN.vf(S,v), ing=EN.be(S)+' '+EN.ing(v);
+     return enBase('mix-sc',3,'Simple ou continuous ? Complète',enPick(['At the moment','Right now','Now'])+', '+S.q+' ___ ('+v+') '+vp[1]+'.',[r],
+       '« '+v+' » est un verbe d\'état : on ne le met en général pas à la forme en -ing, même avec « now ».',
+       v+' est un verbe d\'état → present simple : <b>'+r+'</b>, pas « '+ing+' ».',[[ing,v+' est un verbe d\'état : pas de forme en -ing.']]); }
+   if(t==='have'){ const S=enPick(EN.S), noun=enPick(['lunch','a shower','breakfast','a break']), b=EN.be(S);
+     return enBase('mix-sc',3,'Simple ou continuous ? Complète','Please wait. '+S.s+' ___ (have) '+noun+' at the moment.',[b+' having',S.s+' '+b+' having'].concat(S.c?[S.c+' having']:[]).concat([b==='am'?"'m having":b==='is'?"'s having":"'re having"]),
+       '« have » + repas / douche = action : « at the moment » → present continuous. (« have » = posséder serait un verbe d\'état.)',
+       '« have lunch / a shower » est une action en cours → <b>'+b+' having</b>.',[[EN.vf(S,'have'),'« at the moment » + action : present continuous.']]); }
+   if(t==='ps'){ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], r=EN.vf(S,v), w=enPick([['Every day,',''],['Usually,','']]);
+     return enBase('mix-sc',3,'Simple ou continuous ? Complète',w[0]+' '+S.q+' ___ ('+v+') '+vp[1]+'.',[r],
+       'Repère : '+w[0].replace(',','')+' = habitude → present simple.','Habitude → present simple : <b>'+r+'</b>'+(S.g==='3'?EN.whyS3(v):'')+'.',[[EN.be(S)+' '+EN.ing(v),'Habitude : present simple.']]); }
+   const S=enSubj(), vp=enPick(EN.VP), v=vp[0], b=EN.be(S), ing=EN.ing(v), mk=enPick(['Look!','Listen!','Right now,','At the moment,']);
+   return enBase('mix-sc',3,'Simple ou continuous ? Complète',mk+' '+(mk.endsWith(',')?S.q:S.s)+' ___ ('+v+') '+vp[1]+'.',[b+' '+ing,S.s+' '+b+' '+ing].concat(S.c?[S.c+' '+ing]:[]).concat([b==='am'?"'m "+ing:b==='is'?"'s "+ing:"'re "+ing]),
+     '« '+mk.replace(',','')+' » : action en cours → present continuous.','Action en cours → <b>'+b+' '+ing+'</b>.',[[EN.vf(S,v),'« '+mk.replace(',','')+' » : action en cours, present continuous.']]); },
+ 'fix':()=>{ const L=[["She go to school every day.",["She goes to school every day"],"3e personne du singulier au present simple : go → goes."],
+   ["He don't like coffee.",["He doesn't like coffee","He does not like coffee"],"Avec he / she / it : doesn't (does not) + verbe à la base."],
+   ["Does she plays tennis?",["Does she play tennis"],"Après Does, le verbe reste à la base."],
+   ["I am knowing the answer.",["I know the answer"],"know est un verbe d'état : present simple, pas de forme en -ing."],
+   ["They is playing football now.",["They are playing football now"],"Avec they : are."],
+   ["We are go to the cinema now.",["We are going to the cinema now"],"Present continuous : am / is / are + verbe-ing."],
+   ["She is work at the moment.",["She is working at the moment"],"Present continuous : verbe-ing."],
+   ["Do he speak English?",["Does he speak English"],"Avec he : Does."],
+   ["My brother watch TV every evening.",["My brother watches TV every evening"],"3e personne : watch → watches (-ch : -es)."],
+   ["I doesn't understand.",["I don't understand","I do not understand"],"Avec I : don't."],
+   ["Look! It rains.",["Look! It is raining","Look! It's raining"],"« Look! » : action en cours, present continuous."],
+   ["He is never late not.",["He is never late"],"Une seule négation : he is never late."],
+   ["The train leave at 8:15.",["The train leaves at 8:15"],"3e personne du singulier : leave → leaves."],
+   ["She studys French on Mondays.",["She studies French on Mondays"],"Consonne + y : study → studies."],
+   ["We are runing in the park.",["We are running in the park"],"run : on double le n devant -ing."]];
+   const x=enPick(L);
+   return enBase('fix',3,'Corrige l\'erreur (écris la phrase correcte)',x[0],x[1],'Repère le temps (habitude ou action en cours), puis vérifie l\'auxiliaire, la terminaison et l\'orthographe.',
+     'Phrase correcte : <b>'+x[1][0]+'.</b> '+x[2],[]); }
+};
+
+/* ----- adaptation au moteur : un exercice d'anglais est un exercice « texte » (ex.txt) ----- */
+Object.assign(TAGS,{
+  'en-s3':{label:'Terminaison de la 3e personne',tip:'Au present simple, he / she / it prend -s (-es après s, sh, ch, x, z, o ; -ies après consonne + y). Après do / does / don\'t / doesn\'t, le verbe reste à la base.'},
+  'en-aux':{label:'Auxiliaire do / does',tip:'Négation et question du present simple : do / does + verbe à la base. Does pour he / she / it, do pour les autres sujets.'},
+  'en-be':{label:'am / is / are',tip:'Present continuous : am (I), is (he, she, it), are (you, we, they) + verbe en -ing.'},
+  'en-ing':{label:'Forme en -ing',tip:'-ing : le e muet disparaît (make → making), consonne-voyelle-consonne : on double (run → running), ie → ying (lie → lying).'},
+  'en-temps':{label:'Simple ou continuous ?',tip:'Habitude, vérité générale, horaire → present simple. Action en cours (now, at the moment, Look!) → present continuous. Les verbes d\'état (know, like, want…) restent au simple.'},
+  'en-forme':{label:'Forme de la phrase',tip:'Repère le temps, puis vérifie sujet, auxiliaire, terminaison et orthographe.'}
+});
+function enTag(msg){
+  if(/am \/ is \/ are|« (am|is|are) »|Il manque am/.test(msg)) return 'en-be';
+  if(/auxiliaire|Après d|Après Does|Do \/ Does|Avec he : Does|Avec I : don|Avec he \/ she/.test(msg)) return 'en-aux';
+  if(/orthographe|e muet|consonne doubl|ie → ying|double/.test(msg)) return 'en-ing';
+  if(/habitude|continuous|en cours|verbe d.état|simple/.test(msg)) return 'en-temps';
+  if(/3e personne|-s|-es|terminaison/.test(msg)) return 'en-s3';
+  return 'en-forme';
+}
+/* branches → domaines du moteur : chaque branche de langue ou de texte a son domaine (onglet) */
+const BRDOM={anglais:'ang',francais:'fr'}, DOMBR={ang:'anglais',fr:'francais',ff:'francais',fs:'francais'}, BRDOMS={anglais:['ang'],francais:['fr','ff','fs']};
+const tagDom=t=>/^en-/.test(t)?'ang':/^fr-/.test(t)?'fr':'math';
+const enNorm2=s=>enNorm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function mkTxt(g){
+  const lang=g.lang||'en', stmt=g.statement, ans=g.answers;
+  const ms=g.mist.map(m=>({s:enNorm2(m[0]),msg:m[1],tag:g.tag||enTag(m[1])}));
+  const html='<div class="geo"><p class="geotxt" lang="'+lang+'">'+esc(stmt).replace(/\n/g,'<br>').replace(/_{3,}/g,'<span class="en-gap">…………</span>')+'</p></div>';
+  return {kind:'txt',txt:true,expected:{},vars:[],v:null,geo:{mode:'txt',answers:ans.map(enNorm2),stmt:stmt,choices:g.choices||null},choices:g.choices||null,
+    statement:stmt, html, expectedStr:ans[0], expectedHtml:'<span lang="'+lang+'">'+esc(ans[0])+'</span>',
+    steps:[stp('Repérer le temps et le sujet',g.hint),stp('Appliquer la règle et écrire la réponse',g.solution)],
+    hints:[g.hint], mistakes:ms, instr:g.instr, hintline:g.hintline||'Écris ta réponse en anglais dans la zone de saisie (une seule ligne). Les majuscules, la ponctuation finale et les formes contractées (don\'t / do not) sont acceptées.',
+    fallback:g.fallback||null, keys:g.keys||null, placeholder:g.placeholder||'ta réponse en anglais', work:null, id:Math.random().toString(36).slice(2,9)};
+}
+function checkTxt(ex,input){
+  const lines=input.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!lines.length) return {status:'syntax',title:'Écriture à corriger',html:'<p>Écris ta réponse dans la zone de saisie.</p>',tag:null};
+  const n=enNorm2(lines[lines.length-1]), A=ex.geo.answers, CH=ex.geo.choices;
+  if(A.indexOf(n)>=0) return {status:'ok',steps:lines.length};
+  if(CH){ const words=n.split(/[^a-z]+/), f=CH.map(enNorm2).filter(c=>words.indexOf(c)>=0);
+    if(f.length===1){ if(A.indexOf(f[0])>=0) return {status:'ok',steps:lines.length}; const mm=ex.mistakes.find(x=>x.s===f[0]); if(mm) return {status:'wrong',tag:mm.tag,title:'Pas tout à fait',html:'<p>'+esc(mm.msg)+'</p>'}; } }
+  if(/___/.test(ex.geo.stmt)){
+    const fill=A.map(a=>enNorm2(ex.geo.stmt.replace(/___\s*(\([^)]*\))?/,a)));
+    if(fill.indexOf(n)>=0) return {status:'ok',steps:lines.length};
+  }
+  const m=ex.mistakes.find(x=>x.s===n);
+  if(m) return {status:'wrong',tag:m.tag,title:'Pas tout à fait',html:'<p>'+esc(m.msg)+'</p>'};
+  if(ex.fallback) return {status:'wrong',tag:ex.fallback.tag,title:ex.fallback.title,html:ex.fallback.html};
+  return {status:'wrong',tag:'en-forme',title:'Ce n\'est pas la forme attendue',html:'<p>Relis la consigne, repère le temps (habitude ou action en cours), puis vérifie l\'auxiliaire, la terminaison et l\'orthographe. Utilise un indice si tu bloques.</p>'};
+}
+const ENT=(id,level,kind,label)=>{ TOPICS['en-'+id]={kind,level,label,gen:()=>mkTxt(ENGEN[id]())}; };
+ENT('ps-3s',1,'enor','3e personne (-s, -es, -ies)');
+ENT('pc-ing',1,'enor','Forme en -ing');
+ENT('ps-fill',1,'enps','Compléter au present simple');
+ENT('ps-neg',2,'enps','Present simple : négation');
+ENT('ps-q',2,'enps','Present simple : question');
+ENT('pc-fill',1,'enpc','Compléter au present continuous');
+ENT('pc-neg',2,'enpc','Present continuous : négation');
+ENT('pc-q',2,'enpc','Present continuous : question');
+ENT('mix-sc',3,'encm','Simple ou continuous ?');
+ENT('fix',3,'encm','Chasse à l\'erreur');
+
+/* ===== Français : registres de langue (exercices rédigés pour l'appli, sans reprendre ceux de la feuille) ===== */
+Object.assign(TAGS,{
+  'fr-reg':{label:'Registre confondu',tip:'Familier : mots et tournures de l\'oral (boulot, fringues, « y a », négation sans « ne »). Courant : neutre. Soutenu : vocabulaire recherché et syntaxe élaborée (imparfait du subjonctif, inversions).'},
+  'fr-equiv':{label:'Équivalent de registre',tip:'Un même sens existe en trois registres : courant (travail), familier (boulot), soutenu (labeur). Cherche le mot du bon registre.'}
+});
+const FR_KEYS=['é','è','ê','à','â','ç','î','ô','û','\'','-'];
+const FR_CH=['familier','courant','soutenu'];
+/* trios courant / familier / soutenu, rédigés pour l'appli (pas repris de la feuille) : [courant, familiers, soutenus|null, précision] */
+const FR_TRIOS=[
+  ['travail',['boulot','taf','turbin'],['labeur','besogne'],'',['emploi']],['maison',['baraque'],['demeure','résidence','logis'],'',[]],
+  ['peur',['trouille','frousse','pétoche'],['effroi','épouvante'],'',['crainte','frayeur']],
+  ['fatigué',['crevé','claqué','vanné','lessivé'],['harassé','exténué','fourbu','recru'],'',['épuisé','las']],
+  ['voler',['piquer','faucher','chiper','barboter'],['dérober','subtiliser'],' (prendre ce qui ne t\'appartient pas)',[]],
+  ['mourir',['crever','clamser','calancher','casser sa pipe'],['trépasser','expirer'],'',['décéder']],
+  ['argent',['fric','pognon','blé','oseille','thune'],null,'',[]],['livre',['bouquin'],['ouvrage'],'',[]],
+  ['se dépêcher',['se magner','se grouiller'],['se hâter','s\'empresser'],'',['se presser']],
+  ['rire',['se marrer','rigoler','se poiler','se bidonner'],['s\'esclaffer'],'',[]],
+  ['regarder',['zieuter','mater','reluquer'],['contempler'],'',['observer']],
+  ['se moquer de quelqu\'un',['se foutre de quelqu\'un','se payer la tête de quelqu\'un'],['railler quelqu\'un','se gausser de quelqu\'un'],'',[]],
+  ['beaucoup de',['plein de','un tas de','un paquet de','des tonnes de'],['moult','force'],'',[]],
+  ['médecin',['toubib','doc'],null,'',['docteur']],['policier',['flic','poulet'],null,'',[]],['ami',['pote'],null,'',['camarade','copain']],
+  ['vêtements',['fringues','nippes','frusques','sapes'],['atours'],'',['habits']],
+  ['avoir faim',['avoir la dalle','avoir les crocs','crever de faim'],null,'',[]],['enfant',['gamin','mioche','gosse','marmot','môme'],null,'',[]],
+  ['s\'ennuyer',['se barber'],null,'',[]],['partir',['se barrer','se tirer'],['prendre congé'],'',['s\'en aller']],
+  ['dormir',['roupiller','pioncer'],null,'',['sommeiller']],['se tromper',['se planter','se gourer'],['se méprendre'],'',['faire une erreur']],
+  ['nez',['pif','tarin','blair'],null,'',[]],['tête',['caboche','tronche','ciboulot','bouille'],null,'',[]]
+];
+/* mots à classer : [mot, registre, équivalent courant] */
+const FR_MOTS=[];
+FR_TRIOS.forEach(t=>{ FR_MOTS.push([t[0],'courant','']); t[1].forEach(f=>FR_MOTS.push([f,'familier',t[0]])); (t[2]||[]).forEach(f=>FR_MOTS.push([f,'soutenu',t[0]])); });
+/* phrases : [texte, registre, indice] */
+const FR_PHR=[
+  ['T\'as vu ça ? J\'y crois pas, il s\'est barré sans rien dire !','familier','« T\'as vu », « ne » omis (« J\'y crois pas ») et « s\'est barré » : langue de l\'oral.'],
+  ['Mon frangin, il a paumé ses clés encore une fois.','familier','Sujet répété (« Mon frangin, il ») et mots familiers (« frangin », « paumé »).'],
+  ['Ça fait un bail qu\'on s\'est pas vus, non ?','familier','« un bail » (longtemps), « on » pour « nous » et « ne » omis : langue de l\'oral.'],
+  ['Il s\'est fait virer de sa boîte parce qu\'il glandait toute la journée.','familier','« virer », « boîte » (entreprise) et « glandait » sont des mots familiers.'],
+  ['C\'est dingue, ce prof : il nous file un max de devoirs !','familier','« dingue », « filer » et « un max de » sont des expressions familières.'],
+  ['Y a trop de monde dans ce truc, j\'en peux plus.','familier','« Y a », « truc » et « ne » omis (« j\'en peux plus »).'],
+  ['Je vais acheter du pain, je reviens dans dix minutes.','courant','Vocabulaire et syntaxe neutres : ni familier, ni recherché.'],
+  ['Nous avons visité le musée avant de rentrer à l\'hôtel.','courant','Phrase neutre, correcte, sans mot familier ni mot recherché.'],
+  ['Il a oublié ses clés, alors il a dû attendre sa sœur dehors.','courant','Vocabulaire simple et syntaxe correcte : registre courant.'],
+  ['Pourriez-vous me dire à quelle heure part le prochain train ?','courant','Question polie mais neutre : pas de mot recherché ni de tournure rare.'],
+  ['La réunion a été reportée à jeudi, car le directeur est malade.','courant','Phrase neutre, sans mot familier ni mot recherché.'],
+  ['Elle travaille dans une banque depuis trois ans.','courant','Vocabulaire et syntaxe ordinaires : registre courant.'],
+  ['Il s\'abîma dans une profonde méditation, nul bruit ne venant troubler le silence.','soutenu','Passé simple (« s\'abîma »), « nul… ne » et participe absolu (« nul bruit ne venant… ») : syntaxe littéraire.'],
+  ['Quoi qu\'il en eût, il dut se résoudre à partir avant l\'aube.','soutenu','Subjonctif plus-que-parfait (« eût ») et tournure figée : langue écrite et recherchée.'],
+  ['Je vous saurais gré de bien vouloir m\'accorder un entretien.','soutenu','Formule de politesse très cérémonieuse (« je vous saurais gré »).'],
+  ['Le crépuscule, dans sa mélancolique splendeur, drapait la vallée d\'un voile d\'or.','soutenu','Vocabulaire poétique (« crépuscule », « drapait », « voile d\'or ») et images.'],
+  ['Il convient que vous vous acquittiez de cette tâche sans tarder.','soutenu','Subjonctif présent (« acquittiez ») après « il convient que » et verbe « s\'acquitter » : registre soutenu.'],
+  ['Bien que fourbu, le voyageur poursuivit sa route d\'un pas résolu.','soutenu','Passé simple (« poursuivit »), mot recherché (« fourbu ») et construction soignée.']
+];
+const frCap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function frMist(good){ return FR_CH.filter(c=>c!==good).map(c=>[c,'Ce n\'est pas le registre « '+c+' » : relis les indices (vocabulaire, syntaxe) et utilise un indice si besoin.']); }
+const FRGEN={
+ 'fr-mot':()=>{ const m=enPick(FR_MOTS);
+   return {lang:'fr',choices:FR_CH,tag:'fr-reg',statement:'« '+m[0]+' » : quel est son registre de langue ?',answers:[m[1]],instr:'Quel est le registre de langue ?',
+     hintline:'Réponds par un seul mot : familier, courant ou soutenu (les touches remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'familier, courant ou soutenu',
+     hint:m[1]==='courant'?'Cette expression est neutre : on la dit à tout le monde, dans toutes les situations.':m[1]==='familier'?'Cette expression appartient à la langue de l\'oral, entre proches.':'Cette expression est recherchée : elle appartient à la langue écrite ou cérémonieuse.',
+     solution:'« '+m[0]+' » : registre <b>'+m[1]+'</b>'+(m[2]?' ; équivalent courant : « '+m[2]+' »':'')+'.',mist:frMist(m[1]),fallback:{tag:'fr-reg',title:'Réponds par un registre',html:'<p>Écris l\'un des trois registres : <b>familier</b>, <b>courant</b> ou <b>soutenu</b>.</p>'}}; },
+ 'fr-phr':()=>{ const p=enPick(FR_PHR);
+   return {lang:'fr',choices:FR_CH,tag:'fr-reg',statement:p[0],answers:p[1]==='familier'?['familier','argot']:[p[1]],instr:'Quel est le registre de langue de cette phrase ?',
+     hintline:'Réponds par un seul mot : familier, courant ou soutenu (les touches remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'familier, courant ou soutenu',
+     hint:p[2],solution:'Registre <b>'+p[1]+'</b>. '+p[2],mist:frMist(p[1]),fallback:{tag:'fr-reg',title:'Réponds par un registre',html:'<p>Écris l\'un des trois registres : <b>familier</b>, <b>courant</b> ou <b>soutenu</b>.</p>'}}; },
+ 'fr-eqc':()=>{ const t=enPick(FR_TRIOS.filter(x=>x[0]!=='voler')), f=enPick(t[1]);
+   return {lang:'fr',tag:'fr-equiv',statement:'Mot familier : « '+f+' ». Écris le mot ou l\'expression du registre courant qui a le même sens.',answers:[t[0]].concat(t[4]||[]),instr:'Trouve l\'équivalent courant',
+     hintline:'Écris le mot ou l\'expression (une seule ligne). Les accents et les majuscules ne comptent pas.',placeholder:'équivalent courant',
+     hint:'L\'équivalent courant commence par « '+t[0].charAt(0)+' ».',solution:'« '+f+' » (familier) → <b>'+[t[0]].concat(t[4]||[]).join('</b> ou <b>')+'</b> (courant).',mist:[],keys:FR_KEYS,
+     fallback:{tag:'fr-equiv',title:'Ce n\'est pas l\'équivalent attendu',html:'<p>Cherche le mot ou l\'expression neutre qui a le même sens. Utilise un indice si tu bloques.</p>'}}; },
+ 'fr-eqf':()=>{ const t=enPick(FR_TRIOS), sout=!!t[2]&&Math.random()<0.5, reg=sout?'soutenu':'familier', A=sout?t[2]:t[1];
+   return {lang:'fr',tag:'fr-equiv',statement:'Mot courant : « '+t[0]+' »'+t[3]+'. Écris un équivalent du registre '+reg+'.',answers:A,instr:'Trouve l\'équivalent '+reg,
+     hintline:'Écris le mot ou l\'expression (une seule ligne). Les accents et les majuscules ne comptent pas.',placeholder:'équivalent '+reg,
+     hint:'Un équivalent '+reg+' commence par « '+A[0].charAt(0)+' ».',solution:'« '+t[0]+' » (courant) → <b>'+A.join('</b> ou <b>')+'</b> ('+reg+').',mist:[],keys:FR_KEYS,
+     fallback:{tag:'fr-equiv',title:'Ce n\'est pas l\'équivalent attendu',html:'<p>Il faut un mot ou une expression du registre demandé, avec le même sens. Utilise un indice si tu bloques.</p>'}}; }
+};
+const FRT=(id,level,kind,label)=>{ TOPICS[id]={kind,level,label,gen:()=>mkTxt(FRGEN[id]())}; };
+FRT('fr-mot',1,'frrg','Registre d\'un mot ou d\'une expression');
+FRT('fr-eqc',1,'frre','Du familier au mot courant');
+FRT('fr-eqf',2,'frre','Équivalent familier ou soutenu');
+FRT('fr-phr',2,'frrg','Registre d\'une phrase ou d\'un texte');
+
+/* ===== Français : figures de style (exercices rédigés pour l'appli ; définitions d'après les pages de cours reçues) ===== */
+Object.assign(TAGS,{
+  'fr-fig':{label:'Figure de style confondue',tip:'Repère le mécanisme : analogie (comparaison, métaphore…), substitution (métonymie, synecdoque, périphrase), atténuation (litote, euphémisme), opposition (antithèse, oxymore, antiphrase, chiasme, parallélisme), amplification (énumération, accumulation, gradation, répétition, anaphore, hyperbole).'},
+  'fr-struct':{label:'Structure ABBA ou ABAB',tip:'Chiasme : termes croisés en miroir (ABBA). Parallélisme : mêmes places dans les deux membres (ABAB).'},
+  'fr-lito':{label:'Litote ou euphémisme',tip:'La litote dit moins pour faire entendre plus (elle renforce). L\'euphémisme adoucit une réalité désagréable (il l\'amoindrit).'},
+  'fr-grad':{label:'Gradation ascendante ou descendante',tip:'Ascendante : termes de plus en plus forts. Descendante : termes de plus en plus faibles.'},
+  'fr-comp':{label:'Comparé, comparant, outil',tip:'Comparé : ce dont on parle. Comparant : ce à quoi on le compare. Outil : le mot qui les relie (comme, tel, ressembler à…). Le verbe être n\'est pas un outil de comparaison.'}
+});
+/* [nom, famille, définition] */
+const FR_FIGS=[
+  ['comparaison','analogie','rapproche un comparé et un comparant grâce à un outil de comparaison (comme, tel, ressembler à…)'],
+  ['métaphore','analogie','rapproche deux éléments sans outil de comparaison (in presentia : comparé et comparant présents ; in absentia : comparé absent)'],
+  ['personnification','analogie','donne un caractère humain à un objet ou à un animal'],
+  ['allégorie','analogie','personnification appliquée à une idée abstraite'],
+  ['animalisation','analogie','représente une personne ou une chose sous les traits d\'un animal'],
+  ['réification','analogie','donne les caractéristiques d\'un objet à une personne ou à un animal'],
+  ['métonymie','substitution','désigne une chose par un terme lié à elle par un rapport logique (contenant pour contenu, lieu pour fonction, œuvre pour auteur…)'],
+  ['synecdoque','substitution','forme de métonymie fondée sur l\'inclusion (la partie pour le tout, la matière pour l\'objet)'],
+  ['périphrase','substitution','remplace un mot par une expression qui désigne la même chose sans la nommer'],
+  ['litote','atténuation','dit le moins pour faire entendre le plus, souvent par la négation du contraire ; elle renforce l\'information'],
+  ['euphémisme','atténuation','atténue une réalité choquante ou désagréable ; il amoindrit l\'information'],
+  ['antithèse','opposition','met en parallèle des éléments antonymes pour mettre en valeur ce qui les sépare'],
+  ['oxymore','opposition','allie deux mots de sens opposés dans un même groupe de mots'],
+  ['antiphrase','opposition','exprime une idée par l\'expression contraire (base de l\'ironie)'],
+  ['chiasme','opposition','construction en miroir, termes croisés selon la structure ABBA'],
+  ['parallélisme','opposition','construction de deux membres dont les termes se suivent dans le même ordre (ABAB)'],
+  ['énumération','amplification','détaille les parties de ce qu\'on décrit, avec des éléments de même nature et de même fonction'],
+  ['accumulation','amplification','énumération excessive, interminable, souvent désordonnée'],
+  ['gradation','amplification','série de termes de plus en plus forts (ascendante) ou de plus en plus faibles (descendante)'],
+  ['répétition','amplification','reprend les mêmes termes sans aucune modification lexicale'],
+  ['anaphore','amplification','répète un mot ou un groupe de mots au début de phrases ou de vers qui se suivent'],
+  ['hyperbole','amplification','expression exagérée, superlative, d\'une idée']
+];
+const FIGN=FR_FIGS.map(f=>f[0]), FIGD={}; FR_FIGS.forEach(f=>{ FIGD[f[0]]=f; });
+const FIGMIST=good=>FIGN.filter(n=>n!==good&&enNorm2(n)!==enNorm2(good)).map(n=>[n,'Ce n\'est pas une '+n+' : cette figure '+FIGD[n][2]+'.']);
+const FIGFB={tag:'fr-fig',title:'Nomme la figure de style',html:'<p>Écris le nom d\'une figure de style (par exemple métaphore, litote, anaphore…). Les accents et les majuscules ne comptent pas. Utilise un indice si tu bloques.</p>'};
+/* phrases rédigées pour l'appli : [phrase, figure, indice] */
+const FIG1=[
+  ['Ses mains étaient froides comme du marbre.','comparaison','L\'outil « comme » relie « ses mains » (comparé) et « du marbre » (comparant).'],
+  ['Le directeur parlait tel un général devant ses troupes.','comparaison','L\'outil « tel » rapproche le directeur et un général.'],
+  ['Cette ville ressemble à une fourmilière en plein été.','comparaison','L\'outil « ressemble à » rapproche la ville et une fourmilière.'],
+  ['La nouvelle s\'est répandue ainsi qu\'une traînée de poudre.','comparaison','L\'outil « ainsi que » relie les deux termes.'],
+  ['Cette classe est une ruche bourdonnante.','métaphore','Aucun outil de comparaison : la classe est directement appelée « ruche » (métaphore in presentia).'],
+  ['Le lac est un miroir d\'argent à l\'aube.','métaphore','Le lac (comparé) est identifié à un miroir (comparant), sans outil.'],
+  ['Il déversait un torrent d\'insultes sur l\'arbitre.','métaphore','« Un torrent d\'insultes » : les insultes sont comparées à un torrent, sans outil de comparaison.'],
+  ['Les notes du piano pleuvaient dans la salle.','métaphore','Le verbe « pleuvaient » est une métaphore : les notes sont comparées à de la pluie, sans outil.'],
+  ['Le vent siffle sa colère dans la cheminée.','personnification','Le vent éprouve de la colère : un trait humain est donné à un élément naturel.'],
+  ['La vieille horloge soupirait à chaque heure.','personnification','« Soupirait » donne un comportement humain à un objet.'],
+  ['La nuit étendit sa main sur la ville.','personnification','La nuit reçoit une main : un caractère humain est donné à une chose.'],
+  ['Ce vieux voisin grogne et aboie sur tous les passants.','animalisation','Une personne est représentée sous les traits d\'un animal (grogner, aboyer).'],
+  ['La foule se précipita, meute affamée, sur les derniers billets.','animalisation','La foule (des personnes) devient une « meute » : traits d\'un animal.'],
+  ['Le prisonnier, pantin sans volonté, se laissait pousser d\'une salle à l\'autre.','réification','Une personne reçoit les caractéristiques d\'un objet : un pantin.'],
+  ['On l\'avait rangé dans un coin comme un meuble, et on l\'oubliait.','réification','Une personne est traitée comme un objet : un meuble.'],
+  ['La Justice, les yeux bandés, tient sa balance au-dessus des hommes.','allégorie','Une idée abstraite (la Justice) est personnifiée.'],
+  ['La Mort, la faux à l\'épaule, avançait lentement dans la plaine.','allégorie','Une idée abstraite (la Mort) est représentée comme un personnage.'],
+  ['Il a avalé deux assiettes avant de repartir.','métonymie','On désigne le contenu (la nourriture) par le contenant (l\'assiette).'],
+  ['L\'Élysée a démenti ces rumeurs.','métonymie','On désigne la fonction ou le gouvernement par le lieu où il siège.'],
+  ['Elle a acheté un Monet pour son salon.','métonymie','On désigne l\'œuvre par son auteur.'],
+  ['Il a commandé un champagne pour fêter la nouvelle.','métonymie','On désigne l\'objet par son lieu d\'origine.'],
+  ['Tout le stade s\'est levé pour applaudir.','métonymie','On désigne les personnes par le lieu où elles se trouvent.'],
+  ['Il n\'y a pas un toit pour abriter ces gens.','synecdoque','Le « toit » (une partie) désigne la maison (le tout).'],
+  ['Nous cherchons des bras pour la récolte.','synecdoque','Les « bras » (partie du corps) désignent les ouvriers.'],
+  ['Les mauvaises langues du village ont tout répété.','synecdoque','Les « langues » (une partie) désignent les personnes.'],
+  ['La ville lumière accueille chaque année des millions de visiteurs.','périphrase','« La ville lumière » désigne Paris sans la nommer.'],
+  ['Le roi des animaux se reposait à l\'ombre.','périphrase','« Le roi des animaux » désigne le lion sans le nommer.'],
+  ['Notre planète bleue est fragile.','périphrase','« Planète bleue » désigne la Terre sans la nommer.']
+];
+const FIG2=[
+  ['Il est pauvre en argent, mais riche en amis.','antithèse','« pauvre » et « riche » sont des antonymes mis en parallèle.'],
+  ['Les uns rient, les autres pleurent.','antithèse','« rient » et « pleurent » s\'opposent.'],
+  ['Elle cherche la lumière quand lui préfère l\'ombre.','antithèse','« lumière » et « ombre » sont des termes opposés mis en parallèle.'],
+  ['Un silence assourdissant remplit la salle.','oxymore','« silence » et « assourdissant » sont contradictoires dans un même groupe de mots.'],
+  ['Il avait un froid brûlant dans le dos.','oxymore','« froid » et « brûlant » sont réunis dans le même groupe.'],
+  ['Cette douce violence m\'a surpris.','oxymore','« douce » et « violence » sont contradictoires, dans un même groupe nominal.'],
+  ['Tu as renversé tout le café : bravo, quel talent !','antiphrase','Le locuteur pense le contraire de ce qu\'il dit : c\'est ironique.'],
+  ['Il a oublié mon anniversaire : quel ami attentionné !','antiphrase','« attentionné » veut dire le contraire : antiphrase ironique.'],
+  ['Tu ris quand je pleure et pleures quand je ris.','chiasme','« ris – pleure / pleures – ris » : termes croisés en miroir (ABBA).'],
+  ['Il faut manger pour vivre et non vivre pour manger.','chiasme','« manger – vivre / vivre – manger » : construction en miroir (ABBA).'],
+  ['Le matin, il marche dans les bois ; le soir, il marche sur la plage.','parallélisme','Les deux membres suivent le même ordre (ABAB).'],
+  ['Elle écrivait des lettres d\'amour ; il écrivait des lettres de rupture.','parallélisme','Les deux membres reprennent la même construction dans le même ordre (ABAB).'],
+  ['Cette soupe n\'est pas mauvaise, dit-il en la resservant trois fois.','litote','Négation du contraire (« pas mauvaise ») pour dire qu\'elle est très bonne.'],
+  ['Elle n\'est pas sans talent.','litote','Double négation qui suggère bien plus que ce qui est dit.'],
+  ['Notre voisin est parti pour un monde meilleur.','euphémisme','On adoucit une réalité pénible : la mort.'],
+  ['Un plan social a été annoncé à l\'usine.','euphémisme','Le terme neutre évite le mot « licenciements ».'],
+  ['Mon fils a quelques difficultés d\'apprentissage.','euphémisme','On adoucit une réalité désagréable.']
+];
+const FIG3=[
+  ['Dans son sac, elle avait un livre, une pomme, une écharpe, des clés et un carnet.','énumération','Éléments de même nature détaillés l\'un après l\'autre.'],
+  ['Au marché on trouvait des abricots, des melons, des fraises, des figues et des pêches.','énumération','Des éléments de même nature sont détaillés pour donner une idée d\'abondance.'],
+  ['Ça criait, ça riait, ça sifflait, ça cognait, ça se bousculait, ça chantait, ça hurlait dans toute la cour.','accumulation','Énumération interminable et désordonnée qui donne une impression de profusion.'],
+  ['Valises, cartons, sacs, chaises, lampes, tableaux, vélos : tout s\'empilait dans le couloir sans ordre.','accumulation','Énumération excessive et désordonnée : impression de désordre.'],
+  ['Il hésita, protesta, cria, hurla.','gradation','Les verbes expriment une intensité de plus en plus forte.'],
+  ['La bougie vacilla, faiblit, s\'éteignit.','gradation','Les termes sont de plus en plus faibles : gradation descendante.'],
+  ['Elle attendait, attendait, attendait encore.','répétition','Le même mot est repris sans modification.'],
+  ['Ce n\'est pas la peine, pas la peine du tout.','répétition','Les mêmes termes sont repris pour insister.'],
+  ['Ici, on rit. Ici, on joue. Ici, on s\'aime.','anaphore','« Ici » est répété au début de chaque phrase.'],
+  ['Il faut que tu partes. Il faut que tu oublies. Il faut que tu vives.','anaphore','« Il faut que tu » est répété au début de phrases qui se suivent.'],
+  ['J\'ai attendu des siècles devant ce guichet.','hyperbole','« Des siècles » est une exagération.'],
+  ['Il y avait un million de personnes à ce concert !','hyperbole','Le chiffre est volontairement exagéré.'],
+  ['Cette tarte est à mourir de bonne.','hyperbole','L\'expression exagère le plaisir.'],
+  ['Je te l\'ai dit mille fois : tu me fais mourir de honte !','hyperbole','« Mille fois » et « mourir de honte » sont des exagérations.']
+];
+/* définitions : dérivées de FR_FIGS ; phrase d'ouverture variée */
+const frCl=s=>{ const m=s.match(/^[^(]+/); return m?m[0].trim():s; };
+function figQ(arr,id,lvl){ return ()=>{ const p=enPick(arr);
+  return {lang:'fr',choices:FIGN,keys:FR_KEYS,tag:'fr-fig',statement:p[0],answers:[p[1]],instr:'Quelle figure de style ?',
+    hintline:'Écris le nom de la figure de style. Les accents et les majuscules ne comptent pas.',placeholder:'nom de la figure',
+    hint:p[2],solution:'Figure : <b>'+p[1]+'</b>. '+p[2],mist:FIGMIST(p[1]),fallback:FIGFB}; }; }
+FRGEN['fr-fig1']=figQ(FIG1);
+FRGEN['fr-fig2']=figQ(FIG2);
+FRGEN['fr-fig3']=figQ(FIG3);
+FRGEN['fr-def']=()=>{ const f=enPick(FR_FIGS);
+  return {lang:'fr',choices:FIGN,keys:FR_KEYS,tag:'fr-fig',statement:'Quelle figure de style correspond à cette définition : « '+frCl(f[2])+' » ?',answers:[f[0]],instr:'Retrouve la figure à partir de sa définition',
+    hintline:'Écris le nom de la figure de style. Les accents et les majuscules ne comptent pas.',placeholder:'nom de la figure',
+    hint:'Cette figure appartient à la famille des figures d\'« '+f[1]+' ».',solution:'La <b>'+f[0]+'</b> '+f[2]+'.',mist:FIGMIST(f[0]),fallback:FIGFB}; };
+FRGEN['fr-abab']=()=>{ const P=[
+   ['Il a promis de ne jamais partir, mais partir était tout ce qu\'il promettait.','chiasme','« partir – promis / promettait – partir » : les termes se croisent en miroir.'],
+   ['Elle aime la musique qui la rend heureuse, et le bonheur qui la rend musicienne.','chiasme','« musique – heureuse / bonheur – musicienne » : idées croisées (ABBA).'],
+   ['Le voyageur hâte le pas, le berger ralentit le sien.','parallélisme','Les deux membres suivent la même construction dans le même ordre (ABAB).'],
+   ['Aux uns la gloire, aux autres l\'oubli.','parallélisme','Les deux membres suivent le même ordre : « Aux… la… », « aux… l\'… » (ABAB).'],
+   ['Je ne travaille pas pour dormir mais je dors pour pouvoir travailler.','chiasme','« travaille – dormir / dors – travailler » : disposition croisée (ABBA).'],
+   ['Sa main tenait un livre, son regard tenait une porte.','parallélisme','Même construction dans les deux membres, dans le même ordre.']];
+  const p=enPick(P);
+  return {lang:'fr',choices:['chiasme','parallélisme'],tag:'fr-struct',statement:p[0],answers:[p[1]],instr:'Chiasme ou parallélisme ?',
+    hintline:'Écris « chiasme » ou « parallélisme » (les touches remplissent la zone).',placeholder:'chiasme ou parallélisme',
+    hint:'Compare l\'ordre des termes dans les deux membres : croisé (ABBA) ou identique (ABAB).',solution:'<b>'+p[1]+'</b>. '+p[2],
+    mist:[[p[1]==='chiasme'?'parallélisme':'chiasme','Compare l\'ordre des termes : croisé = chiasme (ABBA), identique = parallélisme (ABAB).']],fallback:{tag:'fr-struct',title:'Chiasme ou parallélisme ?',html:'<p>Réponds par <b>chiasme</b> ou <b>parallélisme</b>.</p>'}}; };
+FRGEN['fr-lito']=()=>{ const P=[
+   ['Elle veut dire que ce gâteau est délicieux : « Ce gâteau n\'est pas mauvais ! »','litote','La négation du contraire renforce l\'idée (elle dit moins pour suggérer plus).'],
+   ['Pour dire que l\'exposé était magnifique, il murmure : « Ce n\'était pas inintéressant. »','litote','Il dit moins que ce qu\'il pense pour renforcer le compliment.'],
+   ['Pour annoncer une mauvaise nouvelle sans choquer, le médecin dit : « Votre père s\'est éteint cette nuit. »','euphémisme','Le terme adoucit une réalité douloureuse.'],
+   ['Pour ne pas vexer le client, le vendeur parle de « petits défauts de finition » au lieu de « pièces cassées ».','euphémisme','L\'expression atténue une réalité désagréable.'],
+   ['Elle veut dire qu\'il est très brillant : « Il n\'est pas bête, ce garçon. »','litote','Dire moins pour faire entendre plus : la litote renforce.'],
+   ['Pour ménager sa tante, il dit que son plat est « un peu particulier » alors qu\'il est immangeable.','euphémisme','Il amoindrit une réalité désagréable pour ménager l\'autre.']];
+  const p=enPick(P);
+  return {lang:'fr',choices:['litote','euphémisme'],tag:'fr-lito',statement:p[0],answers:[p[1]],instr:'Litote ou euphémisme ?',
+    hintline:'Écris « litote » ou « euphémisme » (les touches remplissent la zone).',placeholder:'litote ou euphémisme',
+    hint:'La litote renforce l\'information ; l\'euphémisme adoucit une réalité désagréable.',solution:'<b>'+p[1]+'</b>. '+p[2],
+    mist:[[p[1]==='litote'?'euphémisme':'litote','La litote renforce l\'idée ; l\'euphémisme adoucit une réalité pénible. Regarde l\'intention de celui qui parle.']],fallback:{tag:'fr-lito',title:'Litote ou euphémisme ?',html:'<p>Réponds par <b>litote</b> ou <b>euphémisme</b>.</p>'}}; };
+FRGEN['fr-grad']=()=>{ const P=[
+   ['Il murmura, parla, s\'exclama, rugit.','ascendante','Les verbes expriment une voix de plus en plus forte.'],
+   ['La lumière baissa, pâlit, vacilla, disparut.','descendante','Les termes expriment une intensité de plus en plus faible.'],
+   ['Je te remercie, je te félicite, je t\'admire, je te vénère.','ascendante','Le sentiment exprimé est de plus en plus fort.'],
+   ['Le malade parlait d\'abord fort, puis bas, puis à peine, puis plus du tout.','descendante','Les termes sont de plus en plus faibles.'],
+   ['C\'est utile, c\'est précieux, c\'est indispensable, c\'est vital.','ascendante','Chaque adjectif est plus fort que le précédent.'],
+   ['Il marchait, ralentissait, traînait, s\'arrêtait.','descendante','Les verbes montrent un mouvement de plus en plus faible.']];
+  const p=enPick(P);
+  return {lang:'fr',choices:['ascendante','descendante'],tag:'fr-grad',statement:p[0],answers:[p[1]],instr:'Gradation ascendante ou descendante ?',
+    hintline:'Écris « ascendante » ou « descendante » (les touches remplissent la zone).',placeholder:'ascendante ou descendante',
+    hint:'Compare le premier et le dernier terme : sont-ils de plus en plus forts ou de plus en plus faibles ?',solution:'Gradation <b>'+p[1]+'</b>. '+p[2],
+    mist:[[p[1]==='ascendante'?'descendante':'ascendante','Compare le premier et le dernier terme : de plus en plus forts = ascendante, de plus en plus faibles = descendante.']],fallback:{tag:'fr-grad',title:'Ascendante ou descendante ?',html:'<p>Réponds par <b>ascendante</b> ou <b>descendante</b>.</p>'}}; };
+FRGEN['fr-comp']=()=>{ const C=[
+   ['Sa voix est douce comme le miel.',['sa voix','voix'],['le miel','miel'],['comme']],
+   ['Cet enfant court tel un lapin.',['cet enfant','enfant','l\'enfant'],['un lapin','lapin'],['tel']],
+   ['Ses yeux semblent deux lacs profonds.',['ses yeux','yeux'],['deux lacs profonds','deux lacs','lacs'],['semblent','sembler']],
+   ['La ville ressemble à un grand jardin.',['la ville','ville'],['un grand jardin','jardin'],['ressemble à','ressemble','ressembler à']],
+   ['Il est rusé comme un renard.',['il'],['un renard','renard'],['comme']],
+   ['Les nuages avançaient pareils à des troupeaux.',['les nuages','nuages'],['des troupeaux','troupeaux'],['pareils à','pareil à','pareils']]];
+  const c=enPick(C), q=enPick([['comparé',1],['comparant',2],['outil de comparaison',3]]), ans=c[q[1]];
+  return {lang:'fr',tag:'fr-comp',statement:c[0]+'\nQuel est le '+q[0]+' ?',answers:ans,instr:'Repère le '+q[0],
+    hintline:'Écris le mot ou le groupe de mots (une seule ligne). Les accents, majuscules et articles sont acceptés.',placeholder:q[0],keys:FR_KEYS,
+    hint:q[1]===1?'Le comparé est ce dont on parle (le thème).':q[1]===2?'Le comparant est ce à quoi on compare le thème.':'L\'outil est le mot ou l\'expression qui relie les deux termes.',
+    solution:'Comparé : <b>'+c[1][0]+'</b> ; comparant : <b>'+c[2][0]+'</b> ; outil : <b>'+c[3][0]+'</b>.',mist:[],
+    fallback:{tag:'fr-comp',title:'Ce n\'est pas le bon élément',html:'<p>Comparé = ce dont on parle ; comparant = ce à quoi on le compare ; outil = le mot qui relie. Utilise un indice si tu bloques.</p>'}}; };
+FRT('fr-def',1,'frfg','Retrouver la figure d\'après sa définition');
+FRT('fr-fig1',1,'frfg','Analogie et substitution');
+FRT('fr-fig2',2,'frfg','Opposition et atténuation');
+FRT('fr-fig3',2,'frfg','Amplification');
+FRT('fr-abab',2,'frfa','Chiasme ou parallélisme');
+FRT('fr-comp',3,'frfa','Comparé, comparant et outil');
+FRT('fr-lito',2,'frfa','Litote ou euphémisme');
+FRT('fr-grad',1,'frfa','Gradation ascendante ou descendante');
+/* niveau « toutes les figures » : une phrase, 22 figures possibles. Réserve = phrases des niveaux 1 et 2, plus celles de chiasme/parallélisme et de litote/euphémisme */
+const FIG_ALL=(()=>{ const m={}, add=(s,f,h)=>{ const a=m[f]||(m[f]=[]); if(!a.some(x=>x[0]===s)) a.push([s,f,h]); };
+  FIG1.concat(FIG2,FIG3).forEach(p=>add(p[0],p[1],p[2]));
+  ['fr-abab','fr-lito'].forEach(id=>{ for(let i=0;i<60;i++){ const g=FRGEN[id](); add(g.statement,g.answers[0],g.hint); } });
+  return m; })();
+FRGEN['fr-fig4']=()=>{ const f=enPick(Object.keys(FIG_ALL)), p=enPick(FIG_ALL[f]);
+  return {lang:'fr',choices:FIGN,keys:FR_KEYS,tag:'fr-fig',statement:p[0],answers:[p[1]],instr:'Quelle figure de style ? (toutes les figures sont possibles)',
+    hintline:'Écris le nom de la figure de style. Les accents et les majuscules ne comptent pas.',placeholder:'nom de la figure',
+    hint:'Cette figure appartient à la famille des figures d\'« '+FIGD[p[1]][1]+' ». Relis la phrase en cherchant ce qu\'elle fait (rapprocher, remplacer, atténuer, opposer, amplifier).',solution:'Figure : <b>'+p[1]+'</b>. '+p[2],mist:FIGMIST(p[1]),fallback:FIGFB}; };
+FRT('fr-fig4',3,'frfg','Toutes les figures de style');
+
+/* ===== Français : sémantique (exercices rédigés pour l'appli ; notions d'après les pages de cours reçues, aucun exemple de la feuille réutilisé dans les exercices) ===== */
+Object.assign(TAGS,{
+  'fr-sem':{label:'Notion de sémantique confondue',tip:'Signifiant = forme du mot (sons, lettres). Signifié = son sens. Monosémique = un seul sens ; polysémique = plusieurs sens. Dénotation = sens objectif du dictionnaire ; connotation = sens implicite et subjectif.'},
+  'fr-sens':{label:'Sens d\'un mot dans son contexte',tip:'Un mot polysémique prend un seul sens dans une phrase : les mots qui l\'entourent le disent. Sens propre = sens premier, concret ; sens figuré = sens dérivé, plus imagé (passage du concret à l\'abstrait, analogie).'},
+  'fr-val':{label:'Valeur d\'un mot (neutre, péjoratif, mélioratif)',tip:'Un mot péjoratif dévalorise, un mot mélioratif valorise, un mot neutre ne juge pas. Un euphémisme atténue une réalité jugée choquante.'},
+  'fr-conn':{label:'Dénotation, connotation, symbole',tip:'Dénotation : sens objectif, celui du dictionnaire. Connotation : sens implicite, subjectif, souvent culturel. Un symbole associe un sens dénoté et un sens connoté commun à un groupe.'},
+  'fr-champ':{label:'Champ lexical',tip:'Un champ lexical est l\'ensemble des mots qui renvoient à une même réalité, une même idée, une même notion. Repère le thème commun, puis cherche ce qui ne s\'y rattache pas.'}
+});
+const FSN=['signifiant','signifié','monosémie','polysémie','dénotation','connotation','symbole','péjoratif','mélioratif','euphémisme','motif','asymbolie','lexical','sémantique'];
+const FSD={
+  signifiant:['le signifiant','la forme concrète d\'un mot, sonore ou écrite'],
+  signifié:['le signifié','le sens d\'un mot'],
+  monosémie:['la monosémie','le caractère d\'un mot qui ne porte qu\'une seule signification'],
+  polysémie:['la polysémie','le caractère d\'un mot qui porte au moins deux significations ; son sens dépend alors du contexte'],
+  dénotation:['la dénotation','le sens premier, littéral et objectif d\'un terme, celui que livre le dictionnaire (propre ou figuré)'],
+  connotation:['la connotation','le sens implicite et subjectif : l\'ensemble des sensations, des idées et des images que fait naître un mot dans l\'esprit d\'une personne'],
+  symbole:['le symbole','la coexistence d\'un sens dénoté et d\'au moins un sens connoté commun à un groupe humain'],
+  péjoratif:['un mot péjoratif','un mot qui dévalorise'],
+  mélioratif:['un mot mélioratif','un mot qui valorise'],
+  euphémisme:['un euphémisme','un mot qui atténue une réalité jugée choquante'],
+  motif:['un motif','l\'écho ou le parallélisme de sens créé, dans un texte long, par la présence récurrente d\'un même champ lexical'],
+  asymbolie:['l\'asymbolie','une monosémie pathologique : l\'incapacité de voir dans un mot autre chose que son sens littéral'],
+  lexical:['le champ lexical','l\'ensemble des mots qui renvoient à une même réalité, à une même idée, à une même notion'],
+  sémantique:['le champ sémantique','l\'ensemble des sens qu\'un mot peut prendre dans des emplois variés']
+};
+const fsShuf=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+const fsMist=(ch,ans,fn)=>ch.filter(c=>enNorm2(c)!==enNorm2(ans)).map(c=>[c,fn(c)]);
+const fsFB=(tag,title,html)=>({tag,title,html});
+/* [phrase, notion] : quelle notion illustre cette phrase ? (mot de réponse) */
+const FS_REF=[
+  ['Le mot « glace » peut désigner de l\'eau gelée, un miroir ou un dessert.','polysémie','Un même mot porte plusieurs sens : c\'est la polysémie.'],
+  ['Le mot « xylophone » ne renvoie qu\'à un seul instrument de musique.','monosémie','Une seule signification : monosémie.'],
+  ['Pour beaucoup de gens, le mot « lundi » évoque la fatigue et le retour au travail.','connotation','Ce sont des idées et des sensations ajoutées au sens : connotation.'],
+  ['Le dictionnaire définit « lundi » comme le premier jour de la semaine.','dénotation','Sens objectif livré par le dictionnaire : dénotation.'],
+  ['La suite de sons que l\'on entend, ou de lettres que l\'on lit, quand on dit ou écrit « table ».','signifiant','La forme sonore ou écrite du mot : signifiant.'],
+  ['L\'idée de meuble à plateau posé sur des pieds que le mot « table » fait surgir.','signifié','Le sens du mot, ce que l\'on se représente : signifié.'],
+  ['La balance est un instrument de pesée, mais elle représente aussi la justice pour tout un groupe humain.','symbole','Sens dénoté et sens connoté commun à un groupe : symbole.'],
+  ['Dans tout un roman, le vocabulaire du feu (flamme, brasier, cendre, étincelle) revient d\'un chapitre à l\'autre et fait écho.','motif','Un champ lexical qui revient dans un texte long crée un motif.'],
+  ['Mer, vague, écume, marée, rivage : tous ces mots se rapportent à une même réalité.','lexical','Ensemble de mots d\'un même thème : champ lexical.'],
+  ['Selon la phrase, « pièce » peut désigner une monnaie, une salle ou un spectacle.','polysémie','Plusieurs sens pour un mot : polysémie.'],
+  ['Le mot « orage » évoque la peur pour Samir, parce que la foudre l\'a surpris quand il était enfant.','connotation','Sens subjectif lié à une histoire personnelle : connotation.'],
+  ['« Orage » : perturbation atmosphérique accompagnée d\'éclairs et de tonnerre.','dénotation','Sens littéral et objectif : dénotation.']
+];
+const FS_REFCH=['polysémie','monosémie','dénotation','connotation','signifiant','signifié','symbole','motif','lexical'];
+/* [mot, mono|poly, explication] */
+const FS_MONO=[
+  ['ornithorynque','monosémique','Il ne désigne qu\'un seul animal.'],['hippopotame','monosémique','Il ne désigne qu\'un seul animal.'],
+  ['xylophone','monosémique','Il ne désigne qu\'un seul instrument.'],['ophtalmologue','monosémique','Il ne désigne qu\'un seul métier : le médecin des yeux.'],
+  ['thermomètre','monosémique','Il ne désigne qu\'un seul instrument : celui qui mesure la température.'],['tétraèdre','monosémique','Il ne désigne qu\'un seul solide : celui qui a quatre faces triangulaires.'],
+  ['pied','polysémique','Pied du corps, pied d\'une table, pied d\'une montagne, pied (unité de mesure)…'],['tour','polysémique','Une tour (bâtiment), un tour (promenade, rang, tour de magie)…'],
+  ['mine','polysémique','Mine de charbon, mine d\'un crayon, mine explosive, bonne ou mauvaise mine…'],['avocat','polysémique','Un fruit ou un juriste.'],
+  ['souris','polysémique','Un animal ou un appareil informatique.'],['pièce','polysémique','Une monnaie, une salle, une œuvre de théâtre, un morceau…'],
+  ['carte','polysémique','Carte à jouer, carte routière, carte d\'un restaurant, carte bancaire…'],['feuille','polysémique','Feuille d\'un arbre ou feuille de papier.']
+];
+/* [phrase, mot, sens, tous les sens possibles (mots), explication] */
+const FS_POLY=[
+  ['Elle a rangé sa souris sur le tapis avant d\'éteindre l\'ordinateur.','souris','appareil',['animal','appareil'],'« ordinateur » et « tapis » indiquent l\'objet informatique.'],
+  ['Une souris s\'est glissée sous le placard et le chat l\'a poursuivie.','souris','animal',['animal','appareil'],'« le chat l\'a poursuivie » indique l\'animal.'],
+  ['Pour le dessert, il a écrasé un avocat sur du pain grillé.','avocat','fruit',['fruit','juriste'],'« écrasé sur du pain grillé » indique un aliment.'],
+  ['L\'avocat a plaidé pendant deux heures devant le tribunal.','avocat','juriste',['fruit','juriste'],'« plaidé » et « tribunal » indiquent la profession.'],
+  ['Elle a glissé une pièce dans la machine à café.','pièce','monnaie',['monnaie','salle','spectacle'],'On « glisse » une pièce dans une machine : c\'est de la monnaie.'],
+  ['Leur appartement compte quatre pièces, cuisine non comprise.','pièce','salle',['monnaie','salle','spectacle'],'« appartement » et « cuisine » indiquent les espaces du logement.'],
+  ['Nous avons vu une pièce au théâtre hier soir.','pièce','spectacle',['monnaie','salle','spectacle'],'« au théâtre » indique une œuvre jouée.'],
+  ['Le serveur nous a apporté la carte des desserts.','carte','menu',['menu','plan','jeu'],'« desserts » et « serveur » indiquent la liste du restaurant.'],
+  ['Il a déplié la carte pour retrouver la route.','carte','plan',['menu','plan','jeu'],'« déplié » et « route » indiquent le document géographique.'],
+  ['Elle a posé une carte sur la table : le roi de trèfle.','carte','jeu',['menu','plan','jeu'],'« le roi de trèfle » indique un jeu de cartes.'],
+  ['Une feuille est tombée du chêne.','feuille','végétal',['végétal','papier'],'« tombée du chêne » indique l\'arbre.'],
+  ['Elle a écrit son nom en haut d\'une feuille blanche.','feuille','papier',['végétal','papier'],'« écrit son nom » et « blanche » indiquent le papier.'],
+  ['Son grand-père a travaillé trente ans dans une mine de charbon.','mine','gisement',['aspect','gisement','explosif'],'« charbon » et « travaillé trente ans » indiquent l\'exploitation du sous-sol.'],
+  ['Un démineur a désamorcé une mine enterrée sur la plage.','mine','explosif',['aspect','gisement','explosif'],'« démineur » et « désamorcé » indiquent un engin explosif.'],
+  ['Il avait bien mauvaise mine ce matin, après une nuit blanche.','mine','aspect',['aspect','gisement','explosif'],'« nuit blanche » indique l\'allure du visage.'],
+  ['Nous nous sommes assis sur un banc, à l\'ombre du tilleul.','banc','siège',['siège','groupe'],'« assis » et « à l\'ombre » indiquent un siège de parc.'],
+  ['Un banc de sardines a longé la coque du bateau.','banc','groupe',['siège','groupe'],'« de sardines » indique un groupe de poissons.'],
+  ['Du sommet de la tour, on voit toute la ville.','tour','bâtiment',['bâtiment','promenade','rang'],'« sommet » indique un édifice élevé.'],
+  ['C\'est à ton tour de lancer les dés.','tour','rang',['bâtiment','promenade','rang'],'« à ton » et « de lancer les dés » indiquent un ordre de passage.'],
+  ['Ils ont fait un tour du lac à vélo avant le dîner.','tour','promenade',['bâtiment','promenade','rang'],'« à vélo » indique un petit trajet.'],
+  ['Elle a mangé une glace à la vanille sur le port.','glace','dessert',['dessert','miroir','gel'],'« à la vanille » indique un dessert.'],
+  ['Il s\'est regardé dans la glace de l\'entrée avant de sortir.','glace','miroir',['dessert','miroir','gel'],'« regardé dans » indique un miroir.'],
+  ['Une couche de glace couvrait l\'étang ce matin.','glace','gel',['dessert','miroir','gel'],'« couche » et « étang » indiquent de l\'eau gelée.']
+];
+/* [phrase au sens propre, phrase au sens figuré, mot] */
+const FS_PROP=[
+  ['Le chat a grimpé sur l\'armoire.','Le prix du pain a grimpé en un mois.','grimpé'],
+  ['Il a plongé dans la piscine du village.','Il a plongé dans la lecture de ce roman.','plongé'],
+  ['Cette valise est lourde à porter.','Il porte une lourde responsabilité.','lourde'],
+  ['Le lion dévore sa proie.','Elle dévore les romans policiers.','dévore'],
+  ['L\'eau coule de la fontaine.','Le temps coule trop vite pendant les vacances.','coule'],
+  ['Une lampe éclaire la pièce.','Cet exemple éclaire le problème.','éclaire'],
+  ['Il a brisé le vase en le lâchant.','Ce chagrin l\'a brisé.','brisé'],
+  ['Un mur sépare les deux jardins.','Un mur d\'incompréhension les sépare.','mur'],
+  ['Le paysan sème du blé en octobre.','Cette rumeur sème la discorde.','sème'],
+  ['Le ciel est sombre ce soir.','Il a des pensées sombres.','sombre'],
+  ['Cette soupe est brûlante.','Elle lui lança un regard brûlant de colère.','brûlant'],
+  ['La porte est fermée à clé.','Elle est fermée à toute critique.','fermée']
+];
+/* [mot, définition actuelle, sens ancien (mot), distracteurs] */
+const FS_EVO=[
+  ['formidable','« remarquable, très bien »','redoutable',['minuscule','ennuyeux'],'Jadis, « formidable » (du latin formidabilis) voulait dire « qui fait peur, redoutable ».'],
+  ['énerver','« agacer, irriter »','affaiblir',['calmer','soigner'],'Jadis, « énerver » signifiait « priver de nerf, de force », donc « affaiblir ».'],
+  ['ennui','« lassitude, manque d\'intérêt »','tourment',['plaisir','repos'],'Jadis, « ennui » désignait un tourment, un chagrin violent.'],
+  ['bureau','« pièce ou meuble où l\'on travaille »','étoffe',['outil','jardin'],'À l\'origine, « bureau » désignait une étoffe de laine grossière (la bure), dont on couvrait les tables.'],
+  ['magasin','« lieu où l\'on vend des marchandises »','entrepôt',['école','jardin'],'À l\'origine, « magasin » était un lieu où l\'on entreposait des marchandises.']
+];
+/* [neutre, péjoratif, mélioratif, ce que désigne le trio] */
+const FS_TRI=[
+  ['cheveux','tignasse','chevelure','les cheveux d\'une personne'],
+  ['visage','trogne','minois','le visage d\'une personne'],
+  ['logement','taudis','demeure','l\'endroit où l\'on habite'],
+  ['vin','piquette','nectar','une boisson'],
+  ['odeur','puanteur','parfum','ce que perçoit le nez'],
+  ['mince','efflanqué','svelte','une silhouette peu épaisse']
+];
+const FS_VCH=['neutre','péjoratif','mélioratif'];
+/* [situation, euphémisme, expression crue, expression neutre] */
+const FS_EPH=[
+  ['quelqu\'un vient de mourir','Il nous a quittés.','Il a clamsé.','Il est mort.'],
+  ['un patron licencie des employés','Nous nous séparons de plusieurs collaborateurs.','On a viré plusieurs employés.','Nous licencions plusieurs employés.'],
+  ['quelqu\'un manque d\'argent','Il a des revenus modestes.','Il est fauché.','Il est pauvre.'],
+  ['quelqu\'un ne peut pas marcher','C\'est une personne à mobilité réduite.','C\'est un infirme.','C\'est une personne qui ne marche pas.'],
+  ['un lycée exclut un élève','L\'établissement l\'invite à poursuivre sa scolarité ailleurs.','On l\'a viré du lycée.','Le lycée l\'a renvoyé.'],
+  ['quelqu\'un ne dit pas la vérité','Il entretient un rapport approximatif avec la vérité.','Il ment comme il respire.','Il ment.']
+];
+/* [mot, idée, dénoté|connoté] */
+const FS_DEN=[
+  ['colombe','oiseau de la famille des pigeons','dénoté'],['colombe','la paix','connoté'],
+  ['rose','fleur à épines','dénoté'],['rose','l\'amour, le romantisme','connoté'],
+  ['loup','mammifère carnivore voisin du chien','dénoté'],['loup','le danger, la cruauté','connoté'],
+  ['nuit','période d\'obscurité entre le coucher et le lever du soleil','dénoté'],['nuit','le mystère, l\'inquiétude','connoté'],
+  ['hiver','saison la plus froide de l\'année','dénoté'],['hiver','la solitude, la mélancolie','connoté'],
+  ['mer','vaste étendue d\'eau salée','dénoté'],['mer','la liberté, l\'évasion','connoté'],
+  ['lion','grand félin d\'Afrique','dénoté'],['lion','le courage, la force','connoté'],
+  ['renard','mammifère à queue touffue','dénoté'],['renard','la ruse','connoté'],
+  ['rouge','couleur','dénoté'],['rouge','le danger, l\'interdit','connoté'],
+  ['maison','bâtiment destiné à l\'habitation','dénoté'],['maison','le refuge, la sécurité','connoté']
+];
+/* [phrase, dénoté, connoté] */
+const FS_SYM=[
+  ['La balance symbolise la justice.','pesée','justice'],
+  ['La colombe symbolise la paix.','oiseau','paix'],
+  ['Le lion symbolise le courage.','félin','courage'],
+  ['Le renard symbolise la ruse.','mammifère','ruse'],
+  ['La branche d\'olivier symbolise la paix.','arbre','paix'],
+  ['La couronne symbolise le pouvoir.','ornement','pouvoir']
+];
+const FS_SRC=[
+  ['Pour Inès, le mot « moto » fait peur : elle est d\'un naturel très anxieux, quoi qu\'elle ait vécu.','psychologie'],
+  ['Chez les marins de l\'Atlantique, le mot « brume » évoque d\'abord le danger pour la navigation.','société'],
+  ['Pour Jules, le mot « sapin » évoque la maison de ses grands-parents, où il passait chaque Noël.','histoire'],
+  ['Dans un poème, le mot « ombre » devient inquiétant à cause de « glacé », « silence » et « tombeau » qui l\'entourent.','contexte'],
+  ['Dans son club de randonnée, le mot « sommet » évoque l\'effort partagé et la fierté du groupe.','société'],
+  ['Il a été mordu par un chien à six ans : depuis, ce mot lui rappelle la peur.','histoire'],
+  ['D\'un tempérament mélancolique, il trouve de la tristesse à tout ce qu\'il lit, même au mot « pluie ».','psychologie'],
+  ['Dans un roman, « soleil » est répété près de « poussière » et de « soif » : il finit par évoquer la sécheresse, non la joie.','contexte']
+];
+const FS_SRCCH=['psychologie','société','histoire','contexte'];
+const FS_SRCN={psychologie:'la nature psychologique individuelle',société:'l\'environnement social',histoire:'l\'histoire personnelle',contexte:'les interrelations des mots et des phrases dans un texte'};
+/* [thème, [4 mots], intrus] */
+const FS_INT=[
+  ['la cuisine',['casserole','four','recette','marmite'],'tableau'],
+  ['l\'école',['classe','cartable','leçon','récréation'],'moteur'],
+  ['l\'orage',['éclair','tonnerre','averse','foudre'],'bibliothèque'],
+  ['l\'hôpital',['infirmière','médecin','civière','scalpel'],'crayon'],
+  ['la musique',['mélodie','rythme','accord','partition'],'tournevis'],
+  ['la forêt',['sapin','mousse','clairière','sentier'],'comptable'],
+  ['le voyage',['valise','billet','escale','passeport'],'fourchette'],
+  ['le froid',['glace','frisson','givre','verglas'],'brasier']
+];
+/* [texte, thème] */
+const FS_THM=[
+  ['La lame fendit l\'air. Le duel fut bref : le fer claqua contre le fer et le vaincu rendit son épée.','combat'],
+  ['Il fit revenir l\'oignon, versa le bouillon, laissa mijoter le ragoût et goûta la sauce.','cuisine'],
+  ['Le voilier prit le vent, les vagues claquèrent contre la coque et la côte disparut derrière l\'horizon.','mer'],
+  ['Le professeur corrigea les copies, distribua les devoirs et nota les élèves un à un.','école'],
+  ['Les flocons tombaient, le givre blanchissait les toits et chaque souffle se changeait en buée.','hiver'],
+  ['Le train quitta le quai ; elle vérifia son billet, replia son passeport et regarda la valise au-dessus d\'elle.','voyage'],
+  ['Le médecin ausculta le malade, l\'infirmière prépara la perfusion et on le transporta sur un brancard.','hôpital'],
+  ['Le chœur reprit la mélodie, le violon marqua le rythme et le dernier accord résonna dans la salle.','musique']
+];
+const FS_THMCH=['combat','cuisine','mer','école','hiver','voyage','hôpital','musique'];
+/* [texte, thème dominant, autre thème présent, thèmes distracteurs] */
+const FS_MIX=[
+  ['Les vagues se brisaient sur le récif, l\'écume giclait, le vent gonflait la voile ; seul un téléphone sonna au loin.','mer','téléphone',['musique','cuisine']],
+  ['Il écrasa l\'ail, fit dorer l\'oignon, versa la crème et surveilla la cuisson ; à côté, la radio parlait de football.','cuisine','sport',['combat','école']],
+  ['Le glaive brilla, la lance frappa, le bouclier se fendit ; un oiseau chanta dans la haie.','combat','nature',['voyage','hôpital']],
+  ['Elle ouvrit son cahier, relut la leçon, recopia l\'exercice et rangea son stylo ; dehors, il pleuvait.','école','météo',['mer','musique']],
+  ['Les moteurs rugirent, les pneus crissèrent, le pilote écrasa l\'accélérateur ; un drapeau s\'agita au bord de la piste.','course','fête',['cuisine','hôpital']]
+];
+Object.assign(FRGEN,{
+ 'fr-s-def':()=>{ const k=enPick(FSN), d=FSD[k], lex=k==='lexical'||k==='sémantique';
+   const st=lex?'Complète : « champ ______ » — '+d[1]+'.':'De quoi parle-t-on ? « '+d[1].charAt(0).toUpperCase()+d[1].slice(1)+'. »';
+   return {lang:'fr',choices:FSN,keys:FR_KEYS,tag:'fr-sem',statement:st,answers:[k],instr:lex?'Quel adjectif complète « champ … » ?':'Quelle notion de sémantique ?',
+     hintline:'Écris le mot (ou clique sur un mot de la liste). Les accents et les majuscules ne comptent pas.',placeholder:lex?'lexical ou sémantique':'nom de la notion',
+     hint:lex?'« Lexical » renvoie aux mots d\'un même thème ; « sémantique » renvoie aux sens d\'un seul mot.':'Repère le mot-clé de la définition : forme, sens, un seul sens, plusieurs sens, objectif, subjectif, valorise, dévalorise, atténue…',
+     solution:'<b>'+k+'</b> : '+d[0]+' est '+d[1]+'.',
+     mist:fsMist(FSN,k,c=>'Ce n\'est pas « '+c+' » : '+FSD[c][0]+' est '+FSD[c][1]+'.'),fallback:fsFB('fr-sem','Nomme la notion','<p>Écris le nom d\'une notion (par exemple signifiant, connotation, polysémie…). Les accents et les majuscules ne comptent pas.</p>')}; },
+ 'fr-s-ref':()=>{ const p=enPick(FS_REF);
+   return {lang:'fr',choices:FS_REFCH,keys:FR_KEYS,tag:'fr-sem',statement:p[0],answers:[p[1]],instr:'Quelle notion cette phrase illustre-t-elle ?',
+     hintline:'Écris un mot : polysémie, monosémie, dénotation, connotation, signifiant, signifié, symbole, motif ou lexical (pour champ lexical).',placeholder:'notion illustrée',
+     hint:'Cherche le mot-clé de la phrase : forme ou sens, un ou plusieurs sens, objectif ou subjectif, groupe humain, thème commun, écho dans un texte long.',solution:'<b>'+p[1]+'</b>. '+p[2],
+     mist:fsMist(FS_REFCH,p[1],c=>'Ce n\'est pas « '+c+' » : '+FSD[c][0]+' est '+FSD[c][1]+'.'),fallback:fsFB('fr-sem','Nomme la notion','<p>Écris l\'un des mots proposés. Pour le champ lexical, écris <b>lexical</b>.</p>')}; },
+ 'fr-s-mono':()=>{ const p=enPick(FS_MONO), other=p[1]==='monosémique'?'polysémique':'monosémique';
+   return {lang:'fr',choices:['monosémique','polysémique'],tag:'fr-sens',statement:'Le mot « '+p[0]+' » est-il monosémique ou polysémique ?',answers:[p[1]],instr:'Monosémique ou polysémique ?',
+     hintline:'Écris « monosémique » ou « polysémique » (les boutons remplissent la zone).',placeholder:'monosémique ou polysémique',
+     hint:'Essaie de trouver deux sens bien différents pour ce mot : si tu y arrives, il est polysémique.',solution:'« '+p[0]+' » est <b>'+p[1]+'</b>. '+p[2],
+     mist:[[other,'« '+p[0]+' » est '+p[1]+' : '+p[2]]],fallback:fsFB('fr-sens','Monosémique ou polysémique ?','<p>Réponds par <b>monosémique</b> (un seul sens) ou <b>polysémique</b> (plusieurs sens).</p>')}; },
+ 'fr-s-poly':()=>{ const p=enPick(FS_POLY);
+   return {lang:'fr',choices:p[3],tag:'fr-sens',statement:p[0]+'\nDans cette phrase, que désigne « '+p[1]+' » ?',answers:[p[2]],instr:'Quel sens le contexte impose-t-il ?',
+     hintline:'Écris un mot parmi les propositions (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:p[3].join(', '),keys:FR_KEYS,
+     hint:'Regarde les mots autour de « '+p[1]+' » : ils choisissent le sens.',solution:'Ici « '+p[1]+' » désigne : <b>'+p[2]+'</b>. '+p[4],
+     mist:fsMist(p[3],p[2],c=>'Le contexte ne donne pas le sens « '+c+' ». '+p[4]),fallback:fsFB('fr-sens','Choisis un des sens proposés','<p>Écris un mot parmi : '+p[3].join(', ')+'.</p>')}; },
+ 'fr-s-prop':()=>{ const p=enPick(FS_PROP), fig=Math.random()<0.5, ph=fig?p[1]:p[0], a=fig?'figuré':'propre';
+   return {lang:'fr',choices:['propre','figuré'],tag:'fr-sens',statement:ph+'\nLe mot « '+p[2]+' » est-il employé au sens propre ou au sens figuré ?',answers:[a],instr:'Sens propre ou sens figuré ?',
+     hintline:'Écris « propre » ou « figuré » (les boutons remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'propre ou figuré',
+     hint:'Sens propre : le sens premier, concret. Sens figuré : un sens dérivé, plus imagé, qui passe du concret à l\'abstrait par analogie.',
+     solution:'Ici « '+p[2]+' » est employé au sens <b>'+a+'</b> : '+(fig?'on passe du concret à l\'abstrait par analogie (« '+p[0]+' » serait le sens propre).':'c\'est le sens premier, concret (« '+p[1]+' » illustre le sens figuré).'),
+     mist:[[fig?'propre':'figuré',fig?'Non : ici le sens est abstrait ou imagé, donc figuré.':'Non : ici le sens est concret, donc propre.']],keys:FR_KEYS,
+     fallback:fsFB('fr-sens','Propre ou figuré ?','<p>Réponds par <b>propre</b> ou <b>figuré</b>.</p>')}; },
+ 'fr-s-evo':()=>{ const p=enPick(FS_EVO), ch=fsShuf([p[2]].concat(p[3]));
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-sens',statement:'Aujourd\'hui, « '+p[0]+' » signifie '+p[1]+'. Quel était son sens ancien (ou son sens d\'origine) ?',answers:[p[2]],instr:'Quel est le sens ancien ?',
+     hintline:'Écris un mot parmi les propositions (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:ch.join(', '),
+     hint:'Le sens a changé avec le temps : pense à l\'origine du mot.',solution:'Sens ancien : <b>'+p[2]+'</b>. '+p[4]+' (d\'après l\'histoire du mot : vérifie dans un dictionnaire étymologique.)',
+     mist:fsMist(ch,p[2],c=>'Ce n\'est pas le sens ancien. '+p[4]),fallback:fsFB('fr-sens','Choisis un des sens proposés','<p>Écris un mot parmi : '+ch.join(', ')+'.</p>')}; },
+ 'fr-s-val':()=>{ const t=enPick(FS_TRI), i=Math.floor(Math.random()*3), w=t[i];
+   return {lang:'fr',choices:FS_VCH,tag:'fr-val',statement:'Pour parler de '+t[3]+', on peut dire « '+t[0]+' », « '+t[1]+' » ou « '+t[2]+' ».\nQuelle valeur porte le mot « '+w+' » ?',answers:[FS_VCH[i]],instr:'Neutre, péjoratif ou mélioratif ?',
+     hintline:'Écris « neutre », « péjoratif » ou « mélioratif » (les boutons remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'neutre, péjoratif ou mélioratif',keys:FR_KEYS,
+     hint:'Un mot péjoratif dévalorise, un mot mélioratif valorise, un mot neutre ne juge pas.',solution:'« '+w+' » est <b>'+FS_VCH[i]+'</b> ; les trois mots : « '+t[0]+' » (neutre), « '+t[1]+' » (péjoratif), « '+t[2]+' » (mélioratif).',
+     mist:fsMist(FS_VCH,FS_VCH[i],c=>'Ce n\'est pas « '+c+' » : un mot neutre ne juge pas, un mot péjoratif dévalorise, un mot mélioratif valorise.'),fallback:fsFB('fr-val','Neutre, péjoratif ou mélioratif ?','<p>Réponds par <b>neutre</b>, <b>péjoratif</b> ou <b>mélioratif</b>.</p>')}; },
+ 'fr-s-nuance':()=>{ const t=enPick(FS_TRI), pej=Math.random()<0.5, a=pej?t[1]:t[2], ch=fsShuf(t.slice(0,3));
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-val',statement:'Trois mots désignent '+t[3]+' : « '+ch.join(' », « ')+' ».\nLequel est '+(pej?'péjoratif':'mélioratif')+' ?',answers:[a],instr:'Lequel est '+(pej?'péjoratif':'mélioratif')+' ?',
+     hintline:'Écris un des trois mots (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:'un des trois mots',
+     hint:pej?'Cherche le mot qui dévalorise ce dont on parle.':'Cherche le mot qui valorise ce dont on parle.',solution:'« '+t[0]+' » est neutre, « '+t[1]+' » est péjoratif, « '+t[2]+' » est mélioratif : réponse <b>'+a+'</b>.',
+     mist:fsMist(ch,a,c=>'« '+c+' » est '+(c===t[0]?'neutre':c===t[1]?'péjoratif':'mélioratif')+'.'),fallback:fsFB('fr-val','Choisis un des trois mots','<p>Écris l\'un des trois mots proposés.</p>')}; },
+ 'fr-s-eph':()=>{ const p=enPick(FS_EPH), opts=fsShuf([[p[1],'e'],[p[2],'c'],[p[3],'n']]), L=['a','b','c'], good=L[opts.findIndex(o=>o[1]==='e')];
+   const st='Situation : '+p[0]+'. Quelle formulation est un euphémisme ?\n'+opts.map((o,i)=>L[i]+') '+o[0]).join('\n');
+   const ex={e:'un euphémisme (elle atténue)',c:'une formulation crue ou familière (elle ne ménage pas)',n:'une formulation directe et neutre (elle ne ménage pas)'};
+   return {lang:'fr',choices:L,tag:'fr-val',statement:st,answers:[good],instr:'Quelle lettre ?',
+     hintline:'Écris la lettre de la bonne formulation : a, b ou c (ou clique dessus).',placeholder:'a, b ou c',
+     hint:'Un euphémisme atténue une réalité jugée choquante : cherche la formulation la plus adoucie.',solution:'Réponse <b>'+good+'</b> : '+p[1],
+     mist:opts.map((o,i)=>[L[i],o[1]==='e'?'':'Cette formulation est '+ex[o[1]]+'.']).filter((m,i)=>opts[i][1]!=='e'),fallback:fsFB('fr-val','Réponds par une lettre','<p>Écris <b>a</b>, <b>b</b> ou <b>c</b>.</p>')}; },
+ 'fr-s-den':()=>{ const p=enPick(FS_DEN), a=p[2], o=a==='dénoté'?'connoté':'dénoté';
+   return {lang:'fr',choices:['dénoté','connoté'],tag:'fr-conn',statement:'Pour le mot « '+p[0]+' », l\'idée « '+p[1]+' » relève-t-elle du sens dénoté ou du sens connoté ?',answers:[a],instr:'Sens dénoté ou connoté ?',
+     hintline:'Écris « dénoté » ou « connoté » (les boutons remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'dénoté ou connoté',keys:FR_KEYS,
+     hint:'Dénoté : objectif, celui du dictionnaire. Connoté : implicite, subjectif, souvent culturel.',
+     solution:'Sens <b>'+a+'</b> : '+(a==='dénoté'?'c\'est l\'information objective que donne le dictionnaire.':'c\'est une idée associée au mot, implicite et partagée par un groupe, pas une définition.'),
+     mist:[[o,a==='dénoté'?'Non : cette idée est objective, elle figure dans la définition.':'Non : cette idée est implicite et subjective, elle ne figure pas dans la définition.']],
+     fallback:fsFB('fr-conn','Dénoté ou connoté ?','<p>Réponds par <b>dénoté</b> (objectif) ou <b>connoté</b> (implicite, subjectif).</p>')}; },
+ 'fr-s-symb':()=>{ const p=enPick(FS_SYM), con=Math.random()<0.5, a=con?p[2]:p[1], ch=fsShuf([p[1],p[2]]);
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-conn',statement:'« '+p[0]+' »\nQuel mot donne le sens '+(con?'connoté (symbolique)':'dénoté (objectif)')+' ?',answers:[a],instr:'Quel mot correspond au sens '+(con?'connoté':'dénoté')+' ?',
+     hintline:'Écris un des deux mots proposés (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:ch.join(' ou '),
+     hint:'Un symbole réunit un sens dénoté (ce que l\'on voit, l\'objet ou l\'animal) et un sens connoté commun à un groupe (l\'idée qu\'il représente).',
+     solution:'Sens dénoté : <b>'+p[1]+'</b> ; sens connoté : <b>'+p[2]+'</b>. Réponse : <b>'+a+'</b>.',
+     mist:fsMist(ch,a,c=>'« '+c+' » est le sens '+(c===p[1]?'dénoté':'connoté')+' ; on te demande le sens '+(con?'connoté':'dénoté')+'.'),fallback:fsFB('fr-conn','Choisis un des deux mots','<p>Écris l\'un des deux mots proposés.</p>')}; },
+ 'fr-s-src':()=>{ const p=enPick(FS_SRC);
+   return {lang:'fr',choices:FS_SRCCH,keys:FR_KEYS,tag:'fr-conn',statement:p[0]+'\nQuelle source de connotation est en jeu ?\n(psychologie = nature psychologique individuelle ; société = environnement social ; histoire = histoire personnelle ; contexte = rapports entre les mots d\'un texte)',answers:[p[1]],instr:'Quelle source de connotation ?',
+     hintline:'Écris un mot : psychologie, société, histoire ou contexte (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:'psychologie, société, histoire ou contexte',
+     hint:'Demande-toi d\'où vient l\'idée associée au mot : du caractère, du milieu, d\'un souvenir ou des mots voisins dans le texte.',solution:'Source : <b>'+FS_SRCN[p[1]]+'</b> (« '+p[1]+' »).',
+     mist:fsMist(FS_SRCCH,p[1],c=>'Ici ce n\'est pas '+FS_SRCN[c]+'.'),fallback:fsFB('fr-conn','Choisis une source','<p>Écris l\'un des quatre mots : psychologie, société, histoire, contexte.</p>')}; },
+ 'fr-s-int':()=>{ const p=enPick(FS_INT), ch=fsShuf(p[1].concat([p[2]]));
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-champ',statement:'Quatre de ces mots appartiennent au même champ lexical ; un seul n\'y appartient pas :\n« '+ch.join(' », « ')+' »',answers:[p[2]],instr:'Quel est l\'intrus ?',
+     hintline:'Écris le mot intrus (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:'le mot intrus',
+     hint:'Cherche le thème que partagent quatre mots, puis repère celui qui n\'y renvoie pas.',solution:'Le thème commun est « '+p[0]+' » ; l\'intrus est <b>'+p[2]+'</b>.',
+     mist:fsMist(ch,p[2],c=>'« '+c+' » appartient bien au champ lexical de '+p[0]+'.'),fallback:fsFB('fr-champ','Choisis un des mots','<p>Écris l\'un des cinq mots proposés.</p>')}; },
+ 'fr-s-thm':()=>{ const p=enPick(FS_THM), ch=fsShuf([p[1]].concat(fsShuf(FS_THMCH.filter(x=>x!==p[1])).slice(0,3)));
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-champ',statement:'« '+p[0]+' »\nQuel champ lexical domine dans ce passage ?',answers:[p[1]],instr:'Quel est le thème dominant ?',
+     hintline:'Écris un mot parmi les propositions (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:ch.join(', '),
+     hint:'Souligne les mots qui se rapportent à une même réalité : leur thème est le champ lexical.',solution:'Le champ lexical dominant est celui de <b>'+p[1]+'</b>.',
+     mist:fsMist(ch,p[1],c=>'Aucun mot du passage ne renvoie vraiment à « '+c+' ».'),fallback:fsFB('fr-champ','Choisis un thème','<p>Écris l\'un des thèmes proposés.</p>')}; },
+ 'fr-s-mix':()=>{ const p=enPick(FS_MIX), ch=fsShuf([p[1],p[2]].concat(p[3]));
+   return {lang:'fr',choices:ch,keys:FR_KEYS,tag:'fr-champ',statement:'« '+p[0]+' »\nDeux thèmes sont présents. Lequel domine (le plus de mots) ?',answers:[p[1]],instr:'Quel champ lexical domine ?',
+     hintline:'Écris un mot parmi les propositions (ou clique dessus). Les accents et les majuscules ne comptent pas.',placeholder:ch.join(', '),
+     hint:'Compte les mots qui renvoient à chaque thème : le champ lexical dominant est celui qui en compte le plus.',solution:'Le champ lexical dominant est <b>'+p[1]+'</b> ; « '+p[2]+' » n\'apparaît que ponctuellement.',
+     mist:fsMist(ch,p[1],c=>c===p[2]?'« '+c+' » est présent, mais seulement par un ou deux mots : il ne domine pas.':'Aucun mot du passage ne renvoie à « '+c+' ».'),fallback:fsFB('fr-champ','Choisis un thème','<p>Écris l\'un des thèmes proposés.</p>')}; }
+});
+FRT('fr-s-def',1,'fsnt','Retrouver la notion d\'après sa définition');
+FRT('fr-s-ref',2,'fsnt','Reconnaître la notion dans une phrase');
+FRT('fr-s-mono',1,'fsms','Monosémique ou polysémique');
+FRT('fr-s-poly',1,'fsms','Le sens d\'un mot dans la phrase');
+FRT('fr-s-prop',2,'fsms','Sens propre ou sens figuré');
+FRT('fr-s-evo',3,'fsms','Sens ancien et sens moderne');
+FRT('fr-s-val',1,'fsvc','Neutre, péjoratif ou mélioratif');
+FRT('fr-s-nuance',2,'fsvc','Repérer le mot péjoratif ou mélioratif');
+FRT('fr-s-eph',2,'fsvc','Reconnaître un euphémisme');
+FRT('fr-s-den',2,'fsvc','Sens dénoté ou sens connoté');
+FRT('fr-s-symb',3,'fsvc','Symbole : sens dénoté et sens connoté');
+FRT('fr-s-src',3,'fsvc','Les sources de la connotation');
+FRT('fr-s-int',1,'fscl','Trouver l\'intrus d\'un champ lexical');
+FRT('fr-s-thm',2,'fscl','Le champ lexical d\'un passage');
+FRT('fr-s-mix',3,'fscl','Le champ lexical dominant');
+
 /* ===== Corrige la copie : une copie d'élève à diagnostiquer ===== */
 const COPY_NAMES=['Léo','Emma','Noah','Mila','Luca','Zoé','Nathan','Léa','Elias','Chloé','Gabriel','Lina','Arthur','Julie'];
 /* conseils trop généraux pour désigner une erreur précise : jamais proposés comme commentaire */
@@ -7344,17 +8131,17 @@ Object.assign(GVMAP,{'gm-8a':'arbelosN','gm-8b':'octoN','gm-8c':'rainureN','gm-8
 /* ===== Interface : entraînement ===== */
 const $=id=>document.getElementById(id);
 let TOTAL=10;
-const KIND_LABEL={expand:'Développer',factor:'Factoriser',solve:'Résoudre',problem:'Problèmes',quad:'Second degré',system:'Systèmes',gtri:'Triangles',gquad:'Quadrilatères',gpyth:'Pythagore',gthal:'Thalès',gcirc:'Cercles',gcomp:'Figures composées',gang:'Angles',gsol:'Solides et volumes',gtrig:'Trigonométrie'};
+const KIND_LABEL={expand:'Développer',factor:'Factoriser',solve:'Résoudre',problem:'Problèmes',quad:'Second degré',system:'Systèmes',gtri:'Triangles',gquad:'Quadrilatères',gpyth:'Pythagore',gthal:'Thalès',gcirc:'Cercles',gcomp:'Figures composées',gang:'Angles',gsol:'Solides et volumes',gtrig:'Trigonométrie',frrg:'Reconnaître le registre',frre:'Trouver l\'équivalent',frfa:'Analyser un exemple',fsnt:'Notions du cours',fsms:'Sens des mots',fsvc:'Valeur et connotation',fscl:'Champs lexicaux',frfg:'Reconnaître la figure',enps:'Present simple',enpc:'Present continuous',enor:'Orthographe',encm:'Comparaison'};
 const HINT_ALG='Écris une étape par ligne, ou sépare-les par =. La dernière ligne est ta réponse finale. Chaque ligne est vérifiée, ce qui permet de repérer l\'étape fautive.';
 const HINT_PB='Première ligne : l\'équation qui traduit l\'énoncé. Ensuite une ligne par étape de résolution. Termine par la solution, par exemple x = 7 ; si l\'équation a deux solutions, garde celle qui convient au problème.';
 const HINT_EQ='Écris une équation par ligne : chaque ligne doit avoir les mêmes solutions que la précédente. Termine par la solution, par exemple x = 2 (pour deux solutions : x = 2 ou x = -3 ; sinon « aucune solution » ou « tous les réels »). Fractions autorisées dans la solution : x = 3/2.';
 const RES_LABEL={clean:'Sans aide',helped:'Avec aide',shown:'Solution vue'};
 const S={mode:'mix',level:1,ex:null,n:0,results:[],log:[],status:'idle',tries:0,hints:0,recent:[],seriesErrs:{},pool:null,stepCount:1,domain:'alg',view:'train',combo:0,gxp:0,boss:null,bossNext:false};
-const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang','gsol','gtrig']};
-const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']]};
-const DOM_TITLE={alg:'Développer <span class="amp">&amp;</span> Factoriser',eq:'Équations',geo:'Géométrie'};
-const DOM_KICK={alg:'Algèbre · calcul littéral',eq:'Algèbre · équations, systèmes, problèmes',geo:'Géométrie plane · figures, aires et théorèmes'};
-const DOMSTORE={alg:{mode:'mix',level:1},eq:{mode:'solve',level:1},geo:{mode:'gtri',level:1}};
+const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang','gsol','gtrig'],ang:['enps','enpc','enor','encm'],fr:['frrg','frre'],ff:['frfg','frfa'],fs:['fsnt','fsms','fsvc','fscl']};
+const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],ang:[['enps','Present simple'],['enpc','Present continuous'],['enor','Orthographe'],['encm','Comparaison'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fr:[['frrg','Reconnaître le registre'],['frre','Équivalents'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],ff:[['frfg','Reconnaître la figure'],['frfa','Analyser un exemple'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fs:[['fsnt','Notions du cours'],['fsms','Sens des mots'],['fsvc','Valeur et connotation'],['fscl','Champs lexicaux'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']]};
+const DOM_TITLE={alg:'Développer <span class="amp">&amp;</span> Factoriser',eq:'Équations',geo:'Géométrie',ang:'Anglais',fr:'Registres de langue',ff:'Figures de style',fs:'Sémantique'};
+const DOM_KICK={alg:'Algèbre · calcul littéral',eq:'Algèbre · équations, systèmes, problèmes',geo:'Géométrie plane · figures, aires et théorèmes',ang:'Anglais · present simple et present continuous',fr:'Français · familier, courant, soutenu',ff:'Français · reconnaître et analyser les figures',fs:'Français · analyse de texte : sémantique'};
+const DOMSTORE={alg:{mode:'mix',level:1},eq:{mode:'solve',level:1},geo:{mode:'gtri',level:1},ang:{mode:'mix',level:1},fr:{mode:'mix',level:1},ff:{mode:'mix',level:1},fs:{mode:'mix',level:1}};
 function maxLevel(){
   if(S.mode==='review'||S.mode==='srs') return 0;
   if(S.mode==='copy') return copyMaxLevel();
@@ -7371,10 +8158,11 @@ const scoreOf=r=>r.reduce((s,k)=>s+(k==='clean'?1:k==='helped'?0.5:0),0);
 function setTab(t){
   if(running()&&t!=='train'&&t!=='exam'){ toast('Examen en cours : rends la copie ou abandonne-le avant de changer d\'onglet.'); return; }
   if(running()&&t==='exam') t='train';
+  if(t==='shop'||t==='lb'){ setBranch(t); return; }
   const st=t==='stats'||t==='shop'||t==='lb';
   ['train','course','formulas','exam','stats','shop','lb'].forEach(k=>{ $('view-'+k).hidden=(k!==t); });
   ['train','course','formulas','exam'].forEach(k=>{ const on=k===t||(k==='exam'&&running()); $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
-  ['alg','eq','geo'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
+  ['alg','eq','geo','fr','ff','fs'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
   ['stats','shop','lb'].forEach(k=>{ const on=t===k; $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
   $('subnav').hidden=st;
   if(!st) S.view=t;
@@ -7405,14 +8193,14 @@ function renderSetup0(){
   const tids=canTopic?Object.keys(TOPICS).filter(id=>(S.mode==='mix'?DKINDS[S.domain].includes(TOPICS[id].kind):TOPICS[id].kind===S.mode)&&(!S.level||TOPICS[id].level===S.level)):[];
   if(S.only&&!tids.includes(S.only)) S.only='';
   $('field-topic').hidden=!(canTopic&&tids.length>1);
-  $('sel-topic').innerHTML='<option value="">Tous les thèmes ('+tids.length+')</option>'+tids.map(id=>'<option value="'+id+'"'+(id===S.only?' selected':'')+'>'+esc(TOPICS[id].label)+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)+'</option>').join('');
+  $('sel-topic').innerHTML='<option value="">Tous les exercices ('+tids.length+')</option>'+tids.map(id=>'<option value="'+id+'"'+(id===S.only?' selected':'')+'>'+esc(TOPICS[id].label)+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)+'</option>').join('');
   if(S.pool){ const u=[...new Set(S.pool)]; $('topics-line').innerHTML='Série ciblée sur tes points faibles : '+u.map(id=>'<b>'+esc(TOPICS[id].label)+'</b> ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+', niv. '+TOPICS[id].level+')').join(', ')+'.'; return; }
   if(S.mode==='srs'){ const n=srsDueIds(S.domain); $('topics-line').innerHTML=n.length?'<b>À revoir</b> (+50 % d\'XP) : '+n.slice(0,6).map(id=>'<b>'+esc(TOPICS[id].label)+'</b>').join(', ')+(n.length>6?' et '+(n.length-6)+' autres':'')+'. Ces thèmes reviennent selon un calendrier (1, 3, 7, 14, 30 jours).':'<b>À revoir</b> : aucun thème n\'est à revoir aujourd\'hui. La série reprend la chasse aux erreurs.'; return; }
   if(S.mode==='copy'){ $('topics-line').innerHTML=copyTopicsLine(); return; }
   if(S.mode==='review'){ $('topics-line').innerHTML='<b>Chasse aux erreurs</b> (+50 % d\'XP) : tous les thèmes de cet onglet, avec une fréquence plus élevée pour ceux où tu as eu besoin d\'aide ou vu la solution. Tant qu\'il n\'y a pas de résultats, les thèmes sont tirés à égalité.'; return; }
-  if(S.only){ $('topics-line').innerHTML='Thème travaillé : <b>'+esc(TOPICS[S.only].label)+'</b> (niv. '+TOPICS[S.only].level+').'; return; }
+  if(S.only){ $('topics-line').innerHTML='Exercice travaillé : <b>'+esc(TOPICS[S.only].label)+'</b> (niv. '+TOPICS[S.only].level+').'; return; }
   const ids=tids;
-  $('topics-line').innerHTML='Thèmes travaillés : '+ids.map(id=>'<b>'+esc(TOPICS[id].label)+'</b>'+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)).join(', ')+'.';
+  $('topics-line').innerHTML='Exercices travaillés : '+ids.map(id=>'<b>'+esc(TOPICS[id].label)+'</b>'+(S.mode==='mix'?' ('+KIND_LABEL[TOPICS[id].kind].toLowerCase()+')':'')+(S.level?'':' · niv. '+TOPICS[id].level)).join(', ')+'.';
 }
 
 function newSeries(){
@@ -7434,11 +8222,11 @@ function renderExercise(quiet){
   $('cartouche').innerHTML='<div><span class="lbl">N°</span><b>'+String(S.n+1).padStart(2,'0')+' / '+TOTAL+'</b></div>'
     +'<div><span class="lbl">Niveau</span><b>'+ex.level+'</b></div>'
     +'<div><span class="lbl">Type</span><b>'+KIND_LABEL[t.kind]+'</b></div>'
-    +'<div><span class="lbl">Thème</span><b>'+esc(t.label)+'</b></div>';
+    +'<div><span class="lbl">Exercice</span><b>'+esc(t.label)+'</b></div>';
   $('instr').textContent=ex.kind==='expand'?'Développe et réduis':(ex.instr?ex.instr:ex.word?'Pose l\'équation, puis résous-la':ex.sys?'Résous le système':ex.kind==='solve'?'Résous l\'équation d\'inconnue '+ex.v:'Factorise complètement');
   $('hintline').textContent=ex.hintline?ex.hintline:ex.word?HINT_PB:(ex.kind==='solve'?HINT_EQ:HINT_ALG);
-  $('answer').placeholder=ex.geo?'réponse = ...':(ex.kind==='expand'||ex.kind==='factor')?'= ...':'x = ...';
-  $('btn-check').textContent='Vérifier'; $('btn-step').hidden=false;
+  $('answer').placeholder=ex.txt?(ex.placeholder||'ta réponse'):ex.geo?'réponse = ...':(ex.kind==='expand'||ex.kind==='factor')?'= ...':'x = ...';
+  $('btn-check').textContent='Vérifier'; $('btn-step').hidden=!!ex.txt;
   const cx=$('context'); if(ex.context){ cx.innerHTML=ex.context; cx.hidden=false; } else { cx.innerHTML=''; cx.hidden=true; }
   $('statement').innerHTML=((ex.word||ex.sys||ex.geo)&&ex.html?ex.html:M(ex.statement))+(ex.kind==='geo'&&!running()?geoVisual(ex.topic,false):''); $('statement').classList.toggle('word',!!ex.word||!!ex.geo); $('statement').classList.toggle('sys',!!ex.sys&&!ex.word);
   buildKeys();
@@ -7461,6 +8249,14 @@ function renderProgress(){
 function buildKeys(){
   const box=$('keys'); box.innerHTML='';
   const add=(html,label,fn,cls)=>{ const b=document.createElement('button'); b.type='button'; b.className='key'+(cls?' '+cls:''); b.innerHTML=html; b.setAttribute('aria-label',label); b.addEventListener('click',fn); box.appendChild(b); };
+  if(S.ex.txt&&S.ex.choices&&!S.ex.keys){ S.ex.choices.forEach(c=>add(c,c,()=>{ const el=$('answer'); if(el.disabled) return; el.value=c; el.focus(); updatePreview(); },'wide')); add('⌫','Effacer le dernier caractère',backspace); return; }
+  if(S.ex.txt&&S.ex.keys){ S.ex.keys.forEach(k=>add(k,'Caractère '+k,()=>ins(k))); add('⌫','Effacer le dernier caractère',backspace); add('Tout effacer','Effacer toute la saisie',()=>{ const el=$('answer'); if(el.disabled) return; el.value=''; el.focus(); updatePreview(); },'wide'); return; }
+  if(S.ex.txt){
+    [["'",'Apostrophe',"'"],["n't",'n apostrophe t',"n't"],["'s",'apostrophe s',"'s"],["'m",'apostrophe m',"'m"],["'re",'apostrophe re',"'re"],['-ing','terminaison ing','ing'],['?','Point d\'interrogation','?']].forEach(k=>add(k[0],k[1],()=>ins(k[2])));
+    add('⌫','Effacer le dernier caractère',backspace);
+    add('Tout effacer','Effacer toute la saisie',()=>{ const el=$('answer'); if(el.disabled) return; el.value=''; el.focus(); updatePreview(); },'wide');
+    return;
+  }
   S.ex.vars.forEach(v=>add('<i>'+v+'</i>','Lettre '+v,()=>ins(v)));
   if(S.ex.geo){ add('²','Au carré',()=>ins('²')); add('√','Racine carrée',()=>ins('√')); add('π','Pi',()=>ins('π')); }
   else if(!S.ex.sys){ add('²','Au carré',()=>ins('²')); add('^','Exposant (accent circonflexe)',()=>ins('^')); }
@@ -7488,12 +8284,12 @@ function backspace(){
 function autoGrow(){ const el=$('answer'); el.style.height='auto'; el.style.height=Math.min(el.scrollHeight+2,220)+'px'; }
 function updatePreview(){
   const v=$('answer').value, pv=$('preview'); autoGrow();
-  const solve=S.ex&&S.ex.kind==='solve', sysx=solve&&S.ex.sys, geo=S.ex&&S.ex.kind==='geo';
-  const lines=(solve||geo)?v.split('\n').map(s=>s.trim()).filter(Boolean):splitSteps(v);
+  const solve=S.ex&&S.ex.kind==='solve', sysx=solve&&S.ex.sys, geo=S.ex&&S.ex.kind==='geo', txt=S.ex&&S.ex.kind==='txt';
+  const lines=(solve||geo||txt)?v.split('\n').map(s=>s.trim()).filter(Boolean):splitSteps(v);
   if(!lines.length){ pv.innerHTML='<span class="muted">L\'aperçu de tes lignes apparaît ici, écrites comme sur une feuille.</span>'; return; }
   pv.innerHTML=lines.map((l,i)=>{
     const lab='<span class="lbl">'+(lines.length===1?'Lu comme':'Ligne '+(i+1))+'</span>';
-    try{ return '<div class="pl">'+lab+(geo?previewGeo(l):solve?(sysx?previewSys(l,S.ex):(S.ex.viete||S.ex.build)?M(l.replace(/\s+/g,' ')):parseLine(l,S.ex.v,S.ex).html):M(astStr(parsePoly(l).ast)))+'</div>'; }
+    try{ return '<div class="pl">'+lab+(txt?'<span>'+esc(l)+'</span>':geo?previewGeo(l):solve?(sysx?previewSys(l,S.ex):(S.ex.viete||S.ex.build)?M(l.replace(/\s+/g,' ')):parseLine(l,S.ex.v,S.ex).html):M(astStr(parsePoly(l).ast)))+'</div>'; }
     catch(e){ if(!(e instanceof ParseError)) throw e; return '<div class="pl">'+lab+'<span class="muted bad">'+esc(e.message)+'</span></div>'; }
   }).join('');
 }
@@ -7542,7 +8338,7 @@ function resolve(kind){
   renderProgress(); $('btn-next').focus({preventScroll:true});
 }
 function solutionHTML(ex){
-  return '<div class="sol-final"><span class="lbl">'+(ex.kind==='expand'?'Résultat développé':(ex.geo?'Réponse':ex.word||ex.sys?'Solution':ex.kind==='solve'?'Ensemble des solutions':'Forme factorisée'))+'</span>'+(ex.kind==='solve'||ex.kind==='geo'?ex.expectedHtml:M(ex.expectedStr))+'</div>'
+  return '<div class="sol-final"><span class="lbl">'+(ex.kind==='expand'?'Résultat développé':(ex.geo?'Réponse':ex.word||ex.sys?'Solution':ex.kind==='solve'?'Ensemble des solutions':'Forme factorisée'))+'</span>'+(ex.kind==='solve'||ex.kind==='geo'||ex.kind==='txt'?ex.expectedHtml:M(ex.expectedStr))+'</div>'
     +'<ol class="steps">'+ex.steps.map(s=>'<li><strong>'+s.t+'</strong>'+s.l.map(l=>'<div class="line">'+l+'</div>').join('')+'</li>').join('')+'</ol>'
     +(ex.kind==='geo'?geoVisual(ex.topic,true):'')
     +(ex.kind==='factor'?'<p class="note">Plusieurs écritures sont acceptées (ordre des facteurs, signes répartis autrement) tant que la factorisation est complète.</p>':'');
@@ -7869,6 +8665,7 @@ const BADGES=[
   ['gold','Pépite','Réussir un exercice doré du premier coup, sans indice.',()=>G.c.gold>=1],
   ['podium','Sur le podium','Terminer dans les 3 premiers du classement hebdomadaire.',()=>G.c.podium>=1],
   ['champion','Champion de la semaine','Terminer premier du classement hebdomadaire.',()=>G.c.champion>=1],
+  ['b_anglais','Anglophone','Réussir 40 exercices d\'anglais sans aide.',()=>(G.c.ang||0)>=40],
   ['shop','Premier achat','Acheter un article à la boutique.',()=>G.c.buys>=1]
 ];
 function checkBadges(){
@@ -7906,16 +8703,16 @@ function confetti(){
 /* ---------- barre de jeu ---------- */
 function renderBar(){
   const bar=$('gamebar'); if(!bar) return;
-  const r=rankOf(G.xp), pct=r.next?Math.min(100,Math.round(100*(G.xp-r.min)/(r.next-r.min))):100, d=dailyN();
+  const bx=(typeof BR!=='undefined'&&typeof brXp==='function'&&(BR.id==='math'||BRDOM[BR.id]))?brXp(BR.id):G.xp, r=rankOf(bx), pct=r.next?Math.min(100,Math.round(100*(bx-r.min)/(r.next-r.min))):100, d=dailyN();
   bar.innerHTML='<span class="g-rk"><span class="lbl">Rang</span><b>'+esc(r.name)+'</b>'+(G.title&&TITLES[G.title]?'<span class="g-title">'+esc(TITLES[G.title][0])+'</span>':'')+'</span>'
-    +'<span class="g-xp"><span class="g-bar" aria-hidden="true"><i style="width:'+pct+'%"></i></span><span class="g-txt">'+G.xp+(r.next?' / '+r.next:'')+' XP</span></span>'
+    +'<span class="g-xp"><span class="g-bar" aria-hidden="true"><i style="width:'+pct+'%"></i></span><span class="g-txt">'+bx+(r.next?' / '+r.next:'')+' XP</span></span>'
     +'<span class="g-it"><span class="lbl">Pièces</span><b>'+G.coins+'</b></span>'
     +'<span class="g-it"><span class="lbl">Série</span><b>'+streakNow()+' j</b></span>'
     +'<span class="g-it'+(d>=DAILY_GOAL?' done':'')+'"><span class="lbl">Aujourd\'hui</span><b>'+Math.min(d,DAILY_GOAL)+' / '+DAILY_GOAL+'</b></span>'+srsPills();
-  bar.setAttribute('aria-label','Profil : rang '+r.name+', '+G.xp+' XP, '+G.coins+' pièces, série de '+streakNow()+' jours, '+Math.min(d,DAILY_GOAL)+' exercices sur '+DAILY_GOAL+' aujourd\'hui. Ouvrir le bilan.');
+  bar.setAttribute('aria-label','Profil : rang '+r.name+', '+bx+' XP, '+G.coins+' pièces, série de '+streakNow()+' jours, '+Math.min(d,DAILY_GOAL)+' exercices sur '+DAILY_GOAL+' aujourd\'hui. Ouvrir le bilan.');
 }
 function addXp(n){
-  const before=rankOf(G.xp).i; G.xp+=n; ensureWeek(); G.wk.xp+=n; const after=rankOf(G.xp).i;
+  const before=rankOf(G.xp).i; brAttr(n); G.xp+=n; ensureWeek(); G.wk.xp+=n; const after=rankOf(G.xp).i;
   if(after>before){ toast('Nouveau rang : '+rankOf(G.xp).name,'rank'); tone(SND.rank); confetti(); return true; }
   return false;
 }
@@ -8091,8 +8888,9 @@ function gameInit(){
   const go=e=>{ const b=e.target.closest('[data-g]'); if(!b||b.disabled) return; gameAction(b.dataset.g); };
   $('view-stats').addEventListener('click',go); $('view-shop').addEventListener('click',go); $('boss-zone').addEventListener('click',go);
   $('btn-skip').addEventListener('click',onSkip);
-  const bar=$('gamebar'); bar.addEventListener('click',()=>setTab('stats'));
-  bar.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setTab('stats'); } });
+  const bar=$('gamebar'); const openStats=()=>{ setBranch('bilan'); };
+  bar.addEventListener('click',openStats);
+  bar.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openStats(); } });
 }
 
 /* ===== Révision espacée (Leitner) et défis quotidiens ===== */
@@ -8115,8 +8913,8 @@ function srsPool(){
   return pool.length?pool:null;
 }
 function srsCardHTML(){
-  const doms=[['alg','Algèbre'],['eq','Équations'],['geo','Géométrie']];
-  const tot=srsDueIds().length;
+  const doms=DOMBR[S.domain]?BRDOMS[DOMBR[S.domain]].map(d=>[d,DOM_TITLE[d]]):[['alg','Algèbre'],['eq','Équations'],['geo','Géométrie']];
+  const tot=doms.reduce((a,d)=>a+srsDueIds(d[0]).length,0);
   let h='<div class="card"><h3>À revoir <span class="cnt">'+tot+'</span></h3>';
   if(!Object.keys(SR.t).length) return h+'<p class="note">Aucun thème suivi pour l\'instant. Chaque thème que tu travailles revient ensuite après 1, 3, 7, 14 puis 30 jours si tu le réussis sans aide (dès le lendemain si tu as eu besoin d\'aide).</p></div>';
   h+='<p class="note">Un thème réussi sans aide revient après 1, 3, 7, 14 puis 30 jours. Un thème raté ou aidé revient dès le lendemain.</p>';
@@ -8191,6 +8989,7 @@ const EXCFG={dur:30,lv:0,scope:"dom"};
 const EXN={30:8,45:12,60:16};
 const running=()=>!!(S.exam&&!S.exam.done);
 const EXKINDS=['alg','eq','geo'];
+const EXD=dom=>DOMBR[dom]?BRDOMS[DOMBR[dom]]:EXKINDS;
 function examKeyLabel(k){
   const clean=h=>h.replace(/<[^>]+>/g,'').replace('&amp;','&');
   if(DOM_TITLE[k]) return clean(DOM_TITLE[k]);
@@ -8204,14 +9003,14 @@ function examIds(dom,d2){
   const sc=examScope(dom), ks=sc==='all'?DKINDS[d2||dom]:(sc==='dom'?DKINDS[dom]:[sc]);
   return Object.keys(TOPICS).filter(id=>ks.includes(TOPICS[id].kind));
 }
-function examLvMax(dom){ const all=examScope(dom)==='all'?EXKINDS.reduce((a,d)=>a.concat(examIds(dom,d)),[]):examIds(dom); return Math.max.apply(null,all.map(id=>TOPICS[id].level)); }
+function examLvMax(dom){ const all=examScope(dom)==='all'?EXD(dom).reduce((a,d)=>a.concat(examIds(dom,d)),[]):examIds(dom); return Math.max.apply(null,all.map(id=>TOPICS[id].level)); }
 function examLevels(n,dom){
   const mx=examLvMax(dom);
   if(EXCFG.lv) return Array.from({length:n},()=>Math.min(EXCFG.lv,mx));
   return Array.from({length:n},(_,i)=>Math.max(1,Math.min(mx,1+Math.floor(i*mx/n))));
 }
 function examPick(l,dom,i,avoid){
-  const d2=examScope(dom)==='all'?EXKINDS[i%3]:dom, ids=examIds(dom,d2);
+  const d2=examScope(dom)==='all'?EXD(dom)[i%EXD(dom).length]:dom, ids=examIds(dom,d2);
   const lvs=[...new Set(ids.map(id=>TOPICS[id].level))], L=lvs.reduce((p,c)=>Math.abs(c-l)<Math.abs(p-l)?c:p,lvs[0]);
   return newExercise('mix',L,avoid,ids.filter(id=>TOPICS[id].level===L),d2);
 }
@@ -8297,7 +9096,7 @@ function examViewHTML(){
   }
   const lvMax=examLvMax(dom), sc=examScope(dom), scL=sc==='all'?'Tous les domaines':sc==='dom'?DOM_TITLE[dom].replace(/<[^>]+>/g,'').replace('&amp;','&'):((MODES[dom].find(m=>m[0]===sc)||[0,sc])[1]);
   h+='<div class="card"><h3>Examen blanc · '+esc(scL)+'</h3><p>Conditions d\'examen : temps limité, aucun indice, aucune correction avant la fin. Tu réponds dans l\'ordre que tu veux et tu peux revenir sur une question. Tout est corrigé à la remise de la copie, avec la solution détaillée.</p>'
-    +'<div class="field"><label class="lbl" for="ex-scope">Thème</label><select id="ex-scope" class="sel"><option value="dom"'+(sc==='dom'?' selected':'')+'>Tout le domaine (mélange)</option>'+MODES[dom].filter(m=>DKINDS[dom].includes(m[0])).map(m=>'<option value="'+m[0]+'"'+(sc===m[0]?' selected':'')+'>'+esc(m[1])+'</option>').join('')+'<option value="all"'+(sc==='all'?' selected':'')+'>Tous les domaines mélangés</option></select></div>'
+    +'<div class="field"><label class="lbl" for="ex-scope">Thème</label><select id="ex-scope" class="sel"><option value="dom"'+(sc==='dom'?' selected':'')+'>Tout le domaine (mélange)</option>'+MODES[dom].filter(m=>DKINDS[dom].includes(m[0])).map(m=>'<option value="'+m[0]+'"'+(sc===m[0]?' selected':'')+'>'+esc(m[1])+'</option>').join('')+(EXD(dom).length>1?'<option value="all"'+(sc==='all'?' selected':'')+'>'+(DOMBR[dom]?'Tous les thèmes mélangés':'Tous les domaines mélangés')+'</option>':'')+'</select></div>'
     +'<div class="field"><span class="lbl">Durée</span><div class="seg" id="ex-dur" role="group">'+[30,45,60].map(m=>'<button type="button" data-d="'+m+'" aria-pressed="'+(EXCFG.dur===m)+'">'+m+' min · '+EXN[m]+' questions</button>').join('')+'</div></div>'
     +'<div class="field"><span class="lbl">Difficulté</span><div class="seg" id="ex-lv" role="group"><button type="button" data-l="0" aria-pressed="'+(EXCFG.lv===0)+'">Progressive</button>'+Array.from({length:lvMax},(_,i)=>'<button type="button" data-l="'+(i+1)+'" aria-pressed="'+(EXCFG.lv===i+1)+'">Niveau '+(i+1)+'</button>').join('')+'</div></div>'
     +'<div class="actions"><button type="button" class="btn primary" data-ex="start">Commencer l\'examen</button></div></div>';
@@ -8346,6 +9145,7 @@ function onStep(){
 /* ---------- fiche de formules ---------- */
 function formulasHTML(d){
   const T=(h,rows)=>'<div class="card"><h3>'+h+'</h3><div class="tbl"><table class="ov"><tbody>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</tbody></table></div></div>';
+  const E=s=>'<span lang="en">'+esc(s)+'</span>';
   let h='<div class="formulas"><div class="fhead"><h2>Fiche de formules · '+DOM_TITLE[d].replace(/<[^>]+>/g,'').replace('&amp;','&')+'</h2><button type="button" class="btn noprint" data-f="print">Imprimer la fiche</button></div>';
   if(d==='alg') h+=T('Identités remarquables',[['Carré d\'une somme',M('(a + b)² = a² + 2ab + b²')],['Carré d\'une différence',M('(a - b)² = a² - 2ab + b²')],['Différence de deux carrés',M('(a + b)(a - b) = a² - b²')],['Double distribution',M('(a + b)(c + d) = ac + ad + bc + bd')]])
     +T('Factoriser',[['Facteur commun',M('ka + kb = k(a + b)')],['Différence de carrés',M('a² - b² = (a + b)(a - b)')],['Trinôme carré parfait',M('a² ± 2ab + b² = (a ± b)²')],['Groupement',M('ac + ad + bc + bd = (a + b)(c + d)')],['Trinôme x² + Sx + P',M('x² + Sx + P = (x - r)(x - s)')+' avec '+M('r + s = S')+' et '+M('r × s = P')]])
@@ -8354,12 +9154,22 @@ function formulasHTML(d){
     +T('Second degré '+M('ax² + bx + c = 0'),[['Discriminant',M('Δ = b² - 4ac')],['Δ > 0','Deux solutions : '+M('x = (-b ± √Δ)/(2a)')],['Δ = 0','Une solution : '+M('x = -b/(2a)')],['Δ < 0','Aucune solution réelle'],['Somme et produit',M('x₁ + x₂ = -b/a')+' ; '+M('x₁ × x₂ = c/a')],['Factorisation',M('a(x - x₁)(x - x₂)')]])
     +T('Systèmes',[['Substitution','Isole une inconnue dans une équation, remplace-la dans l\'autre.'],['Combinaison','Multiplie les équations pour faire disparaître une inconnue, puis additionne ou soustrais.'],['Vérification','Remplace dans les deux équations.']])
     +T('Problèmes',[['Méthode','1. Choisir l\'inconnue avec son unité. 2. Traduire l\'énoncé en équation. 3. Résoudre. 4. Vérifier que la solution convient (positive, entière…). 5. Répondre par une phrase.']]);
+  else if(d==='fs') h+=T('Sens des mots',[['Signifiant / signifié','Forme du mot (sons, lettres) / son sens'],['Monosémique / polysémique','Un seul sens / au moins deux sens (le contexte choisit)'],['Sens propre / figuré','Sens premier, concret / sens dérivé, imagé (concret → abstrait, analogie)'],['Sens ancien / moderne','Un même mot dont le sens a changé avec le temps']])
+    +T('Valeur et connotation',[['Péjoratif / mélioratif','Le mot dévalorise / le mot valorise (neutre : aucun jugement)'],['Euphémisme','Mot qui atténue une réalité jugée choquante'],['Dénotation','Sens premier, littéral, objectif (celui du dictionnaire)'],['Connotation','Sens implicite, subjectif : sensations, idées, images associées au mot'],['Symbole','Sens dénoté + au moins un sens connoté commun à un groupe humain'],['Sources de connotation','Nature psychologique individuelle · environnement social · histoire personnelle · interrelations des mots et phrases d\'un texte']])
+    +T('Champs',[['Champ sémantique','Ensemble des sens d\'un mot (somme de ses emplois)'],['Champ lexical','Ensemble des mots qui renvoient à une même réalité, idée, notion (thème dominant)'],['Motif','Écho de sens créé par un champ lexical qui revient dans un texte long'],['À l\'analyse','Ne pas seulement énumérer : interpréter selon le contexte']]);
+  else if(d==='ff') h+=T('Figures de style',FR_FIGS.map(f=>['<b>'+f[0]+'</b> <small>('+f[1]+')</small>',f[2]]));
+  else if(d==='fr') h+=T('Registres de langue',[['Familier','Langue de l\'oral : mots comme bouffer, mater, tabasser, se les geler ; ciné, télé, docu, frigo, clopes ; négation sans « ne », sujet répété'],['Courant','Langue neutre : manger, regarder quelqu\'un, battre quelqu\'un, avoir très froid'],['Soutenu','Langue recherchée : déguster, toiser, châtier, être transi ; subjonctif imparfait, inversions, vocabulaire poétique']])
+    +T('Trios courant / familier / soutenu',[['avoir très froid','se les geler (fam.) · être transi (soutenu)'],['regarder quelqu\'un','mater (fam.) · toiser (soutenu)'],['battre quelqu\'un','tabasser (fam.) · châtier (soutenu)'],['manger','bouffer (fam.)']]);
+  else if(d==='ang') h+=T('Present simple',[['Affirmatif',E('I work')+', '+E('he works')+' (3e personne : -s / -es / -ies ; have → has)'],['Négatif',E('I don\'t work')+' ; '+E('she doesn\'t work')+' (verbe à la base)'],['Question',E('Do you work?')+' ; '+E('Does he work?')+' (verbe à la base)'],['Emploi','Habitudes, vérités générales, horaires, états (know, like, want)'],['Repères','always, usually, often, sometimes, never, every day, on Sundays']])
+    +T('Present continuous',[['Affirmatif','am / is / are + verbe-ing : '+E('I am working')+', '+E('she is working')+', '+E('they are working')],['Négatif',E('He isn\'t working')+' ; '+E('We aren\'t working')],['Question',E('Is he working?')+' ; '+E('Are you working?')],['Emploi','Action en cours maintenant ou autour de maintenant'],['Repères','now, right now, at the moment, Look!, Listen!']])
+    +T('Orthographe',[['3e personne','-s ; -es après s, sh, ch, x, z, o ; consonne + y → -ies ; have → has'],['Forme en -ing','e muet supprimé (make → making) ; consonne doublée (run → running) ; ie → ying (lie → lying)']])
+    +T('Simple ou continuous ?',[['Verbes d\'état','know, like, love, want, need, understand : pas de forme en -ing (même avec now)'],['have','have = posséder : simple ; have lunch / a shower : action, continuous possible']]);
   else h+=T('Aires et périmètres',[['Rectangle / carré',M('A = L × l')+' ; '+M('P = 2(L + l)')],['Triangle',M('A = b × h / 2')],['Triangle équilatéral de côté a',M('h = a√3 / 2')+' ; '+M('A = a²√3 / 4')],['Parallélogramme / losange',M('A = b × h')+' ; '+M('A = D × d / 2')],['Trapèze',M('A = (B + b) × h / 2')],['Héron',M('p = (a + b + c)/2')+' ; '+M('A = √(p(p - a)(p - b)(p - c))')]])
     +T('Théorèmes',[['Pythagore',M('a² + b² = c²')+' (c = hypoténuse) ; réciproque : si l\'égalité est vraie, le triangle est rectangle'],['Thalès',M('AM/AB = AN/AC = MN/BC')+' avec (MN) // (BC)'],['Papillon',M('OA/OB = OC/OD = AC/BD')+' avec (AC) // (BD)'],['Euclide','Triangle AED rectangle en E, hauteur [EB] : '+M('AE² = AB × AD')+' ; '+M('EB² = AB × BD')]])
     +T('Cercle et disque',[['Disque',M('A = πr²')+' ; '+M('P = 2πr')],['Secteur d\'angle α',M('A = α/360 × πr²')+' ; '+M('arc = α/360 × 2πr')],['Anneau',M('A = π(R² - r²)')],['Segment circulaire',M('secteur − triangle')+' (rayons + corde)'],['Angle inscrit',M('∠ au centre = 2 × ∠ inscrit')],['Demi-cercle','Triangle inscrit dans un demi-cercle : rectangle'],['Tangente-corde','Angle tangente-corde = angle inscrit sur le même arc'],['Quadrilatère inscrit','Angles opposés supplémentaires (somme 180°)']])
     +T('Angles et unités',[['Un tour',M('360° = 400 grades = 2π rad')],['Conversions',M('a° = a × π/180 rad')+' ; '+M('1 grade = 0,9°')],['Triangle','Somme 180° ; isocèle : angles à la base égaux ; angle extérieur = somme des deux non adjacents'],['Parallèles','Correspondants et alternes-internes égaux ; angles sur une droite : somme 180°']])
     +T('Résultats à connaître',[['Intersection de 3 cercles de rayon r',M('A = (π - √3) r² / 2')],['Cercles tangents en quinconce','Écart entre rangées : '+M('y√3')],['Triplets',M('n ; n + k ; √(2kn + k²)')],['Réunion de disques','Somme des disques − parties communes ; lentille = 2 × (quart de disque − triangle)'],['Zones grises','Système : somme des zones = aire de la figure ; secteur = combinaison de zones'],['Cercles tangents dans un angle','Centres sur la bissectrice ; rayons de contact parallèles : Thalès']]);
-  return h+'<p class="note noprint">Astuce : écris toujours l\'unité (cm, cm²) et garde les valeurs exactes (π, √) sauf si l\'énoncé demande un arrondi.</p></div>';
+  return h+(DOMBR[d]?'':'<p class="note noprint">Astuce : écris toujours l\'unité (cm, cm²) et garde les valeurs exactes (π, √) sauf si l\'énoncé demande un arrondi.</p>')+'</div>';
 }
 function renderFormulas(){ $('view-formulas').innerHTML=formulasHTML(S.domain); }
 
@@ -9070,9 +9880,264 @@ function lbClick(e){
 }
 function lbInit(){ $('view-lb').addEventListener('click',lbClick); $('view-lb').addEventListener('submit',e=>{ e.preventDefault(); doAuth('login'); }); $('syncbar').addEventListener('click',lbClick); }
 
+/* ===== Branches de maturité : barre des branches et modules (fiches et exercices) ===== */
+/* Le contenu de chaque branche (fiches et exercices) se renseigne ici ; les thèmes viennent des devoirs du planificateur Notion. */
+const BRANCHES=[
+  {id:'math',name:'Maths',sub:'Algèbre, équations et géométrie',themes:[]},
+  {id:'physique',name:'Physique',themes:['Chaleur','Dilatation','Gaz parfaits'],fiches:[]},
+  {id:'chimie',name:'Chimie',themes:['Test de chimie'],fiches:[]},
+  {id:'economie',name:'Économie',themes:['Économie d\'échelle'],fiches:[]},
+  {id:'histoire',name:'Histoire',themes:['Institutions politiques et Jura'],fiches:[]},
+  {id:'francais',name:'Français',themes:['Sémantique','Littérature','Répétitions'],fiches:[]},
+  {id:'allemand',name:'Allemand',themes:['Vocabulaire (unité 1)','Exposé sur une ville allemande'],fiches:[]},
+  {id:'anglais',name:'Anglais',themes:['Test d\'anglais'],fiches:[]}
+];
+const BR={id:'home',tab:'cours',qx:null,xs:null};
+const BRSTORE='maturite-branches-v1';
+let brProg=(()=>{ try{ const p=JSON.parse(localStorage.getItem(BRSTORE)); if(p&&typeof p==='object') return p; }catch(e){} return {}; })();
+function brSave(){ try{ localStorage.setItem(BRSTORE,JSON.stringify(brProg)); }catch(e){} }
+const brData=id=>BRANCHES.find(b=>b.id===id);
+const brXp=id=>{ if(id==='math'){ let o=0; BRANCHES.forEach(b=>{ if(b.id!=='math') o+=(brProg[b.id]&&brProg[b.id].xp)||0; }); return Math.max(0,G.xp-o); } return (brProg[id]&&brProg[id].xp)||0; };
+function brAward(id,n){
+  if(!(n>0)) return;
+  const b=brData(id), p=brProg[id]||(brProg[id]={}), r0=rankOf(brXp(id)).i;
+  p.xp=(p.xp||0)+n; brSave(); addXp(n); saveGame(); renderBar();
+  const r1=rankOf(brXp(id));
+  if(r1.i>r0) toast('Nouveau rang en '+b.name+' : '+r1.name,'rank');
+}
+function brAttr(n){
+  if(!(n>0)||typeof BR==='undefined'||!BRDOM[BR.id]||DOMBR[S.domain]!==BR.id) return;
+  const id=BR.id, r0=rankOf(brXp(id)).i, p=brProg[id]||(brProg[id]={});
+  p.xp=(p.xp||0)+n; brSave();
+  const r1=rankOf(brXp(id));
+  if(r1.i>r0) toast('Nouveau rang en '+brData(id).name+' : '+r1.name,'rank');
+}
+const brRankLine=id=>{ const r=rankOf(brXp(id)), x=brXp(id); return r.name+' · '+x+(r.next?' / '+r.next:'')+' XP'; };
+const brBest=id=>{ const p=brProg[id]||(brProg[id]={}); return p; };
+
+const brCount=b=>({f:(b.fiches||[]).length});
+/* statistiques d'une branche, calculées à partir des thèmes du moteur (maths : alg, eq, geo ; anglais : ang) */
+function brStat(b){
+  const t={n:0,clean:0,helped:0,shown:0}; if(b.id!=='math'&&!BRDOM[b.id]) return t;
+  Object.keys(TOPICS).forEach(id=>{ const dm=domainOf(TOPICS[id].kind), s=stats.topics[id]; if(s&&(BRDOM[b.id]?DOMBR[dm]===b.id:!DOMBR[dm])){ t.n+=s.n; t.clean+=s.clean; t.helped+=s.helped; t.shown+=s.shown; } });
+  return t;
+}
+const brEngine=id=>id==='math'||id==='anglais';
+function brHome(){
+  const card=b=>{
+    let sub, prog='';
+    if(b.id==='math'){ sub=b.sub; }
+    else{
+      const n=brCount(b), e=brStat(b);
+      sub=b.themes.length?b.themes.join(' · '):'';
+      prog=BRDOM[b.id]?(e.n?e.n+' exercice'+(e.n>1?'s':'')+' · '+Math.round(100*e.clean/e.n)+' % sans aide':'exercices à faire'):(n.f?n.f+' fiche'+(n.f>1?'s':''):'Contenu à venir');
+    }
+    return '<button type="button" class="hcard" data-br="'+b.id+'"><span class="hname">'+esc(b.name)+'</span><span class="hrank">Rang : '+esc(brRankLine(b.id))+'</span>'+(sub?'<span class="hsub">'+esc(sub)+'</span>':'')+(prog?'<span class="hprog">'+esc(prog)+'</span>':'')+'</button>';
+  };
+  $('view-home').innerHTML='<h2 class="hsec">Outils</h2><div class="hgrid"><button type="button" class="hcard" data-br="bilan"><span class="hname">Bilan global</span><span class="hsub">Rang global, badges et bilan par branche</span></button><button type="button" class="hcard" data-br="shop"><span class="hname">Boutique</span><span class="hsub">Dépense les pièces gagnées</span></button><button type="button" class="hcard" data-br="lb"><span class="hname">Classement</span><span class="hsub">Classement et compte de synchronisation</span></button></div>'
+    +'<h2 class="hsec">Branches</h2><div class="hgrid">'+BRANCHES.map(card).join('')+'</div>';
+}
+function brTabs(){
+  const b=brData(BR.id), n=brCount(b);
+  const t=[['cours','Cours',n.f],['exos','Exercices',0],['bilan','Bilan',0]];
+  $('brtabs').innerHTML=t.map(x=>'<button type="button" class="tab" role="tab" data-bt="'+x[0]+'" aria-selected="'+(BR.tab===x[0])+'">'+x[1]+(x[2]?' ('+x[2]+')':'')+'</button>').join('');
+}
+function setBranch(id){
+  if(running()&&id!=='math'&&id!==BR.id){ toast('Examen en cours : rends la copie ou abandonne-le avant de changer de branche.'); return; }
+  if(running()&&id==='home'){ toast('Examen en cours : rends la copie ou abandonne-le avant de quitter.'); return; }
+  const home=id==='home', tool=id==='shop'||id==='lb'||id==='bilan', b=(home||tool)?null:brData(id); if(!home&&!tool&&!b) return;
+  BR.id=id; BR.tab='cours'; BR.xs=null;
+  const eng=!!BRDOM[id], math=id==='math'||eng, app=document.querySelector('.app');
+  app.classList.toggle('nomath',!math);
+  app.classList.toggle('nogame',false);
+  app.dataset.br=id; renderBar();
+  $('homebtn').hidden=home;
+  $('brtabs').hidden=home||math||tool;
+  $('view-home').hidden=!home;
+  $('view-branch').hidden=home||math||tool;
+  ['train','course','formulas','exam','stats','shop','lb'].forEach(k=>{ if(!math) $('view-'+k).hidden=true; });
+  if(tool){
+    $('subnav').hidden=true; $('view-'+(id==='bilan'?'stats':id)).hidden=false;
+    $('brand-kicker').textContent='Maturité'; $('brand-title').textContent=id==='shop'?'Boutique':id==='lb'?'Classement':'Bilan global';
+    if(id==='shop') renderShop(); else if(id==='lb') renderLb(); else renderStats();
+  } else if(home){
+    $('subnav').hidden=true;
+    $('brand-kicker').textContent='Maturité'; $('brand-title').textContent='Mes branches';
+    brHome();
+  } else if(math){
+    const want=eng?(DOMBR[S.domain]===id?S.domain:BRDOM[id]):(DOMBR[S.domain]?(BR.lastMath||'alg'):S.domain);
+    if(want!==S.domain){ if(eng&&!DOMBR[S.domain]) BR.lastMath=S.domain; setDomain(want,S.view||'train'); }
+    else { $('brand-title').innerHTML=DOM_TITLE[S.domain]; $('brand-kicker').textContent=DOM_KICK[S.domain]; setTab(S.view||'train'); }
+  } else {
+    $('subnav').hidden=true;
+    $('brand-kicker').textContent='Maturité · branche'; $('brand-title').textContent=b.name;
+    brTabs(); brRender();
+  }
+  window.scrollTo(0,0);
+}
+function brEmpty(b,what){
+  return '<div class="card brempty"><p><b>Pas encore de '+what+' pour '+esc(b.name)+'.</b></p><p>Envoie-moi tes cours de '+esc(b.name)+' (photos ou PDF) : je les transformerai en fiches et en exercices corrigés, uniquement à partir de ce que tu m\'envoies.</p></div>';
+}
+function brRender(){
+  const b=brData(BR.id), v=$('view-branch'), e=brStat(b);
+  let h='<div class="panel brstats"><div><span class="lbl">Rang de la branche</span><b>'+esc(brRankLine(b.id))+'</b></div><div><span class="lbl">Exercices</span><b>'+e.n+'</b></div>'+'</div>';
+  h+='<div class="brbody">'+(BR.tab==='cours'?brCours(b):BR.tab==='exos'?brEmpty(b,'exercice')+brThemes(b):'<div class="card brempty"><p>Le bilan de '+esc(b.name)+' apparaîtra ici dès les premiers exercices.</p></div>')+'</div>';
+  v.innerHTML=h; brTabs();
+}
+function brThemes(b){
+  if(!b.themes||!b.themes.length) return '';
+  return '<div class="card"><p class="lbl">Thèmes repérés dans tes devoirs (Notion)</p><p class="chips">'+b.themes.map(t=>'<span class="chip">'+esc(t)+'</span>').join('')+'</p></div>';
+}
+function brCours(b){
+  const f=b.fiches||[];
+  if(!f.length) return brEmpty(b,'fiche de cours')+brThemes(b);
+  return f.map(x=>'<article class="card brfiche"><h3>'+esc(x.t)+'</h3><div class="brhtml">'+x.html+'</div></article>').join('');
+}
+(function brSetup(){
+  const go=e=>{ const t=e.target.closest('[data-br]'); if(t) setBranch(t.dataset.br); };
+  $('view-home').addEventListener('click',go);
+  $('homebtn').addEventListener('click',()=>setBranch('home'));
+  $('brtabs').addEventListener('click',e=>{ const t=e.target.closest('[data-bt]'); if(t){ BR.tab=t.dataset.bt; brRender(); } });
+})();
+
+/* Contenu Anglais : present simple et present continuous (grammaire standard, pas tiré de tes cours) */
+Object.assign(brData('anglais'),{
+fiches:[
+{t:'Present simple',html:
+'<p><b>Quand l\'utiliser</b></p><ul><li>habitudes et routines : <i>I get up at 6.</i></li><li>vérités générales : <i>Water boils at 100 °C.</i></li><li>horaires : <i>The train leaves at 8:15.</i></li><li>états et goûts : <i>She likes tea. He knows the answer.</i></li></ul>'
++'<p><b>Affirmatif</b> : verbe à la base ; à la 3e personne du singulier (he, she, it) on ajoute <b>-s</b> : <i>I work, you work, he works, we work, they work.</i></p>'
++'<p><b>Orthographe de la 3e personne</b></p><ul><li>verbes en -s, -sh, -ch, -x, -z, -o : <b>-es</b> (<i>watches, washes, goes, does</i>)</li><li>consonne + y : y devient <b>-ies</b> (<i>study → studies</i>)</li><li>voyelle + y : <b>-s</b> (<i>play → plays</i>)</li><li><i>have → has</i></li></ul>'
++'<p><b>Négatif</b> : <i>do not (don\'t)</i> / <i>does not (doesn\'t)</i> + verbe à la base. <i>She doesn\'t like coffee.</i> (pas de -s après doesn\'t)</p>'
++'<p><b>Question</b> : <i>Do / Does</i> + sujet + verbe à la base. <i>Does he work here?</i> Réponses courtes : <i>Yes, he does. / No, he doesn\'t.</i></p>'
++'<p><b>Verbe « be »</b> : pas de do/does. <i>He isn\'t tall. Is he tall?</i></p>'
++'<p><b>Adverbes de fréquence</b> : always, usually, often, sometimes, rarely, never. Ils se placent <b>avant</b> le verbe et <b>après</b> « be » : <i>She often walks. He is never late.</i></p>'
++'<p><b>Mots repères</b> : every day, on Mondays, once a week, always, usually, never.</p>'
++'<p><b>Questions avec mot interrogatif</b> : <i>Where does she live? What do you do?</i> Si la question porte sur le sujet, pas de do : <i>Who lives here?</i></p>'},
+{t:'Present continuous',html:
+'<p><b>Quand l\'utiliser</b></p><ul><li>action en cours au moment où l\'on parle : <i>I\'m doing my homework.</i></li><li>situation temporaire : <i>She is staying with her aunt this week.</i></li><li>projet arrangé dans un futur proche : <i>I\'m meeting him tomorrow.</i></li><li>habitude agaçante avec « always » : <i>He is always losing his keys.</i></li></ul>'
++'<p><b>Formation</b> : <b>am / is / are + verbe-ing</b></p><ul><li>Affirmatif : <i>I am working, she is working, they are working.</i></li><li>Négatif : <i>I\'m not working, he isn\'t working, we aren\'t working.</i></li><li>Question : <i>Is she working? Are they working?</i> Réponse courte : <i>Yes, she is. / No, they aren\'t.</i></li></ul>'
++'<p><b>Orthographe du -ing</b></p><ul><li>e final muet disparaît : <i>make → making, write → writing</i></li><li>verbe court consonne-voyelle-consonne : on double la consonne : <i>run → running, sit → sitting, stop → stopping</i></li><li><i>ie → ying</i> : <i>lie → lying</i></li><li>-y reste : <i>play → playing</i></li></ul>'
++'<p><b>Mots repères</b> : now, at the moment, currently, today, this week, « Look! », « Listen! ».</p>'
++'<p><b>Verbes d\'état, en général pas à la forme en -ing</b> : know, like, love, hate, want, need, prefer, understand, believe, belong, own, seem. On dit <i>I know</i>, pas <i>I am knowing</i>. Certains verbes changent de sens : <i>I have a car</i> (possession, simple) mais <i>I\'m having lunch</i> (action, continuous).</p>'},
+{t:'Simple ou continuous ?',html:
+'<ul><li><b>Habitude / fait permanent</b> → present simple : <i>She works in a bank.</i></li><li><b>En cours / temporaire</b> → present continuous : <i>She is working at the airport this week.</i></li></ul>'
++'<p>Exemple de contraste : <i>My brother usually has breakfast at 7, but today he is having breakfast at 9.</i></p>'
++'<p>Astuce : cherche un mot repère (every day, usually → simple ; now, at the moment → continuous), puis vérifie que le verbe n\'est pas un verbe d\'état.</p>'}
+],
+});
+
+/* Contenu Français : thème « Registres de langue » (d'après la feuille d'exercices du cours MPT-CRS-FRA, pages 3 et 4) */
+Object.assign(brData('francais'),{
+fiches:[
+{d:'fr',t:'Registres de langue : repères',html:
+'<p>Les pages de théorie ne sont pas encore dans l\'appli : cette fiche ne reprend que ce qui apparaît dans tes exercices.</p>'
++'<p><b>Familier</b> : langue de l\'oral. Indices relevés : mots familiers (<i>bouffer, mater, tabasser, bagnole, bossant, mec, type, clopes</i>), abréviations (<i>ciné, télé, docu, frigo</i>), élisions (<i>Not\' gosse, d\'répéter</i>), « ne » omis (<i>on peut rien, il faut jamais</i>), sujet répété (<i>sa femme elle a eu</i>), écriture phonétique (<i>jmonte, voulàtipas</i>).</p>'
++'<p><b>Courant</b> : langue neutre, sans mot familier ni recherché : <i>avoir très froid, manger, regarder quelqu\'un, battre quelqu\'un</i>.</p>'
++'<p><b>Soutenu</b> : langue recherchée. Indices relevés : mots rares ou poétiques (<i>luth, constellé, livrée, blasonné, sudoripare</i>), imparfait du subjonctif et inversion (<i>fallait-il que je vous visse</i>), phrases longues et complexes.</p>'},
+{d:'fr',t:'Un même sens, trois registres',html:
+'<table class="ov"><thead><tr><th>Courant</th><th>Familier</th><th>Soutenu</th></tr></thead><tbody>'
++'<tr><td>avoir très froid</td><td>se les geler</td><td>être transi</td></tr>'
++'<tr><td>manger</td><td>bouffer</td><td></td></tr>'
++'<tr><td>regarder quelqu\'un</td><td>mater</td><td>toiser</td></tr>'
++'<tr><td>battre quelqu\'un</td><td>tabasser</td><td>châtier</td></tr>'
++'<tr><td>café</td><td>caoua</td><td></td></tr>'
++'<tr><td>cinéma · télévision · documentaire</td><td>ciné · télé · docu</td><td></td></tr>'
++'<tr><td>réfrigérateur · cigarettes</td><td>frigo · clopes</td><td></td></tr>'
++'<tr><td>homme</td><td>type · mec</td><td></td></tr></tbody></table>'},
+{d:'fr',t:'Autres exemples (ajoutés par moi, pas tirés de ton cours)',html:'<table class="ov"><thead><tr><th>Courant</th><th>Familier</th><th>Soutenu</th></tr></thead><tbody>'+FR_TRIOS.map(t=>'<tr><td>'+t[0]+'</td><td>'+t[1].join(' · ')+'</td><td>'+(t[2]?t[2].join(' · '):'')+'</td></tr>').join('')+'</tbody></table>'},
+{d:'fr',t:'Le familier dans le texte de David Thomas',html:
+'<p>Dans la micronouvelle (« Ça a commencé quand je me suis réveillé… »), les traits du registre familier sont :</p>'
++'<ul><li><b>lexique</b> : <i>caoua, type, mec, ciné, télé, docu, frigo, clopes, pourries, envoyer chier, passer des coups de fil, tuer une heure, ça m\'a foutu un bourdon</i></li>'
++'<li><b>syntaxe</b> : phrases sans « ne » (<i>il faut jamais désespérer</i>), tournures orales (<i>Y avait que…, Fallait pas insister, plus qu\'à</i>), phrases très courtes (<i>Bon, c\'était pas mon jour, quoi.</i>)</li></ul>'}
+]});
+/* Thème 2 : figures de style (pages « Analyse de texte : figures de style », Section Maturité) */
+brData('francais').fiches.push(
+{d:'ff',t:'Figures de style : les cinq familles',html:
+'<table class="ov"><thead><tr><th>Famille</th><th>Figures</th></tr></thead><tbody>'
++'<tr><td>Analogie</td><td>comparaison, métaphore (in presentia, in absentia, filée), personnification, allégorie, animalisation, réification</td></tr>'
++'<tr><td>Substitution ↔</td><td>métonymie, synecdoque, périphrase</td></tr>'
++'<tr><td>Atténuation ▼</td><td>litote, euphémisme</td></tr>'
++'<tr><td>Opposition ≠</td><td>antithèse, oxymore, antiphrase, chiasme, parallélisme</td></tr>'
++'<tr><td>Amplification ▲</td><td>énumération, accumulation, gradation, répétition, anaphore, hyperbole</td></tr></tbody></table>'},
+{d:'ff',t:'La comparaison',html:
+'<p>La comparaison relie le <b>comparé</b> (ce dont on parle, le thème) et le <b>comparant</b> (ce qu\'on en dit, le propos) par un <b>outil</b>. Le <b>motif</b> est ce qui les rapproche.</p>'
++'<p>Outils fréquents : <i>comme, ainsi que, de même que, pareil à, semblable à, identique à, tel, différent de, ressembler à, sembler, avoir l\'air de, en, de, ressemblance, similitude</i>. Ils peuvent être de catégories grammaticales différentes. <b>Le verbe « être » n\'est pas un outil de comparaison.</b></p>'
++'<p>Le rapprochement est le plus souvent logique (motif évident) ; il peut être paradoxal ou énigmatique, car purement subjectif.</p>'
++'<p>Certaines comparaisons <b>ne sont pas des figures de style</b> : celles de la langue populaire devenues banales (<i>malin comme un singe, blanc comme un linge…</i>) et la comparaison simple, factuelle et objective (comparaison <b>grammaticale</b> : informer, décrire, clarifier).</p>'},
+{d:'ff',t:'Métaphore et cas particuliers',html:
+'<ul><li><b>Métaphore in presentia</b> : le comparé et le comparant sont tous deux présents. <b>In absentia</b> : le comparé est absent, le destinataire doit « décoder » l\'image.</li>'
++'<li>Les termes rapprochés peuvent être des noms, mais aussi des adjectifs ou des verbes.</li>'
++'<li><b>Métaphore filée</b> : suite de métaphores sur le même thème (même « fil »), avec des sèmes communs.</li>'
++'<li><b>Métaphores lexicalisées ou figées</b> (catachrèses) : la langue n\'a pas de mot propre (<i>le bras du fauteuil</i>). Les <b>figures d\'usage</b> sont des métaphores devenues courantes (<i>ne pas mettre la charrue avant les bœufs</i>). Elles ne sont plus considérées comme des figures de style.</li>'
++'<li><b>Personnification</b> : donne un caractère humain à un objet ou à un animal. Appliquée à une idée abstraite, c\'est une <b>allégorie</b>.</li>'
++'<li><b>Animalisation</b> : représenter une personne ou une chose sous les traits d\'un animal.</li>'
++'<li><b>Réification</b> : donner les caractéristiques d\'un objet à une personne ou à un animal.</li></ul>'},
+{d:'ff',t:'Substitution : métonymie, synecdoque, périphrase',html:
+'<p>La <b>métonymie</b> désigne une chose par un terme lié à elle par un rapport logique. On désigne :</p>'
++'<ul><li>le contenu par le contenant ; l\'objet par son lieu d\'origine ; l\'œuvre par son auteur</li><li>l\'abstrait par le concret ; la fonction par le lieu où elle est exercée ; le sentiment par une partie du corps</li></ul>'
++'<p>La <b>synecdoque</b> est une métonymie fondée sur l\'<b>inclusion</b> : la partie pour le tout, la matière pour l\'objet.</p>'
++'<p>La <b>périphrase</b> désigne quelqu\'un ou quelque chose par une expression au lieu de son nom (définition générale : elle n\'est pas rédigée dans les pages reçues, seulement travaillée en exercices).</p>'},
+{d:'ff',t:'Atténuation : litote et euphémisme',html:
+'<p><b>Litote</b> : expression affaiblie, en deçà de la réalité, qui cherche en fait à <b>renforcer</b> l\'information. Souvent fondée sur la négation de son contraire. Elle dit le moins pour exprimer le plus. Il faut connaître l\'intention de l\'émetteur pour l\'interpréter.</p>'
++'<p><b>Euphémisme</b> : atténue une réalité choquante, désagréable ou douloureuse, par souci réel ou feint de bienséance. Il cherche à <b>amoindrir</b> l\'information, et permet parfois d\'éviter un terme dévalorisant par un terme neutre. Fréquent dans les discours « politiquement corrects ».</p>'},
+{d:'ff',t:'Opposition : antithèse, oxymore, antiphrase, chiasme, parallélisme',html:
+'<ul><li><b>Antithèse</b> : met en parallèle des éléments antonymes pour mettre en valeur ce qui les sépare.</li>'
++'<li><b>Oxymore</b> (alliance de mots) : deux mots de sens opposés dans un même groupe de mots ; association inattendue qui met en évidence une réalité paradoxale.</li>'
++'<li><b>Antiphrase</b> : emploi d\'un mot dans un sens contraire à son sens habituel ; l\'ironie repose souvent sur elle (il faut le contexte ou l\'intonation).</li>'
++'<li><b>Chiasme</b> : construction en miroir, termes croisés <b>ABBA</b>.</li>'
++'<li><b>Parallélisme</b> : structure <b>ABAB</b> (à ne pas confondre avec le chiasme).</li></ul>'},
+{d:'ff',t:'Amplification : énumération, accumulation, gradation, répétition, anaphore, hyperbole',html:
+'<ul><li><b>Énumération</b> : détaille successivement les parties de ce qu\'on décrit ; éléments de même nature et de même fonction. <b>Inventaire</b> : énumération exhaustive.</li>'
++'<li><b>Accumulation</b> : énumération excessive ou interminable, souvent désordonnée (profusion, désordre, disproportion).</li>'
++'<li><b>Gradation</b> : termes juxtaposés ou coordonnés exprimant la même idée, de plus en plus forts (<b>ascendante</b>) ou de plus en plus faibles (<b>descendante</b>). Elle peut être parodique.</li>'
++'<li><b>Répétition</b> : reprise des mêmes termes sans modification lexicale ; peut renforcer une idée.</li>'
++'<li><b>Anaphore</b> : répétition d\'un mot ou groupe de mots au début de phrases ou de vers qui se suivent (symétrie, insistance).</li>'
++'<li><b>Hyperbole</b> : expression exagérée, superlative. Mots hyperboliques (<i>géant, fabuleux</i>), préfixes (<i>super, hyper</i>), suffixe <i>-issime</i>, superlatifs.</li></ul>'}
+);
+
+/* Thème « Sémantique » (d'après la feuille « Analyse de texte : sémantique », MPT-CRS-FRA) */
+brData('francais').fiches.push(
+{d:'fs',t:'Sémantique : signifiant, signifié, monosémie et polysémie',html:
+'<p>La <b>sémantique</b> (du grec <i>semantikos</i>, « qui signifie ») est l\'étude du sens des mots. Chaque mot a une <b>forme concrète</b>, sonore ou écrite (le <b>signifiant</b>), et un <b>sens</b> (le <b>signifié</b>).</p>'
++'<p>Un mot <b>monosémique</b> ne porte qu\'une seule signification : soit il n\'a qu\'un sens (dénoté ou objectif) dans le dictionnaire (<i>un séquoia est un conifère et rien d\'autre</i>), soit il a plusieurs sens dans le dictionnaire mais n\'en garde qu\'un dans un énoncé (<i>« j\'ai mangé un croissant chaud » : l\'aliment, pas la lune ni l\'emblème musulman</i>).</p>'
++'<p>Un mot <b>polysémique</b> porte au moins deux significations. Beaucoup de mots le sont ; leur sens dépend du <b>contexte</b> (la phrase, voire le passage), c\'est-à-dire des mots qui précèdent ou qui suivent : c\'est eux qui font choisir un sens plutôt qu\'un autre.</p>'
++'<p>Une personne imperméable au symbolisme, qui ne voit dans le printemps qu\'une saison et dans un cheval qu\'un quadrupède, est victime d\'<b>asymbolie</b> : une monosémie pathologique connue des psychiatres.</p>'},
+{d:'fs',t:'Nuances de sens : ancien/moderne, péjoratif/mélioratif, propre/figuré',html:
+'<h3>A. Sens ancien et sens moderne</h3>'
++'<p>Certains mots ont un <b>sens ancien</b> et un <b>sens moderne</b> : <i>étonné</i> signifie aujourd\'hui « surpris », mais au XIXe siècle « troublé par une violente émotion » ; <i>gourmand</i> signifie surtout « qui aime faire bonne chère », alors qu\'avant la Révolution française il signifiait exclusivement « glouton ».</p>'
++'<h3>B. Sens péjoratif et sens mélioratif</h3>'
++'<p>Le mot <b>péjoratif</b> dévalorise, le mot <b>mélioratif</b> valorise. Ces mots servent à exprimer des jugements de valeur.</p>'
++'<table class="ov"><thead><tr><th>Neutre</th><th>Péjoratif</th><th>Mélioratif</th></tr></thead><tbody><tr><td>maison</td><td>bicoque</td><td>villa</td></tr><tr><td>voiture</td><td>tacot</td><td>bolide</td></tr></tbody></table>'
++'<p>Un <b>euphémisme</b> est un mot qui atténue une réalité jugée choquante : aujourd\'hui, certains mots sont souvent considérés comme péjoratifs et on les remplace par des euphémismes.</p>'
++'<h3>C. Sens propre et sens figuré</h3>'
++'<p>Le <b>sens propre</b> est le sens premier, le plus concret du mot. Le <b>sens figuré</b> est un sens dérivé, souvent plus imagé. Le passage du sens propre au sens figuré s\'opère principalement quand on passe du <b>concret à l\'abstrait</b>, ainsi que par <b>ressemblance (analogie)</b>.</p>'
++'<ul><li><i>Frappé</i> peut vouloir dire « battu », mais aussi « impressionné ».</li><li><i>Cœur</i> est, au sens propre, un organe ; au sens figuré, le courage, la générosité ou le centre (<i>le cœur d\'une ville</i>).</li></ul>'},
+{d:'fs',t:'Dénotation, connotation et symbole',html:
+'<p>Tous les mots ont un <b>sens dénoté (objectif)</b> et un <b>sens connoté (subjectif)</b>.</p>'
++'<p>La <b>dénotation</b> est le sens premier, littéral, objectif d\'un terme : l\'ensemble des sens livrés par le dictionnaire, qu\'ils soient au sens propre ou figuré.</p>'
++'<p>La <b>connotation</b> est le sens implicite, subjectif : l\'ensemble des éléments de sens qui peuvent s\'ajouter au sens littéral, l\'ensemble des sensations, des idées et des images que fait naître un mot dans l\'esprit d\'une personne. Elle est liée aux <b>réseaux de sens</b> qui s\'établissent à l\'intérieur d\'un texte : les connotations viennent des rapports et des associations entre les mots, mais aussi de notre subjectivité. Elle peut n\'avoir qu\'un très faible lien avec le sens dénoté.</p>'
++'<ul><li><i>Voiture</i> peut connoter la pollution, l\'accident, la famille… <i>Voiture</i> et <i>caisse</i> ont la même dénotation mais certainement une connotation différente.</li><li><i>Édredon</i> peut connoter la chaleur, le froid, l\'hiver, l\'amour, Andersen (« édredon » vient du danois <i>eider</i>)…</li><li>La couleur blanche connote la pureté et le mariage pour un Européen, le deuil pour un Asiatique.</li><li>Le svastika est perçu par un Indien comme un symbole religieux hindouiste (énergie positive) alors qu\'il évoque pour un Occidental le nazisme.</li></ul>'
++'<p>Le champ de la connotation est difficile à définir : il recouvre tous les sens <b>indirects, subjectifs, culturels, implicites</b>. Un même mot ou symbole peut avoir des connotations différentes selon le contexte.</p>'
++'<p>Un <b>symbole</b> correspond à la coexistence d\'un sens dénoté et d\'au moins un sens connoté <b>commun à un groupe humain</b> : <i>le chien est un animal (sens dénoté) qui symbolise la fidélité (sens connoté)</i>.</p>'
++'<p><b>Quatre grandes sources de connotations</b> : 1. la nature psychologique individuelle ; 2. l\'environnement social ; 3. l\'histoire personnelle ; 4. les interrelations des mots et des phrases, dans le cas d\'un texte.</p>'},
+{d:'fs',t:'Champ sémantique et champ lexical',html:
+'<p>L\'ensemble des sens d\'un mot constitue son <b>champ sémantique</b>. C\'est à partir de sa polysémie et de sa distribution qu\'on peut l\'établir : la somme des sens qu\'il peut prendre dans des occurrences variées. Exemple : <i>fantaisie</i> = création libre et imprévisible, caprice, création qui ne suit pas les règles établies (notamment en musique)…</p>'
++'<p>Le <b>champ lexical</b> est l\'ensemble des mots qui renvoient à <b>une même réalité, une même idée, une même notion</b> : tous les mots qui peuvent se regrouper autour d\'un même thème. Exemple : le champ lexical du <i>rêve</i> pourrait comprendre <i>songe, mirage, mythe, chimère, utopie, s\'imaginer, croire, se figurer, irréel, saugrenu, insolite, illusoire, pensif, absent…</i></p>'
++'<p>Observer les champs lexicaux d\'un texte permet de <b>déterminer le ou les thèmes dominants</b>. Mais il ne suffit pas d\'énumérer des termes : il faut les <b>interpréter</b>, en tenant compte de leur choix, de leur organisation, de leurs liens, de leur relation (directe ou non) avec le thème concerné. L\'interprétation d\'un même champ lexical <b>diffère selon le contexte</b> : il faut l\'expliquer en fonction du passage où il se trouve.</p>'
++'<p>Dans un texte long, la présence récurrente de certains champs lexicaux crée des échos et des parallélismes de sens appelés <b>motifs</b>. Exemple : dans <i>Germinal</i> de Zola, la fosse de la mine, appelée « Le Voreux », est systématiquement évoquée par le champ lexical d\'un homme ou d\'une bête monstrueuse qui ne cesse de dévorer les mineurs. Les motifs d\'une œuvre permettent de mettre en lumière les idées, les obsessions (parfois conscientes ou non) de l\'écrivain et de révéler les sens profonds d\'un texte.</p>'},
+{d:'fs',t:'Exercices de la feuille (E et F)',html:
+'<p>Les exercices E (texte de Baudelaire, <i>La Belle Dorothée</i> : sens dénoté et connotations des mots en italique, puis continuation du texte) et F (texte de Laurent Gaudé, <i>Eldorado</i> : trois champs lexicaux à repérer et à analyser sur feuille annexe) sont des travaux rédigés : ils ne sont pas corrigés par l\'appli. Les exercices A à D (deux sens d\'un mot, sens figuré, mot péjoratif, euphémisme) sont à réponse libre ; l\'appli propose à la place des exercices à réponse courte, rédigés par moi.</p>'},
+{d:'fs',t:'Autres exemples (ajoutés par moi, pas tirés de ton cours)',html:
+'<p>Ces exemples servent aux exercices ; ils viennent de mes connaissances générales (vérifie dans un dictionnaire en cas de doute).</p>'
++'<table class="ov"><thead><tr><th>Neutre</th><th>Péjoratif</th><th>Mélioratif</th></tr></thead><tbody><tr><td>cheveux</td><td>tignasse</td><td>chevelure</td></tr><tr><td>visage</td><td>trogne</td><td>minois</td></tr><tr><td>logement</td><td>taudis</td><td>demeure</td></tr><tr><td>vin</td><td>piquette</td><td>nectar</td></tr><tr><td>odeur</td><td>puanteur</td><td>parfum</td></tr><tr><td>mince</td><td>efflanqué</td><td>svelte</td></tr></tbody></table>'
++'<table class="ov"><thead><tr><th>Mot</th><th>Sens moderne</th><th>Sens ancien</th></tr></thead><tbody><tr><td>formidable</td><td>remarquable</td><td>redoutable, qui fait peur</td></tr><tr><td>énerver</td><td>agacer</td><td>priver de force, affaiblir</td></tr><tr><td>ennui</td><td>lassitude</td><td>tourment, chagrin violent</td></tr><tr><td>bureau</td><td>meuble, pièce de travail</td><td>étoffe de laine grossière</td></tr><tr><td>magasin</td><td>lieu de vente</td><td>entrepôt</td></tr></tbody></table>'
++'<table class="ov"><thead><tr><th>Symbole</th><th>Sens dénoté</th><th>Sens connoté</th></tr></thead><tbody><tr><td>la balance</td><td>instrument de pesée</td><td>la justice</td></tr><tr><td>la colombe</td><td>oiseau</td><td>la paix</td></tr><tr><td>le lion</td><td>grand félin</td><td>le courage</td></tr><tr><td>le renard</td><td>mammifère</td><td>la ruse</td></tr><tr><td>la branche d\'olivier</td><td>rameau d\'arbre</td><td>la paix</td></tr><tr><td>la couronne</td><td>ornement de tête</td><td>le pouvoir</td></tr></tbody></table>'}
+);
+
 /* ===== Interface : cours, bilan, démarrage ===== */
 function ovTable(rows){ return '<div class="card"><h3>Vue d\'ensemble</h3><div class="tbl"><table class="ov"><thead><tr><th>Ce que tu cherches</th><th>Idée clé</th><th>Mode</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>').join('')+'</tbody></table></div></div>'; }
 function courseHTML(d){
+  if(DOMBR[d]) return '<div class="course">'+(brData(DOMBR[d]).fiches||[]).filter(x=>!x.d||x.d===d).map(x=>'<h2>'+esc(x.t)+'</h2>'+x.html).join('')+'</div>';
   if(d==='geo'){ const ovg=ovTable([['Longueur du contour, surface','Périmètre = somme des côtés ; aire = formule de la figure','Triangles · Quadrilatères'],['Un côté d\'un triangle rectangle',M('a² + b² = c²'),'Pythagore'],['Une longueur avec deux droites parallèles','Rapports égaux (produit en croix)','Thalès'],['Un angle dans un cercle',M('∠ au centre = 2 × ∠ inscrit'),'Cercles'],['Une figure faite de plusieurs formes','Découper, additionner ou soustraire','Figures composées'],['Convertir ou calculer un angle','360° = 400 grades = 2π rad ; somme 180° ; parallèles','Angles et unités'],['Un problème de synthèse (Héron, équation, tangente, secteur d\'anneau)','Combiner plusieurs théorèmes','Niveau 6 de chaque mode']]); return '<div class="course">'+ovg+courseGeo()+'</div>'; }
   const full=courseFull(), inner=full.slice('<div class="course">'.length,full.length-'</div>'.length);
   const secs=inner.split('<h2>').filter(Boolean).map(s=>'<h2>'+s);
@@ -9232,7 +10297,7 @@ function noteErr(tag,topic){
   (stats.errLast=stats.errLast||{})[tag]=dayStr(0);
 }
 function errSheetHTML(){
-  const all=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]).sort((a,b)=>b[1]-a[1]);
+  const all=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]&&tagDom(t)===(DOMBR[S.domain]?S.domain:'math')).sort((a,b)=>b[1]-a[1]);
   if(!all.length) return '<div class="card"><h3>Fiche d\'erreurs</h3><p class="empty">Aucune erreur enregistrée.</p></div>';
   const row=([t,n])=>{
     const tp=Object.entries((stats.errTopics||{})[t]||{}).sort((a,b)=>b[1]-a[1]).filter(([id])=>TOPICS[id]);
@@ -9255,18 +10320,34 @@ function themePoints(kind){
 }
 function themeRank(p){ let i=0; THEME_RANKS.forEach((r,k)=>{ if(p>=r[0]) i=k; }); const n=THEME_RANKS[i+1]; return {i,name:THEME_RANKS[i][1],min:THEME_RANKS[i][0],next:n?n[0]:null,nextName:n?n[1]:null}; }
 function themeRanksHTML(){
-  const doms=[['alg','Développer & factoriser'],['eq','Équations'],['geo','Géométrie']];
+  const doms=DOMBR[S.domain]?BRDOMS[DOMBR[S.domain]].map(d=>[d,DOM_TITLE[d]]):[['alg','Développer & factoriser'],['eq','Équations'],['geo','Géométrie']];
   return '<div class="card"><h3>Rangs par thème</h3><p class="note">Points de maîtrise = exercices réussis sans aide (pleins points), avec aide (moitié) ou solution vue (peu), pondérés par le niveau.</p>'
     +doms.map(([d,t])=>'<h4 class="shop-h">'+esc(t)+'</h4><div class="bars">'+DKINDS[d].map(k=>{
       const p=themePoints(k), r=themeRank(p), pc=r.next?Math.min(100,Math.round(100*(p-r.min)/(r.next-r.min))):100;
       return '<div class="bar-row"><div class="name">'+esc(KIND_LABEL[k])+'<small>'+p+' pts'+(r.next?' · prochain : '+esc(r.nextName)+' à '+r.next:' · rang maximal')+'</small></div>'
         +'<div class="track" role="img" aria-label="'+pc+' % vers le rang suivant"><span class="clean" style="width:'+pc+'%"></span></div><div class="cnt">'+esc(r.name)+'</div></div>'; }).join('')+'</div>').join('')+'</div>';
 }
+function mathTot(){ const t={n:0,clean:0,helped:0,shown:0}; Object.keys(TOPICS).forEach(id=>{ const s=stats.topics[id]; if(s&&!DOMBR[domainOf(TOPICS[id].kind)]){ t.n+=s.n; t.clean+=s.clean; t.helped+=s.helped; t.shown+=s.shown; } }); return t; }
+function branchTableHTML(){
+  const rows=BRANCHES.map(b=>{
+    let n,c; if(b.id==='math'){ const t=mathTot(); n=t.n; c=t.clean; } else { const e=brStat(b); n=e.n; c=e.clean; }
+    const x=brXp(b.id), r=rankOf(x);
+    return '<tr><td>'+esc(b.name)+'</td><td>'+esc(r.name)+'</td><td>'+x+' XP</td><td>'+n+'</td><td>'+(n?Math.round(100*c/n)+' %':'–')+'</td></tr>';
+  }).join('');
+  return '<div class="card"><h3>Bilan par branche</h3><p class="empty">Le rang global additionne l\'XP de toutes les branches. Chaque branche a son propre rang.</p><div class="tbl"><table class="trap"><thead><tr><th>Branche</th><th>Rang</th><th>XP</th><th>Exercices</th><th>Sans aide</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+function renderStatsGlobal(){
+  let h='<div class="course">'+gameProfileHTML().replace('<details class="rules">',dqCardHTML()+'<details class="rules">')+branchTableHTML();
+  h+='<div class="card"><h3>Données</h3><p class="empty">Les résultats sont stockés dans ce navigateur. La synchronisation du compte se trouve dans le classement.</p></div></div>';
+  $('view-stats').innerHTML=h;
+}
 function renderStats(){
-  const ids=Object.keys(TOPICS), tot={n:0,clean:0,helped:0,shown:0};
+  if(!(typeof BR!=='undefined'&&(BR.id==='math'||BRDOM[BR.id]))) return renderStatsGlobal();
+  const EN_=!!DOMBR[S.domain], BID=DOMBR[S.domain]||'math', BN=brData(BID).name;
+  const ids=Object.keys(TOPICS).filter(id=>EN_?DOMBR[domainOf(TOPICS[id].kind)]===BID:!DOMBR[domainOf(TOPICS[id].kind)]), tot={n:0,clean:0,helped:0,shown:0};
   ids.forEach(id=>{ const s=stats.topics[id]; if(s){ tot.n+=s.n; tot.clean+=s.clean; tot.helped+=s.helped; tot.shown+=s.shown; } });
-  const errs=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  let h='<div class="course">'+gameProfileHTML().replace('<details class="rules">',dqCardHTML()+srsCardHTML()+'<details class="rules">');
+  const errs=Object.entries(stats.errors||{}).filter(([t])=>TAGS[t]&&(EN_?DOMBR[tagDom(t)]===BID:tagDom(t)==='math')).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  let h='<div class="course"><div class="card"><h3>Bilan '+BN+'</h3><div class="kpis"><div class="kpi"><span class="lbl">Rang '+BN+'</span><b>'+esc(rankOf(brXp(BID)).name)+'</b></div><div class="kpi"><span class="lbl">XP '+BN+'</span><b>'+brXp(BID)+'</b></div></div><p class="empty">Le bilan global, avec le rang total et les badges, est sur la page d\'accueil.</p></div>'+srsCardHTML();
   h+='<div class="kpis"><div class="kpi"><span class="lbl">Exercices terminés</span><b>'+tot.n+'</b></div>'
     +'<div class="kpi"><span class="lbl">Réussis sans aide</span><b>'+(tot.n?Math.round(100*tot.clean/tot.n)+' %':'–')+'</b></div>'
     +'<div class="kpi"><span class="lbl">Séries terminées</span><b>'+(stats.series||0)+'</b></div></div>';
@@ -9297,7 +10378,7 @@ function levelAdvice(kind){
   return 'les '+MX+' niveaux sont validés.';
 }
 function levelAdviceCard(){
-  const K=[['expand','Développer'],['factor','Factoriser'],['solve','Équations à une inconnue'],['system','Systèmes'],['problem','Problèmes'],['quad','Second degré'],['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie']];
+  const K=DOMBR[S.domain]?BRDOMS[DOMBR[S.domain]].reduce((a,d)=>a.concat(DKINDS[d]),[]).map(k=>[k,KIND_LABEL[k]]):[['expand','Développer'],['factor','Factoriser'],['solve','Équations à une inconnue'],['system','Systèmes'],['problem','Problèmes'],['quad','Second degré'],['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie']];
   return '<div class="card"><h3>Où continuer</h3><ul class="plain" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">'+K.map(k=>'<li><b>'+k[1]+'</b> : '+levelAdvice(k[0])+'</li>').join('')+'</ul><p class="note">Un niveau est validé à partir de 5 exercices terminés dont 70 % réussis sans aide.</p></div>';
 }
 function init(){
@@ -9341,7 +10422,7 @@ function init(){
     else if(b.dataset.act==='errtrain') errTrain(b.dataset.tag);
   });
   gameInit(); funInit(); lbInit(); syncInit();
-  renderSetup(); setTab('train'); newSeries();
+  renderSetup(); setTab('train'); newSeries(); setBranch('home');
 }
 init();
 })();
