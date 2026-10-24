@@ -6835,19 +6835,43 @@ const FR_TRIOS=[
   ['rire',['se marrer','rigoler','se poiler','se bidonner'],['s\'esclaffer'],'',[]],
   ['regarder',['zieuter','mater','reluquer'],['contempler'],'',['observer']],
   ['se moquer de quelqu\'un',['se foutre de quelqu\'un','se payer la tête de quelqu\'un'],['railler quelqu\'un','se gausser de quelqu\'un'],'',[]],
-  ['beaucoup de',['plein de','un tas de','un paquet de','des tonnes de'],['moult','force'],'',[]],
+  ['beaucoup de',['plein de','un tas de','un paquet de','des tonnes de','une tonne de','une chiée de','une flopée de','un max de','des masses de'],['moult','force'],'',[]],
   ['médecin',['toubib','doc'],null,'',['docteur']],['policier',['flic','poulet'],null,'',[]],['ami',['pote'],null,'',['camarade','copain']],
   ['vêtements',['fringues','nippes','frusques','sapes'],['atours'],'',['habits']],
   ['avoir faim',['avoir la dalle','avoir les crocs','crever de faim'],null,'',[]],['enfant',['gamin','mioche','gosse','marmot','môme'],null,'',[]],
   ['s\'ennuyer',['se barber'],null,'',[]],['partir',['se barrer','se tirer'],['prendre congé'],'',['s\'en aller']],
   ['dormir',['roupiller','pioncer'],null,'',['sommeiller']],['se tromper',['se planter','se gourer'],['se méprendre'],'',['faire une erreur']],
-  ['nez',['pif','tarin','blair'],null,'',[]],['tête',['caboche','tronche','ciboulot','bouille'],null,'',[]]
+  ['nez',['pif','tarin','blair'],null,'',[]],['tête',['caboche','tronche','ciboulot','bouille'],null,'',[]],
+  ['gifler',['mettre une baffe','mettre une claque'],['souffleter'],'',[]],['stupide',['débile','crétin'],['inepte','sot'],'',['idiot','bête']],
+  ['ennuyeux',['barbant','rasoir'],['fastidieux'],'',[]],['abandonner',['laisser tomber','plaquer'],['délaisser'],'',[]],
+  ['crier',['gueuler','brailler'],['vociférer'],'',['hurler']],['pleurer',['chialer'],['se lamenter'],'',[]],
+  ['chaussures',['godasses','pompes'],null,'',[]],['bavarder',['papoter','tailler une bavette'],['converser','deviser'],'',[]],
+  ['mauvais',['pourri','nul'],['exécrable','détestable'],'',[]],['en colère',['furax','remonté'],['courroucé'],'',['furieux','fâché']],
+  ['se disputer',['s\'engueuler','se chamailler'],['se quereller'],'',['se fâcher']],['très beau',['canon','super beau'],['sublime','splendide'],'',['magnifique']]
 ];
 /* mots à classer : [mot, registre, équivalent courant] */
 const FR_MOTS=[];
 FR_TRIOS.forEach(t=>{ FR_MOTS.push([t[0],'courant','']); t[1].forEach(f=>FR_MOTS.push([f,'familier',t[0]])); (t[2]||[]).forEach(f=>FR_MOTS.push([f,'soutenu',t[0]])); });
 /* phrases : [texte, registre, indice] */
 const FR_PHR=[
+  ['Franchement, ce film, c\'était nul : j\'ai failli m\'endormir.','familier','« Franchement » et « nul » (au sens de « mauvais ») sont des mots de l\'oral.'],
+  ['Tu viens avec nous ou t\'as pas envie ?','familier','« t\'as » (tu as) et « ne » omis (« pas envie ») : langue de l\'oral.'],
+  ['Ma copine, elle m\'a dit qu\'elle viendrait pas.','familier','Sujet répété (« Ma copine, elle ») et « ne » omis : langue de l\'oral.'],
+  ['J\'ai la flemme de ranger ma piaule, c\'est le bazar total.','familier','« la flemme », « piaule » et « bazar » sont des mots familiers.'],
+  ['On s\'est bien marrés hier soir, c\'était trop cool.','familier','« marrés » et « trop cool » sont des expressions familières.'],
+  ['Il est vachement sympa, ce prof, mais il nous gave avec ses contrôles.','familier','« vachement » et « gaver » (ennuyer) sont des mots familiers.'],
+  ['Je suis allé chez le dentiste ce matin ; j\'y retourne la semaine prochaine.','courant','Vocabulaire et syntaxe neutres : ni familier, ni recherché.'],
+  ['Les élèves ont préparé leur exposé pendant la récréation.','courant','Phrase neutre, correcte, sans mot familier ni mot recherché.'],
+  ['Il fait froid ce soir : prends une veste avant de sortir.','courant','Phrase simple, correcte et neutre : registre courant.'],
+  ['Nous mangerons à midi, puis nous irons au marché.','courant','Vocabulaire ordinaire et syntaxe correcte : registre courant.'],
+  ['Mon voisin a repeint sa clôture en vert.','courant','Phrase neutre, sans mot familier ni mot recherché.'],
+  ['Elle a téléphoné à sa mère pour lui annoncer la nouvelle.','courant','Vocabulaire et syntaxe ordinaires : registre courant.'],
+  ['Nul n\'eût imaginé que l\'entreprise périrait si vite.','soutenu','« Nul… ne » et subjonctif plus-que-parfait (« eût imaginé ») : langue écrite et recherchée.'],
+  ['Il me plairait que vous consentissiez à m\'entendre.','soutenu','Imparfait du subjonctif (« consentissiez ») : syntaxe très soignée.'],
+  ['Les ténèbres enveloppaient le château, tandis qu\'un vent funeste gémissait dans les tours.','soutenu','Vocabulaire littéraire (« ténèbres », « funeste ») et images.'],
+  ['Veuillez agréer, Madame, l\'expression de ma considération distinguée.','soutenu','Formule de politesse très cérémonieuse.'],
+  ['Se peut-il que l\'on se soit mépris à ce point sur ses desseins ?','soutenu','Inversion du sujet (« Se peut-il ») et mots recherchés (« se mépris », « desseins »).'],
+  ['Elle contemplait, rêveuse, l\'onde argentée qui s\'effaçait sous la lune.','soutenu','« onde » (eau, poétique) et vocabulaire imagé : registre soutenu.'],
   ['T\'as vu ça ? J\'y crois pas, il s\'est barré sans rien dire !','familier','« T\'as vu », « ne » omis (« J\'y crois pas ») et « s\'est barré » : langue de l\'oral.'],
   ['Mon frangin, il a paumé ses clés encore une fois.','familier','Sujet répété (« Mon frangin, il ») et mots familiers (« frangin », « paumé »).'],
   ['Ça fait un bail qu\'on s\'est pas vus, non ?','familier','« un bail » (longtemps), « on » pour « nous » et « ne » omis : langue de l\'oral.'],
@@ -6934,6 +6958,33 @@ const FIGMIST=good=>FIGN.filter(n=>n!==good&&enNorm2(n)!==enNorm2(good)).map(n=>
 const FIGFB={tag:'fr-fig',title:'Nomme la figure de style',html:'<p>Écris le nom d\'une figure de style (par exemple métaphore, litote, anaphore…). Les accents et les majuscules ne comptent pas. Utilise un indice si tu bloques.</p>'};
 /* phrases rédigées pour l'appli : [phrase, figure, indice] */
 const FIG1=[
+  ['Elle restait immobile, pareille à une statue de sel.','comparaison','L\'outil « pareille à » relie « elle » (comparé) et « une statue de sel » (comparant).'],
+  ['Sa colère montait comme le lait sur le feu.','comparaison','L\'outil « comme » rapproche la colère et le lait qui déborde.'],
+  ['Il dormait, semblable à un enfant fatigué.','comparaison','L\'outil « semblable à » rapproche l\'homme et un enfant fatigué.'],
+  ['Sa mémoire est un coffre sans fond.','métaphore','Aucun outil : la mémoire est directement appelée « coffre » (métaphore in presentia).'],
+  ['Les étoiles étaient des lanternes accrochées au plafond de la nuit.','métaphore','Les étoiles sont identifiées à des lanternes, sans outil de comparaison.'],
+  ['Cette fille est un rayon de soleil dans la maison.','métaphore','Le comparé (la fille) est identifié au comparant (un rayon de soleil), sans outil.'],
+  ['La mer murmurait des secrets aux rochers.','personnification','La mer reçoit des traits humains : murmurer, confier des secrets.'],
+  ['La lune souriait derrière les nuages.','personnification','« Souriait » donne un comportement humain à la lune.'],
+  ['Le vieux chêne protégeait le village de ses grands bras.','personnification','Le chêne reçoit des bras et un geste protecteur : traits humains.'],
+  ['Le chef rugit ses ordres devant toute l\'équipe.','animalisation','Une personne est représentée sous les traits d\'un animal (rugir).'],
+  ['Les clients, troupeau docile, attendaient devant la caisse.','animalisation','Les clients (des personnes) deviennent un « troupeau » : traits d\'un animal.'],
+  ['Sa voisine, vipère jalouse, répandait des rumeurs.','animalisation','Une personne est présentée comme un animal (une vipère).'],
+  ['Le soldat, simple rouage de la machine, obéissait sans réfléchir.','réification','Une personne reçoit les caractéristiques d\'un objet : un rouage.'],
+  ['On l\'a traitée comme une marchandise qu\'on déplace d\'un entrepôt à l\'autre.','réification','Une personne est traitée comme un objet : une marchandise.'],
+  ['Le chanteur, devenu produit de l\'industrie, était exposé en vitrine.','réification','Une personne devient un objet de commerce : un produit en vitrine.'],
+  ['La Paix, une branche d\'olivier à la main, marchait entre les armées.','allégorie','Une idée abstraite (la Paix) est représentée comme un personnage.'],
+  ['L\'Hiver, vieillard voûté, traînait sa cape de givre sur les champs.','allégorie','Une idée abstraite (l\'Hiver) est personnifiée.'],
+  ['Le Temps, vieillard muni d\'un sablier, regardait passer les saisons.','allégorie','Une idée abstraite (le Temps) est représentée comme un personnage.'],
+  ['Il a bu un verre de trop pendant la soirée.','métonymie','On désigne le contenu (la boisson) par le contenant (le verre).'],
+  ['Washington a imposé de nouvelles sanctions.','métonymie','On désigne le gouvernement par le lieu où il siège.'],
+  ['Il lit du Victor Hugo avant de dormir.','métonymie','On désigne l\'œuvre par son auteur.'],
+  ['Dix voiles apparurent à l\'horizon.','synecdoque','Les « voiles » (une partie) désignent les bateaux (le tout).'],
+  ['Sous ce ciel, vingt mille âmes se pressaient dans la ville.','synecdoque','Les « âmes » (une partie de l\'être) désignent les personnes.'],
+  ['Il a enfilé son cuir avant de partir.','synecdoque','La matière (le cuir) désigne l\'objet (le blouson).'],
+  ['L\'astre du jour se leva sur la vallée.','périphrase','« L\'astre du jour » désigne le soleil sans le nommer.'],
+  ['Le septième art attire de moins en moins de jeunes.','périphrase','« Le septième art » désigne le cinéma sans le nommer.'],
+  ['Le pays du soleil levant exporte ces appareils.','périphrase','« Le pays du soleil levant » désigne le Japon sans le nommer.'],
   ['Ses mains étaient froides comme du marbre.','comparaison','L\'outil « comme » relie « ses mains » (comparé) et « du marbre » (comparant).'],
   ['Le directeur parlait tel un général devant ses troupes.','comparaison','L\'outil « tel » rapproche le directeur et un général.'],
   ['Cette ville ressemble à une fourmilière en plein été.','comparaison','L\'outil « ressemble à » rapproche la ville et une fourmilière.'],
@@ -6964,6 +7015,22 @@ const FIG1=[
   ['Notre planète bleue est fragile.','périphrase','« Planète bleue » désigne la Terre sans la nommer.']
 ];
 const FIG2=[
+  ['Le bonheur des uns fait le malheur des autres.','antithèse','« bonheur » et « malheur » sont des termes opposés mis en parallèle.'],
+  ['Il est petit par la taille, mais grand par le cœur.','antithèse','« petit » et « grand » s\'opposent dans la même phrase.'],
+  ['La ville s\'endort quand la campagne s\'éveille.','antithèse','« s\'endort » et « s\'éveille » sont opposés.'],
+  ['Ils gardaient un silence éloquent.','oxymore','« silence » et « éloquent » sont contradictoires dans un même groupe de mots.'],
+  ['Une joyeuse tristesse l\'envahit au moment de partir.','oxymore','« joyeuse » et « tristesse » sont réunis dans le même groupe.'],
+  ['Ce secret de polichinelle, tout le village le connaît.','oxymore','« secret » et « de polichinelle » (connu de tous) se contredisent dans une même expression.'],
+  ['Il pleut des cordes et on part en pique-nique : la belle journée !','antiphrase','Le locuteur pense le contraire de ce qu\'il dit : c\'est ironique.'],
+  ['Devant les bagages perdus, elle soupira : « Quelle chance nous avons ! »','antiphrase','« Quelle chance » veut dire le contraire : antiphrase ironique.'],
+  ['Tu as encore perdu ton téléphone ? Quelle merveille d\'organisation !','antiphrase','Le compliment signifie son contraire : antiphrase.'],
+  ['Le train a trois heures de retard : c\'est d\'une ponctualité remarquable.','antiphrase','L\'éloge signifie le contraire de ce qu\'il dit : antiphrase.'],
+  ['Ce n\'est pas rien, ce que tu as fait pour nous !','litote','Négation (« pas rien ») pour dire que c\'est beaucoup : dire moins pour suggérer plus.'],
+  ['Il ne manque pas d\'humour, ton frère.','litote','Négation du contraire pour dire qu\'il en a beaucoup.'],
+  ['Ce film ne m\'a pas déplu du tout.','litote','La négation du contraire suggère qu\'il a beaucoup plu.'],
+  ['Cet été, le chat a été endormi par le vétérinaire.','euphémisme','On adoucit une réalité pénible : l\'euthanasie.'],
+  ['Le rapport évoque des « dommages collatéraux » pour parler des victimes civiles.','euphémisme','L\'expression atténue une réalité choquante.'],
+  ['L\'entreprise procède à une restructuration de ses effectifs.','euphémisme','Le terme évite de dire « supprimer des emplois ».'],
   ['Il est pauvre en argent, mais riche en amis.','antithèse','« pauvre » et « riche » sont des antonymes mis en parallèle.'],
   ['Les uns rient, les autres pleurent.','antithèse','« rient » et « pleurent » s\'opposent.'],
   ['Elle cherche la lumière quand lui préfère l\'ombre.','antithèse','« lumière » et « ombre » sont des termes opposés mis en parallèle.'],
@@ -6983,6 +7050,25 @@ const FIG2=[
   ['Mon fils a quelques difficultés d\'apprentissage.','euphémisme','On adoucit une réalité désagréable.']
 ];
 const FIG3=[
+  ['Dans la valise, il y avait des chemises, des chaussettes, des mouchoirs et deux livres.','énumération','Des éléments de même nature sont détaillés l\'un après l\'autre.'],
+  ['La recette demande de la farine, du beurre, du sucre et des œufs.','énumération','Les ingrédients sont énumérés un à un.'],
+  ['Le jardin contenait des roses, des tulipes, des lilas et des pivoines.','énumération','Des éléments de même nature sont détaillés pour donner une idée d\'abondance.'],
+  ['On entendait les klaxons, les sirènes, les cris, les moteurs, les pas, les portes, les alarmes : un vacarme sans fin.','accumulation','Énumération excessive qui donne une impression de trop-plein.'],
+  ['Papiers, factures, stylos, dossiers, tasses, plantes, cartons, câbles : son bureau croulait sous les objets.','accumulation','Énumération excessive et désordonnée : impression de surcharge.'],
+  ['Il y avait des fleurs partout : sur les tables, sur les chaises, sur les marches, sur les fenêtres, dans les coupes, dans les vases, jusque sur le piano.','accumulation','Les lieux s\'enchaînent sans fin : impression de profusion.'],
+  ['Il pâlit, trembla, chancela, s\'effondra.','gradation','Les verbes expriment une intensité de plus en plus forte.'],
+  ['Le bruit s\'atténua, se fit murmure, puis souffle, puis rien.','gradation','Les termes sont de plus en plus faibles : gradation descendante.'],
+  ['Un soupçon, un doute, une certitude, une évidence.','gradation','Les termes sont de plus en plus forts.'],
+  ['On le remarqua, on le salua, on l\'acclama, on le porta en triomphe.','gradation','L\'intensité des actions augmente à chaque terme.'],
+  ['Jamais, jamais je n\'oublierai ce jour.','répétition','Le même mot est repris sans modification.'],
+  ['La pluie, la pluie, toujours la pluie.','répétition','Les mêmes termes sont repris pour insister.'],
+  ['Encore un effort, un dernier effort.','répétition','Le mot « effort » est repris pour insister.'],
+  ['Si tu m\'écoutes, si tu me crois, si tu restes, tout ira mieux.','anaphore','« Si » est répété au début de chaque groupe.'],
+  ['Rien ne l\'arrêtait. Rien ne le faisait douter. Rien, pas même la peur.','anaphore','« Rien » est répété au début de chaque phrase.'],
+  ['Pour ceux qui attendent, pour ceux qui espèrent, pour ceux qui n\'abandonnent pas.','anaphore','« Pour ceux qui » est répété au début de chaque groupe.'],
+  ['J\'ai attendu des siècles devant ce guichet !','hyperbole','L\'expression exagère la durée de l\'attente.'],
+  ['Elle a une faim de loup et pourrait avaler un éléphant.','hyperbole','L\'expression exagère volontairement son appétit.'],
+  ['Il y avait un monde fou : la ville entière était là.','hyperbole','L\'expression exagère le nombre de personnes.'],
   ['Dans son sac, elle avait un livre, une pomme, une écharpe, des clés et un carnet.','énumération','Éléments de même nature détaillés l\'un après l\'autre.'],
   ['Au marché on trouvait des abricots, des melons, des fraises, des figues et des pêches.','énumération','Des éléments de même nature sont détaillés pour donner une idée d\'abondance.'],
   ['Ça criait, ça riait, ça sifflait, ça cognait, ça se bousculait, ça chantait, ça hurlait dans toute la cour.','accumulation','Énumération interminable et désordonnée qui donne une impression de profusion.'],
@@ -7012,6 +7098,14 @@ FRGEN['fr-def']=()=>{ const f=enPick(FR_FIGS);
     hintline:'Écris le nom de la figure de style. Les accents et les majuscules ne comptent pas.',placeholder:'nom de la figure',
     hint:'Cette figure appartient à la famille des figures d\'« '+f[1]+' ».',solution:'La <b>'+f[0]+'</b> '+f[2]+'.',mist:FIGMIST(f[0]),fallback:FIGFB}; };
 FRGEN['fr-abab']=()=>{ const P=[
+   ['Il faut aimer ce que l\'on fait et faire ce que l\'on aime.','chiasme','« aimer – faire / faire – aimer » : termes croisés en miroir (ABBA).'],
+   ['Les enfants jouent dans la cour, les parents discutent sur le banc.','parallélisme','Les deux membres suivent la même construction dans le même ordre (ABAB).'],
+   ['La peur donne du courage, et le courage chasse la peur.','chiasme','« peur – courage / courage – peur » : termes croisés en miroir (ABBA).'],
+   ['Le blanc fait ressortir le noir, le noir exalte le blanc.','chiasme','« blanc – noir / noir – blanc » : disposition croisée (ABBA).'],
+   ['Tu parles du silence, et le silence te fait parler.','chiasme','« parles – silence / silence – parler » : termes croisés (ABBA).'],
+   ['Il a le cœur lourd, elle a l\'esprit léger.','parallélisme','Même construction dans les deux membres, dans le même ordre (ABAB).'],
+   ['À l\'aube, les pêcheurs rentrent ; au crépuscule, les marins repartent.','parallélisme','Les deux membres suivent le même ordre (ABAB).'],
+   ['Il aime la montagne pour son calme, elle aime la mer pour sa lumière.','parallélisme','Les deux membres suivent la même construction (ABAB).'],
    ['Il a promis de ne jamais partir, mais partir était tout ce qu\'il promettait.','chiasme','« partir – promis / promettait – partir » : les termes se croisent en miroir.'],
    ['Elle aime la musique qui la rend heureuse, et le bonheur qui la rend musicienne.','chiasme','« musique – heureuse / bonheur – musicienne » : idées croisées (ABBA).'],
    ['Le voyageur hâte le pas, le berger ralentit le sien.','parallélisme','Les deux membres suivent la même construction dans le même ordre (ABAB).'],
@@ -7024,6 +7118,14 @@ FRGEN['fr-abab']=()=>{ const P=[
     hint:'Compare l\'ordre des termes dans les deux membres : croisé (ABBA) ou identique (ABAB).',solution:'<b>'+p[1]+'</b>. '+p[2],
     mist:[[p[1]==='chiasme'?'parallélisme':'chiasme','Compare l\'ordre des termes : croisé = chiasme (ABBA), identique = parallélisme (ABAB).']],fallback:{tag:'fr-struct',title:'Chiasme ou parallélisme ?',html:'<p>Réponds par <b>chiasme</b> ou <b>parallélisme</b>.</p>'}}; };
 FRGEN['fr-lito']=()=>{ const P=[
+   ['Pour dire que le restaurant est excellent, il glisse : « On n\'y mange pas mal. »','litote','Il dit moins que ce qu\'il pense pour renforcer le compliment.'],
+   ['Pour parler d\'une forte chute de la bourse, on dit qu\'elle « corrige ».','euphémisme','Le verbe adoucit une réalité jugée désagréable.'],
+   ['Pour féliciter sa collègue d\'un travail excellent, il dit : « Ce n\'est pas du mauvais travail. »','litote','Il dit moins que ce qu\'il pense pour renforcer le compliment.'],
+   ['Pour dire qu\'elle a adoré ce voyage, elle dit : « Je ne regrette pas d\'être venue. »','litote','La négation atténuée suggère un enthousiasme bien plus fort.'],
+   ['Pour dire que l\'idée est excellente, il répond : « Ce n\'est pas une idée stupide. »','litote','Dire moins pour faire entendre plus : la litote renforce.'],
+   ['Pour annoncer un licenciement, le patron parle d\'une « séparation d\'un commun accord ».','euphémisme','L\'expression adoucit une réalité désagréable.'],
+   ['Au lieu de dire « il est gros », elle dit « il est bien en chair ».','euphémisme','Le terme amoindrit une réalité jugée désagréable.'],
+   ['Pour parler de son chien mort, la fillette dit qu\'il « est parti jouer dans les étoiles ».','euphémisme','L\'expression adoucit une réalité douloureuse : la mort.'],
    ['Elle veut dire que ce gâteau est délicieux : « Ce gâteau n\'est pas mauvais ! »','litote','La négation du contraire renforce l\'idée (elle dit moins pour suggérer plus).'],
    ['Pour dire que l\'exposé était magnifique, il murmure : « Ce n\'était pas inintéressant. »','litote','Il dit moins que ce qu\'il pense pour renforcer le compliment.'],
    ['Pour annoncer une mauvaise nouvelle sans choquer, le médecin dit : « Votre père s\'est éteint cette nuit. »','euphémisme','Le terme adoucit une réalité douloureuse.'],
@@ -7036,6 +7138,12 @@ FRGEN['fr-lito']=()=>{ const P=[
     hint:'La litote renforce l\'information ; l\'euphémisme adoucit une réalité désagréable.',solution:'<b>'+p[1]+'</b>. '+p[2],
     mist:[[p[1]==='litote'?'euphémisme':'litote','La litote renforce l\'idée ; l\'euphémisme adoucit une réalité pénible. Regarde l\'intention de celui qui parle.']],fallback:{tag:'fr-lito',title:'Litote ou euphémisme ?',html:'<p>Réponds par <b>litote</b> ou <b>euphémisme</b>.</p>'}}; };
 FRGEN['fr-grad']=()=>{ const P=[
+   ['Il se redressa, avança, courut, bondit sur l\'estrade.','ascendante','Chaque verbe exprime un mouvement plus vif.'],
+   ['La tempête gronda, se calma, murmura, s\'éteignit.','descendante','L\'intensité diminue à chaque verbe.'],
+   ['Il frappa à la porte, secoua la poignée, cogna du poing, défonça le battant.','ascendante','Chaque geste est plus violent que le précédent.'],
+   ['Les applaudissements s\'éteignirent, les murmures s\'apaisèrent, un souffle passa, le silence revint.','descendante','Le bruit diminue à chaque terme.'],
+   ['Elle s\'agaça, s\'énerva, s\'emporta, explosa de rage.','ascendante','L\'intensité de la colère augmente à chaque verbe.'],
+   ['Sa colère tomba, s\'adoucit, se dissipa, s\'effaça.','descendante','L\'intensité de la colère diminue à chaque verbe.'],
    ['Il murmura, parla, s\'exclama, rugit.','ascendante','Les verbes expriment une voix de plus en plus forte.'],
    ['La lumière baissa, pâlit, vacilla, disparut.','descendante','Les termes expriment une intensité de plus en plus faible.'],
    ['Je te remercie, je te félicite, je t\'admire, je te vénère.','ascendante','Le sentiment exprimé est de plus en plus fort.'],
@@ -7048,6 +7156,10 @@ FRGEN['fr-grad']=()=>{ const P=[
     hint:'Compare le premier et le dernier terme : sont-ils de plus en plus forts ou de plus en plus faibles ?',solution:'Gradation <b>'+p[1]+'</b>. '+p[2],
     mist:[[p[1]==='ascendante'?'descendante':'ascendante','Compare le premier et le dernier terme : de plus en plus forts = ascendante, de plus en plus faibles = descendante.']],fallback:{tag:'fr-grad',title:'Ascendante ou descendante ?',html:'<p>Réponds par <b>ascendante</b> ou <b>descendante</b>.</p>'}}; };
 FRGEN['fr-comp']=()=>{ const C=[
+   ['Cette valise est lourde comme du plomb.',['cette valise','valise'],['du plomb','plomb'],['comme']],
+   ['Ses cheveux brillaient tels des fils d\'or.',['ses cheveux','cheveux'],['des fils d\'or','fils d\'or'],['tels','tel']],
+   ['Mon voisin ronfle ainsi qu\'un ours.',['mon voisin','voisin'],['un ours','ours'],['ainsi que','ainsi qu\'']],
+   ['Elle a l\'air d\'une reine dans cette robe.',['elle'],['une reine','reine'],['a l\'air de','avoir l\'air de','l\'air de']],
    ['Sa voix est douce comme le miel.',['sa voix','voix'],['le miel','miel'],['comme']],
    ['Cet enfant court tel un lapin.',['cet enfant','enfant','l\'enfant'],['un lapin','lapin'],['tel']],
    ['Ses yeux semblent deux lacs profonds.',['ses yeux','yeux'],['deux lacs profonds','deux lacs','lacs'],['semblent','sembler']],
@@ -7104,11 +7216,37 @@ const FSD={
   lexical:['le champ lexical','l\'ensemble des mots qui renvoient à une même réalité, à une même idée, à une même notion'],
   sémantique:['le champ sémantique','l\'ensemble des sens qu\'un mot peut prendre dans des emplois variés']
 };
+const FSD2={
+  signifiant:'la partie matérielle du mot : ce que l\'on entend ou ce que l\'on lit',
+  signifié:'l\'idée, le contenu que le mot représente',
+  monosémie:'le fait qu\'un mot n\'ait qu\'un seul sens',
+  polysémie:'le fait qu\'un mot ait plusieurs sens, le contexte choisissant lequel',
+  dénotation:'le sens objectif d\'un mot, tel que le donne le dictionnaire',
+  connotation:'les idées et les émotions que le mot suggère en plus de son sens littéral',
+  symbole:'un signe à la fois dénoté et connoté de la même façon pour tout un groupe',
+  péjoratif:'qualifie un mot qui rabaisse ce qu\'il désigne',
+  mélioratif:'qualifie un mot qui met en valeur ce qu\'il désigne',
+  euphémisme:'une manière d\'adoucir ce qui choque ou fait mal',
+  motif:'un écho de sens dû à un champ lexical qui revient souvent dans une œuvre',
+  asymbolie:'le fait de ne voir que le sens littéral des mots, au point d\'en souffrir (monosémie pathologique)',
+  lexical:'les mots qui se rattachent à un même thème',
+  sémantique:'tous les sens qu\'un mot peut prendre'
+};
 const fsShuf=a=>{ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
 const fsMist=(ch,ans,fn)=>ch.filter(c=>enNorm2(c)!==enNorm2(ans)).map(c=>[c,fn(c)]);
 const fsFB=(tag,title,html)=>({tag,title,html});
 /* [phrase, notion] : quelle notion illustre cette phrase ? (mot de réponse) */
 const FS_REF=[
+  ['Le mot « bureau » désigne un meuble, une pièce ou un service administratif.','polysémie','Plusieurs sens pour un mot : polysémie.'],
+  ['Pour beaucoup de gens, le mot « fondue » évoque la convivialité d\'un repas partagé.','connotation','Idée associée au mot, implicite et subjective : connotation.'],
+  ['Le dictionnaire définit « rose » comme la fleur du rosier.','dénotation','Sens objectif livré par le dictionnaire : dénotation.'],
+  ['Les lettres t-i-g-r-e à l\'écrit et le son [tigr] à l\'oral sont deux présentations du même mot.','signifiant','La forme sonore ou écrite du mot : signifiant.'],
+  ['Ce que l\'on se représente en pensant à « tigre » : un grand félin rayé.','signifié','Le sens du mot, ce qu\'il fait imaginer : signifié.'],
+  ['Le mot « baobab » ne désigne qu\'un seul type d\'arbre.','monosémie','Une seule signification : monosémie.'],
+  ['Le drapeau blanc, simple tissu clair, signifie la reddition pour tous ceux qui partagent ce code.','symbole','Sens dénoté (un tissu) et sens connoté commun à un groupe (la reddition) : symbole.'],
+  ['Dans tout un roman reviennent la mer, les vagues, les voiles, le port et la houle : écho d\'un chapitre à l\'autre.','motif','Un champ lexical qui revient dans un texte long crée un motif.'],
+  ['Pluie, averse, orage, ondée, bruine : tous ces mots renvoient à une même notion.','lexical','Ensemble de mots d\'un même thème : champ lexical.'],
+  ['Le mot « chaîne » peut désigner un lien de métal, une série de télévision ou une suite de montagnes.','polysémie','Plusieurs sens pour un mot : polysémie.'],
   ['Le mot « glace » peut désigner de l\'eau gelée, un miroir ou un dessert.','polysémie','Un même mot porte plusieurs sens : c\'est la polysémie.'],
   ['Le mot « xylophone » ne renvoie qu\'à un seul instrument de musique.','monosémie','Une seule signification : monosémie.'],
   ['Pour beaucoup de gens, le mot « lundi » évoque la fatigue et le retour au travail.','connotation','Ce sont des idées et des sensations ajoutées au sens : connotation.'],
@@ -7125,6 +7263,11 @@ const FS_REF=[
 const FS_REFCH=['polysémie','monosémie','dénotation','connotation','signifiant','signifié','symbole','motif','lexical'];
 /* [mot, mono|poly, explication] */
 const FS_MONO=[
+  ['stéthoscope','monosémique','Il ne désigne qu\'un seul instrument médical.'],['microscope','monosémique','Il ne désigne qu\'un seul instrument d\'optique.'],
+  ['rhinocéros','monosémique','Il ne désigne qu\'un seul animal.'],['nénuphar','monosémique','Il ne désigne qu\'une seule plante aquatique.'],
+  ['paratonnerre','monosémique','Il ne désigne qu\'un seul dispositif.'],['vélodrome','monosémique','Il ne désigne qu\'un seul type de piste.'],
+  ['cadre','polysémique','Cadre d\'un tableau, cadre d\'une entreprise, cadre d\'une action…'],['pile','polysémique','Pile électrique, pile de livres, côté d\'une pièce de monnaie…'],
+  ['vol','polysémique','Vol d\'un oiseau, vol d\'un bijou…'],['plan','polysémique','Plan d\'une ville, plan d\'un projet, plan incliné…'],
   ['ornithorynque','monosémique','Il ne désigne qu\'un seul animal.'],['hippopotame','monosémique','Il ne désigne qu\'un seul animal.'],
   ['xylophone','monosémique','Il ne désigne qu\'un seul instrument.'],['ophtalmologue','monosémique','Il ne désigne qu\'un seul métier : le médecin des yeux.'],
   ['thermomètre','monosémique','Il ne désigne qu\'un seul instrument : celui qui mesure la température.'],['tétraèdre','monosémique','Il ne désigne qu\'un seul solide : celui qui a quatre faces triangulaires.'],
@@ -7135,6 +7278,16 @@ const FS_MONO=[
 ];
 /* [phrase, mot, sens, tous les sens possibles (mots), explication] */
 const FS_POLY=[
+  ['Elle a accroché un cadre au-dessus du canapé.','cadre','tableau',['tableau','dirigeant'],'« accroché au-dessus du canapé » indique l\'objet décoratif.'],
+  ['Le cadre de l\'entreprise a présenté ses résultats au conseil.','cadre','dirigeant',['tableau','dirigeant'],'« entreprise » et « conseil » indiquent la fonction.'],
+  ['Il a changé la pile de la télécommande.','pile','batterie',['batterie','tas','côté'],'« télécommande » indique la source d\'énergie.'],
+  ['Une pile de livres menaçait de tomber.','pile','tas',['batterie','tas','côté'],'« de livres menaçait de tomber » indique un entassement.'],
+  ['Il a lancé la pièce : pile, c\'est lui qui commence.','pile','côté',['batterie','tas','côté'],'« lancé la pièce » indique le jeu de pile ou face.'],
+  ['Le vol des hirondelles dessinait des arabesques dans le ciel.','vol','envol',['envol','larcin'],'« hirondelles » et « dans le ciel » indiquent le déplacement dans les airs.'],
+  ['On a signalé un vol de bijoux dans la bijouterie.','vol','larcin',['envol','larcin'],'« signalé » et « bijouterie » indiquent un délit.'],
+  ['Il a déplié le plan de la ville pour trouver la rue.','plan','carte',['carte','projet','surface'],'« la ville » et « la rue » indiquent un document géographique.'],
+  ['Leur plan pour la fête est prêt : tout est organisé.','plan','projet',['carte','projet','surface'],'« pour la fête » et « organisé » indiquent une intention préparée.'],
+  ['La bille roulait le long du plan incliné.','plan','surface',['carte','projet','surface'],'« incliné » et « roulait le long » indiquent une surface.'],
   ['Elle a rangé sa souris sur le tapis avant d\'éteindre l\'ordinateur.','souris','appareil',['animal','appareil'],'« ordinateur » et « tapis » indiquent l\'objet informatique.'],
   ['Une souris s\'est glissée sous le placard et le chat l\'a poursuivie.','souris','animal',['animal','appareil'],'« le chat l\'a poursuivie » indique l\'animal.'],
   ['Pour le dessert, il a écrasé un avocat sur du pain grillé.','avocat','fruit',['fruit','juriste'],'« écrasé sur du pain grillé » indique un aliment.'],
@@ -7161,6 +7314,15 @@ const FS_POLY=[
 ];
 /* [phrase au sens propre, phrase au sens figuré, mot] */
 const FS_PROP=[
+  ['Un nuage cache le soleil.','Il cache sa tristesse derrière un sourire.','cache'],
+  ['Elle a ouvert la porte du garage.','Il a ouvert un débat sur l\'avenir du club.','ouvert'],
+  ['Le tunnel traverse la montagne.','Une idée folle a traversé son esprit.','traverse'],
+  ['Le chien mord le facteur.','Le froid mord les doigts des promeneurs.','mord'],
+  ['Le vent enfle la voile.','La rumeur enfle de jour en jour.','enfle'],
+  ['Il a mis la clé dans la serrure.','Cette découverte donne la clé du mystère.','clé'],
+  ['Elle a posé un voile sur la statue.','Un voile de tristesse passa sur son visage.','voile'],
+  ['Elle allume une bougie.','Cette remarque allume la colère de la foule.','allume'],
+  ['Le pont relie les deux rives.','Cette amitié relie deux familles.','relie'],
   ['Le chat a grimpé sur l\'armoire.','Le prix du pain a grimpé en un mois.','grimpé'],
   ['Il a plongé dans la piscine du village.','Il a plongé dans la lecture de ce roman.','plongé'],
   ['Cette valise est lourde à porter.','Il porte une lourde responsabilité.','lourde'],
@@ -7176,6 +7338,9 @@ const FS_PROP=[
 ];
 /* [mot, définition actuelle, sens ancien (mot), distracteurs] */
 const FS_EVO=[
+  ['travail','« activité professionnelle, tâche »','tourment',['plaisir','repos'],'Jadis, « travail » pouvait désigner une souffrance, un tourment (le mot est souvent rattaché à un instrument de torture, le tripalium).'],
+  ['vilain','« laid ; méchant »','paysan',['noble','marchand'],'Jadis, « vilain » désignait un paysan, un habitant du village (du latin villanus).'],
+  ['pitoyable','« très mauvais, lamentable »','compatissant',['joyeux','rapide'],'À l\'origine, « pitoyable » signifiait « qui a pitié, compatissant ».'],
   ['formidable','« remarquable, très bien »','redoutable',['minuscule','ennuyeux'],'Jadis, « formidable » (du latin formidabilis) voulait dire « qui fait peur, redoutable ».'],
   ['énerver','« agacer, irriter »','affaiblir',['calmer','soigner'],'Jadis, « énerver » signifiait « priver de nerf, de force », donc « affaiblir ».'],
   ['ennui','« lassitude, manque d\'intérêt »','tourment',['plaisir','repos'],'Jadis, « ennui » désignait un tourment, un chagrin violent.'],
@@ -7184,6 +7349,11 @@ const FS_EVO=[
 ];
 /* [neutre, péjoratif, mélioratif, ce que désigne le trio] */
 const FS_TRI=[
+  ['bateau','rafiot','vaisseau','un moyen de transport sur l\'eau'],
+  ['vêtement','guenille','parure','ce que l\'on porte sur soi'],
+  ['cuisine','tambouille','gastronomie','l\'art de préparer les repas'],
+  ['femme','mégère','dame','une personne de sexe féminin'],
+  ['chanson','rengaine','mélodie','un air chanté ou joué'],
   ['cheveux','tignasse','chevelure','les cheveux d\'une personne'],
   ['visage','trogne','minois','le visage d\'une personne'],
   ['logement','taudis','demeure','l\'endroit où l\'on habite'],
@@ -7194,6 +7364,10 @@ const FS_TRI=[
 const FS_VCH=['neutre','péjoratif','mélioratif'];
 /* [situation, euphémisme, expression crue, expression neutre] */
 const FS_EPH=[
+  ['une entreprise met un employé à la porte','Elle a décidé de ne pas poursuivre sa collaboration avec lui.','Elle l\'a foutu dehors.','Elle l\'a renvoyé.'],
+  ['quelqu\'un vit dans la rue','Il est sans domicile fixe.','C\'est un clodo.','Il vit dans la rue.'],
+  ['un élève échoue à l\'école','Il rencontre quelques difficultés scolaires.','Il est nul à l\'école.','Il échoue à l\'école.'],
+  ['quelqu\'un a trop bu','Il a un peu forcé sur la boisson.','Il est complètement bourré.','Il est ivre.'],
   ['quelqu\'un vient de mourir','Il nous a quittés.','Il a clamsé.','Il est mort.'],
   ['un patron licencie des employés','Nous nous séparons de plusieurs collaborateurs.','On a viré plusieurs employés.','Nous licencions plusieurs employés.'],
   ['quelqu\'un manque d\'argent','Il a des revenus modestes.','Il est fauché.','Il est pauvre.'],
@@ -7203,6 +7377,11 @@ const FS_EPH=[
 ];
 /* [mot, idée, dénoté|connoté] */
 const FS_DEN=[
+  ['feu','phénomène de combustion qui dégage chaleur et lumière','dénoté'],['feu','la passion, la destruction','connoté'],
+  ['soleil','étoile autour de laquelle tourne la Terre','dénoté'],['soleil','la joie, la vie','connoté'],
+  ['ombre','zone sombre due à l\'absence de lumière','dénoté'],['ombre','le secret, la menace','connoté'],
+  ['chêne','arbre qui porte des glands','dénoté'],['chêne','la solidité, la longévité','connoté'],
+  ['corbeau','grand oiseau noir','dénoté'],['corbeau','le mauvais présage','connoté'],
   ['colombe','oiseau de la famille des pigeons','dénoté'],['colombe','la paix','connoté'],
   ['rose','fleur à épines','dénoté'],['rose','l\'amour, le romantisme','connoté'],
   ['loup','mammifère carnivore voisin du chien','dénoté'],['loup','le danger, la cruauté','connoté'],
@@ -7216,6 +7395,10 @@ const FS_DEN=[
 ];
 /* [phrase, dénoté, connoté] */
 const FS_SYM=[
+  ['Le drapeau blanc symbolise la reddition.','tissu','reddition'],
+  ['Le chêne symbolise la force tranquille.','arbre','force'],
+  ['La rose symbolise l\'amour.','fleur','amour'],
+  ['Le corbeau symbolise le mauvais présage.','oiseau','présage'],
   ['La balance symbolise la justice.','pesée','justice'],
   ['La colombe symbolise la paix.','oiseau','paix'],
   ['Le lion symbolise le courage.','félin','courage'],
@@ -7224,6 +7407,12 @@ const FS_SYM=[
   ['La couronne symbolise le pouvoir.','ornement','pouvoir']
 ];
 const FS_SRC=[
+  ['Élevée au bord de la mer, elle trouve que le mot « horizon » promet toujours une aventure.','histoire'],
+  ['Dans les familles d\'agriculteurs de la région, le mot « orage » évoque d\'abord le risque pour la récolte.','société'],
+  ['Très inquiet de nature, il entend dans toute sonnerie de téléphone une mauvaise nouvelle.','psychologie'],
+  ['Dans un conte, le mot « forêt » devient menaçant parce que les phrases voisines parlent de loups, de nuit et d\'égarés.','contexte'],
+  ['Ayant grandi dans un quartier d\'artistes, il associe « atelier » à la liberté et à la fête.','société'],
+  ['Le jour de son premier concours, elle a reçu une enveloppe : depuis, ce mot lui serre le ventre.','histoire'],
   ['Pour Inès, le mot « moto » fait peur : elle est d\'un naturel très anxieux, quoi qu\'elle ait vécu.','psychologie'],
   ['Chez les marins de l\'Atlantique, le mot « brume » évoque d\'abord le danger pour la navigation.','société'],
   ['Pour Jules, le mot « sapin » évoque la maison de ses grands-parents, où il passait chaque Noël.','histoire'],
@@ -7237,6 +7426,12 @@ const FS_SRCCH=['psychologie','société','histoire','contexte'];
 const FS_SRCN={psychologie:'la nature psychologique individuelle',société:'l\'environnement social',histoire:'l\'histoire personnelle',contexte:'les interrelations des mots et des phrases dans un texte'};
 /* [thème, [4 mots], intrus] */
 const FS_INT=[
+  ['la montagne',['sommet','col','glacier','alpage'],'orchestre'],
+  ['le sport',['arbitre','match','maillot','score'],'rideau'],
+  ['le théâtre',['scène','rideau','comédien','répétition'],'carburant'],
+  ['l\'automobile',['moteur','volant','embrayage','pneu'],'estuaire'],
+  ['la justice',['tribunal','verdict','juge','plaidoirie'],'balançoire'],
+  ['le jardinage',['bêche','semis','arrosoir','compost'],'ordinateur'],
   ['la cuisine',['casserole','four','recette','marmite'],'tableau'],
   ['l\'école',['classe','cartable','leçon','récréation'],'moteur'],
   ['l\'orage',['éclair','tonnerre','averse','foudre'],'bibliothèque'],
@@ -7248,6 +7443,17 @@ const FS_INT=[
 ];
 /* [texte, thème] */
 const FS_THM=[
+  ['Les violons s\'accordèrent, la cheffe leva sa baguette et le premier mouvement commença.','musique'],
+  ['Le chirurgien enfila ses gants, l\'anesthésiste vérifia le moniteur et on poussa le patient vers le bloc opératoire.','hôpital'],
+  ['Ils bouclèrent leurs valises, attendirent à la gare et montrèrent leurs billets au contrôleur.','voyage'],
+  ['Le cuisinier émincia les carottes, assaisonna la sauce et dressa les assiettes.','cuisine'],
+  ['La neige tombait sur les skis, le givre brillait et le vent glacial piquait les joues.','hiver'],
+  ['Le guide encorda la cordée, ils gravirent l\'arête et atteignirent le sommet avant la tempête.','montagne'],
+  ['Le juge ouvrit l\'audience, l\'avocat plaida et le tribunal rendit son verdict.','justice'],
+  ['Le rideau se leva, le comédien entra en scène et le public retint son souffle.','théâtre'],
+  ['L\'arbitre siffla la fin du match : l\'attaquant avait marqué deux buts et le gardien s\'était incliné.','sport'],
+  ['Le capitaine hissa le pavillon et le navire doubla le cap par gros temps.','mer'],
+  ['Le mécanicien vérifia le moteur, changea les pneus et resserra le volant.','automobile'],
   ['La lame fendit l\'air. Le duel fut bref : le fer claqua contre le fer et le vaincu rendit son épée.','combat'],
   ['Il fit revenir l\'oignon, versa le bouillon, laissa mijoter le ragoût et goûta la sauce.','cuisine'],
   ['Le voilier prit le vent, les vagues claquèrent contre la coque et la côte disparut derrière l\'horizon.','mer'],
@@ -7257,9 +7463,14 @@ const FS_THM=[
   ['Le médecin ausculta le malade, l\'infirmière prépara la perfusion et on le transporta sur un brancard.','hôpital'],
   ['Le chœur reprit la mélodie, le violon marqua le rythme et le dernier accord résonna dans la salle.','musique']
 ];
-const FS_THMCH=['combat','cuisine','mer','école','hiver','voyage','hôpital','musique'];
+const FS_THMCH=['combat','cuisine','mer','école','hiver','voyage','hôpital','musique','montagne','justice','théâtre','sport','automobile'];
 /* [texte, thème dominant, autre thème présent, thèmes distracteurs] */
 const FS_MIX=[
+  ['Le chirurgien opérait, l\'infirmière préparait les compresses, le brancard attendait ; un oiseau chanta dehors.','hôpital','nature',['sport','voyage']],
+  ['Les violons jouaient, le chef battait la mesure, la mélodie s\'élevait ; un enfant toussa dans la salle.','musique','public',['justice','mer']],
+  ['Le tribunal siégeait, l\'avocat plaidait, le juge écoutait le témoin ; au dehors, un chien aboyait.','justice','animal',['mer','cuisine']],
+  ['Le cuisinier flambait, salait, goûtait, nappait ; un enfant riait au fond de la salle.','cuisine','enfance',['combat','hôpital']],
+  ['Le sommet se dressait, la cordée progressait sur l\'arête, le glacier craquait ; un avion traversa le ciel.','montagne','aviation',['musique','école']],
   ['Les vagues se brisaient sur le récif, l\'écume giclait, le vent gonflait la voile ; seul un téléphone sonna au loin.','mer','téléphone',['musique','cuisine']],
   ['Il écrasa l\'ail, fit dorer l\'oignon, versa la crème et surveilla la cuisson ; à côté, la radio parlait de football.','cuisine','sport',['combat','école']],
   ['Le glaive brilla, la lance frappa, le bouclier se fendit ; un oiseau chanta dans la haie.','combat','nature',['voyage','hôpital']],
@@ -7268,7 +7479,7 @@ const FS_MIX=[
 ];
 Object.assign(FRGEN,{
  'fr-s-def':()=>{ const k=enPick(FSN), d=FSD[k], lex=k==='lexical'||k==='sémantique';
-   const st=lex?'Complète : « champ ______ » — '+d[1]+'.':'De quoi parle-t-on ? « '+d[1].charAt(0).toUpperCase()+d[1].slice(1)+'. »';
+   const dd=Math.random()<0.5?d[1]:FSD2[k], st=lex?'Complète : « champ ______ » — '+dd+'.':'De quoi parle-t-on ? « '+dd.charAt(0).toUpperCase()+dd.slice(1)+'. »';
    return {lang:'fr',choices:FSN,keys:FR_KEYS,tag:'fr-sem',statement:st,answers:[k],instr:lex?'Quel adjectif complète « champ … » ?':'Quelle notion de sémantique ?',
      hintline:'Écris le mot (ou clique sur un mot de la liste). Les accents et les majuscules ne comptent pas.',placeholder:lex?'lexical ou sémantique':'nom de la notion',
      hint:lex?'« Lexical » renvoie aux mots d\'un même thème ; « sémantique » renvoie aux sens d\'un seul mot.':'Repère le mot-clé de la définition : forme, sens, un seul sens, plusieurs sens, objectif, subjectif, valorise, dévalorise, atténue…',
@@ -8586,7 +8797,7 @@ function attachDraw(){
 
 /* ===== Couche de jeu : XP, rangs, combo, boss, badges, boutique, records ===== */
 const GSTORE='dev-fact-game-v1';
-const RANKS=[[0,'Ébauche'],[50,'Ébauche II'],[100,'Dégrossi'],[200,'Dégrossi II'],[300,'Ajusté'],[500,'Ajusté II'],[700,'Rectifié'],[1000,'Rectifié II'],[1400,'Poli'],[1900,'Poli II'],[2500,'Micro-précision'],[3200,'Micro-précision II'],[4000,'Chef-d\'œuvre'],[5500,'Chef-d\'œuvre II']];
+const RANKS=[[0,'Novice'],[50,'Novice II'],[100,'Élève'],[200,'Élève II'],[300,'Studieux'],[500,'Studieux II'],[700,'Assidu'],[1000,'Assidu II'],[1400,'Confirmé'],[1900,'Confirmé II'],[2500,'Érudit'],[3200,'Érudit II'],[4000,'Lauréat'],[5500,'Lauréat II']];
 const RK=n=>RANKS.findIndex(x=>x[1]===n);
 const DAILY_GOAL=15, BOSS_TOTAL=5, BOSS_WIN=4;
 const xpBase=L=>Math.round(10*Math.pow(1.4,Math.max(1,L)-1));
@@ -8658,8 +8869,8 @@ const BADGES=[
   ['algo','Algébriste','Réussir 40 exercices de l\'onglet Développer & factoriser sans aide.',()=>G.c.alg>=40],
   ['equa','Équationniste','Réussir 40 exercices de l\'onglet Équations sans aide.',()=>G.c.eq>=40],
   ['geom','Géomètre','Réussir 40 exercices de l\'onglet Géométrie sans aide.',()=>G.c.geo>=40],
-  ['rank3','Rectifié','Atteindre le rang « Rectifié ».',()=>rankOf(G.xp).i>=RK('Rectifié')],
-  ['rank6','Chef-d\'œuvre','Atteindre le rang « Chef-d\'œuvre ».',()=>rankOf(G.xp).i>=RK('Chef-d\'œuvre')],
+  ['rank3','Assidu','Atteindre le rang « Assidu ».',()=>rankOf(G.xp).i>=RK('Assidu')],
+  ['rank6','Lauréat','Atteindre le rang « Lauréat ».',()=>rankOf(G.xp).i>=RK('Lauréat')],
   ['copy20','Correcteur','Corriger 20 copies du premier coup, sans indice.',()=>G.c.copy>=20],
   ['bet10','Parieur avisé','Gagner 10 paris de confiance.',()=>G.c.betW>=10],
   ['gold','Pépite','Réussir un exercice doré du premier coup, sans indice.',()=>G.c.gold>=1],
@@ -10313,7 +10524,7 @@ function errTrain(tag){
   const dom=domainOf(TOPICS[ids[0]].kind); ids=ids.filter(id=>domainOf(TOPICS[id].kind)===dom);
   setDomain(dom,'train'); S.mode='mix'; S.only=null; S.pool=[...ids,...ids]; renderSetup(); newSeries();
 }
-const THEME_RANKS=[[0,'Débutant'],[60,'Apprenti'],[200,'Compagnon'],[500,'Technicien'],[1000,'Expert'],[2000,'Maître']];
+const THEME_RANKS=[[0,'Débutant'],[60,'Apprenti'],[200,'Studieux'],[500,'Confirmé'],[1000,'Expert'],[2000,'Maître']];
 function themePoints(kind){
   let p=0; Object.keys(TOPICS).forEach(id=>{ const T=TOPICS[id], s=stats.topics[id]; if(T.kind===kind&&s) p+=(s.clean*1+s.helped*0.5+s.shown*0.1)*xpBase(T.level); });
   return Math.round(p);
