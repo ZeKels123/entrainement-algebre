@@ -6832,8 +6832,8 @@ const FR_TRIOS=[
   ['mourir',['crever','clamser','calancher','casser sa pipe'],['trépasser','expirer'],'',['décéder']],
   ['argent',['fric','pognon','blé','oseille','thune'],null,'',[]],['livre',['bouquin'],['ouvrage'],'',[]],
   ['se dépêcher',['se magner','se grouiller'],['se hâter','s\'empresser'],'',['se presser']],
-  ['rire',['se marrer','rigoler','se poiler','se bidonner'],['s\'esclaffer'],'',[]],
-  ['regarder',['zieuter','mater','reluquer'],['contempler'],'',['observer']],
+  ['rire',['se marrer','rigoler','se poiler','se bidonner'],['s\'esclaffer'],'',['rigoler']],
+  ['regarder',['zieuter','reluquer'],['contempler'],'',['observer'],['mater']],
   ['se moquer de quelqu\'un',['se foutre de quelqu\'un','se payer la tête de quelqu\'un'],['railler quelqu\'un','se gausser de quelqu\'un'],'',[]],
   ['beaucoup de',['plein de','un tas de','un paquet de','des tonnes de','une tonne de','une chiée de','une flopée de','un max de','des masses de'],['moult','force'],'',[]],
   ['médecin',['toubib','doc'],null,'',['docteur']],['policier',['flic','poulet'],null,'',[]],['ami',['pote'],null,'',['camarade','copain']],
@@ -6847,11 +6847,27 @@ const FR_TRIOS=[
   ['crier',['gueuler','brailler'],['vociférer'],'',['hurler']],['pleurer',['chialer'],['se lamenter'],'',[]],
   ['chaussures',['godasses','pompes'],null,'',[]],['bavarder',['papoter','tailler une bavette'],['converser','deviser'],'',[]],
   ['mauvais',['pourri','nul'],['exécrable','détestable'],'',[]],['en colère',['furax','remonté'],['courroucé'],'',['furieux','fâché']],
-  ['se disputer',['s\'engueuler','se chamailler'],['se quereller'],'',['se fâcher']],['très beau',['canon','super beau'],['sublime','splendide'],'',['magnifique']]
+  ['se disputer',['s\'engueuler','se chamailler'],['se quereller'],'',['se fâcher']],['très beau',['canon','super beau'],['sublime','splendide'],'',['magnifique']],
+  ['travailler dur',['bosser','trimer','bûcher'],['œuvrer','peiner'],'',[]],['nourriture',['graille'],['victuailles'],'',[]],
+  ['très riche',['friqué','plein aux as'],['opulent','fortuné'],'',['riche']],['pauvre',['fauché','raide'],['indigent','nécessiteux'],'',['démuni']],
+  ['ivre',['bourré','beurré'],['éméché','aviné'],'',['soûl','saoul']],['sale',['crado'],['malpropre','fangeux'],'',[]],
+  ['laid',['moche'],['hideux','disgracieux'],'',[]],['fort',['costaud','balèze'],['vigoureux'],'',['robuste','musclé']],
+  ['facile',['fastoche'],['aisé'],'',['simple']],['difficile',['coton'],['ardu','malaisé'],'',['compliqué']],
+  ['frère',['frangin','frérot'],null,'',[]],['sœur',['frangine'],null,'',[]],['comprendre',['piger','capter','percuter'],null,'',['saisir']],
+  ['s\'énerver',['péter un câble','péter les plombs'],null,'',['se mettre en colère']],['avoir de la chance',['avoir du bol','avoir du pot'],null,'',[]],
+  ['jeter',['balancer','bazarder'],null,'',[]],['cacher',['planquer'],['dissimuler'],'',[]],['arrêter quelqu\'un',['choper','pincer'],['appréhender'],'',[]],
+  ['se coucher',['se pieuter'],null,'',[]],['fou',['dingue','timbré','cinglé'],['insensé'],'',[]],['lycée',['bahut'],null,'',['établissement']],
+  ['professeur',['prof'],null,'',['enseignant']],['examen',['exam','interro'],null,'',['contrôle']],['ordinateur',['ordi'],null,'',[]],
+  ['petit-déjeuner',['petit-déj'],null,'',[]],['apéritif',['apéro'],null,'',[]],['sympathique',['sympa'],['aimable','avenant'],'',[]],
+  ['excellent',['génial','top','super'],['remarquable','admirable'],'',['formidable','très bien']],['vite',['fissa'],['promptement'],'',['rapidement']],
+  ['malade',['patraque','mal fichu'],['souffrant','indisposé'],'',['mal en point']],['tomber',['se casser la figure','se ramasser'],['choir'],'',['chuter']],
+  ['gronder',['engueuler','enguirlander'],['admonester','tancer'],'',['réprimander','disputer']],['plaisanter',['blaguer','déconner'],['badiner'],'',[]],
+  ['ventre',['bide','brioche'],null,'',[]],['bouche',['clapet','gueule'],null,'',[]],['mains',['pattes','paluches'],null,'',[]],
+  ['pieds',['panards','arpions'],null,'',[]],['yeux',['mirettes','quinquets'],null,'',[]]
 ];
 /* mots à classer : [mot, registre, équivalent courant] */
 const FR_MOTS=[];
-FR_TRIOS.forEach(t=>{ FR_MOTS.push([t[0],'courant','']); t[1].forEach(f=>FR_MOTS.push([f,'familier',t[0]])); (t[2]||[]).forEach(f=>FR_MOTS.push([f,'soutenu',t[0]])); });
+FR_TRIOS.forEach(t=>{ FR_MOTS.push([t[0],'courant','']); t[1].filter(f=>!(t[4]||[]).includes(f)).forEach(f=>FR_MOTS.push([f,'familier',t[0]])); (t[2]||[]).forEach(f=>FR_MOTS.push([f,'soutenu',t[0]])); });
 /* phrases : [texte, registre, indice] */
 const FR_PHR=[
   ['Franchement, ce film, c\'était nul : j\'ai failli m\'endormir.','familier','« Franchement » et « nul » (au sens de « mauvais ») sont des mots de l\'oral.'],
@@ -6903,12 +6919,12 @@ const FRGEN={
    return {lang:'fr',choices:FR_CH,tag:'fr-reg',statement:p[0],answers:p[1]==='familier'?['familier','argot']:[p[1]],instr:'Quel est le registre de langue de cette phrase ?',
      hintline:'Réponds par un seul mot : familier, courant ou soutenu (les touches remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'familier, courant ou soutenu',
      hint:p[2],solution:'Registre <b>'+p[1]+'</b>. '+p[2],mist:frMist(p[1]),fallback:{tag:'fr-reg',title:'Réponds par un registre',html:'<p>Écris l\'un des trois registres : <b>familier</b>, <b>courant</b> ou <b>soutenu</b>.</p>'}}; },
- 'fr-eqc':()=>{ const t=enPick(FR_TRIOS.filter(x=>x[0]!=='voler')), f=enPick(t[1]);
+ 'fr-eqc':()=>{ const t=enPick(FR_TRIOS.filter(x=>x[0]!=='voler')), f=enPick(t[1].filter(x=>!(t[4]||[]).includes(x)));
    return {lang:'fr',tag:'fr-equiv',statement:'Mot familier : « '+f+' ». Écris le mot ou l\'expression du registre courant qui a le même sens.',answers:[t[0]].concat(t[4]||[]),instr:'Trouve l\'équivalent courant',
      hintline:'Écris le mot ou l\'expression (une seule ligne). Les accents et les majuscules ne comptent pas.',placeholder:'équivalent courant',
      hint:'L\'équivalent courant commence par « '+t[0].charAt(0)+' ».',solution:'« '+f+' » (familier) → <b>'+[t[0]].concat(t[4]||[]).join('</b> ou <b>')+'</b> (courant).',mist:[],keys:FR_KEYS,
      fallback:{tag:'fr-equiv',title:'Ce n\'est pas l\'équivalent attendu',html:'<p>Cherche le mot ou l\'expression neutre qui a le même sens. Utilise un indice si tu bloques.</p>'}}; },
- 'fr-eqf':()=>{ const t=enPick(FR_TRIOS), sout=!!t[2]&&Math.random()<0.5, reg=sout?'soutenu':'familier', A=sout?t[2]:t[1];
+ 'fr-eqf':()=>{ const t=enPick(FR_TRIOS), sout=!!t[2]&&Math.random()<0.5, reg=sout?'soutenu':'familier', A=sout?t[2]:t[1].concat(t[5]||[]);
    return {lang:'fr',tag:'fr-equiv',statement:'Mot courant : « '+t[0]+' »'+t[3]+'. Écris un équivalent du registre '+reg+'.',answers:A,instr:'Trouve l\'équivalent '+reg,
      hintline:'Écris le mot ou l\'expression (une seule ligne). Les accents et les majuscules ne comptent pas.',placeholder:'équivalent '+reg,
      hint:'Un équivalent '+reg+' commence par « '+A[0].charAt(0)+' ».',solution:'« '+t[0]+' » (courant) → <b>'+A.join('</b> ou <b>')+'</b> ('+reg+').',mist:[],keys:FR_KEYS,
@@ -7190,6 +7206,51 @@ FRGEN['fr-fig4']=()=>{ const f=enPick(Object.keys(FIG_ALL)), p=enPick(FIG_ALL[f]
     hintline:'Écris le nom de la figure de style. Les accents et les majuscules ne comptent pas.',placeholder:'nom de la figure',
     hint:'Cette figure appartient à la famille des figures d\'« '+FIGD[p[1]][1]+' ». Relis la phrase en cherchant ce qu\'elle fait (rapprocher, remplacer, atténuer, opposer, amplifier).',solution:'Figure : <b>'+p[1]+'</b>. '+p[2],mist:FIGMIST(p[1]),fallback:FIGFB}; };
 FRT('fr-fig4',3,'frfg','Toutes les figures de style');
+
+/* ===== textes d'auteurs du domaine public : version d'origine (soutenu) ou réécriture de ma main (courant, familier) ===== */
+Object.assign(TAGS,{'fr-txt':{label:'Registre d\'un texte',tip:'Compare les mots (recherchés, neutres ou familiers), la syntaxe (inversions, subjonctif imparfait, passé simple) et les marques de l\'oral (« ne » omis, sujet répété, abréviations).'}});
+const FR_TXT=[
+ ['Jean de La Fontaine, « La Cigale et la Fourmi » (1668)',
+  ['La Cigale, ayant chanté\nTout l\'été,\nSe trouva fort dépourvue\nQuand la bise fut venue.','« fort dépourvue », « la bise » (le vent froid), participe présent et passé simple : langue littéraire.'],
+  ['La cigale avait chanté tout l\'été. Quand l\'hiver est arrivé, elle s\'est retrouvée sans rien.','Mots neutres (« l\'hiver », « sans rien ») et phrases simples.'],
+  ['La cigale avait chanté tout l\'été ; quand l\'hiver s\'est pointé, elle s\'est retrouvée complètement fauchée.','« s\'est pointé » et « fauchée » (sans argent) sont des mots familiers.']],
+ ['Jean de La Fontaine, « Le Corbeau et le Renard » (1668)',
+  ['Maître Corbeau, sur un arbre perché,\nTenait en son bec un fromage.\nMaître Renard, par l\'odeur alléché,\nLui tint à peu près ce langage :','« alléché », « langage » (manière de parler), « tint » (passé simple), « en son bec » : langue littéraire.'],
+  ['Un corbeau, perché sur un arbre, tenait un fromage dans son bec. Un renard, attiré par l\'odeur, lui parla à peu près ainsi.','Vocabulaire neutre (« attiré », « parla ») et construction simple.'],
+  ['Un corbeau, posé sur une branche, avait un fromage dans le bec. Le renard, qui avait flairé le truc, lui a dit à peu près ça.','« flairer le truc » et « ça » à la place de « ainsi » : langue de l\'oral.']],
+ ['Victor Hugo, « Demain, dès l\'aube » (1856)',
+  ['Demain, dès l\'aube, à l\'heure où blanchit la campagne,\nJe partirai. Vois-tu, je sais que tu m\'attends.','« à l\'heure où blanchit la campagne » (image poétique) et futur littéraire : langue soutenue.'],
+  ['Demain matin, au lever du jour, je partirai. Tu vois, je sais que tu m\'attends.','Mots neutres (« demain matin », « au lever du jour »).'],
+  ['Demain, à la première heure, je me tire. Tu vois, je sais que tu m\'attends.','« je me tire » (je pars) est une expression familière.']],
+ ['Voltaire, « Candide » (1759)',
+  ['Il y avait en Westphalie, dans le château de M. le baron de Thunder-ten-tronckh, un jeune garçon à qui la nature avait donné les mœurs les plus douces.','« à qui la nature avait donné les mœurs les plus douces » : tournure ample et vocabulaire classique (« mœurs »).'],
+  ['En Westphalie, dans le château du baron de Thunder-ten-tronckh, vivait un jeune garçon d\'un caractère très doux.','Phrase correcte et neutre : « caractère », « très doux ».'],
+  ['En Westphalie, chez le baron de Thunder-ten-tronckh, il y avait un jeune gars hyper gentil.','« gars » et « hyper gentil » sont des mots familiers.']],
+ ['Molière, « Le Bourgeois gentilhomme » (1670)',
+  ['Par ma foi ! il y a plus de quarante ans que je dis de la prose sans que j\'en susse rien.','Imparfait du subjonctif (« susse »), « Par ma foi » et « n\'en… rien » : langue classique soutenue.'],
+  ['Il y a plus de quarante ans que je parle en prose sans le savoir.','Vocabulaire et syntaxe neutres : pas de subjonctif imparfait, pas de mot familier.'],
+  ['Ça fait plus de quarante ans que je cause en prose sans m\'en douter.','« Ça fait » et « causer » (parler) sont de l\'oral familier.']],
+ ['Pierre de Ronsard, « Mignonne, allons voir si la rose » (1553)',
+  ['Mignonne, allons voir si la rose\nQui ce matin avait déclose\nSa robe de pourpre au soleil,','« Mignonne », « déclose » (ouverte) et « robe de pourpre » (image) : langue poétique soutenue.'],
+  ['Ma chérie, allons voir si la rose, qui s\'était ouverte ce matin, montre encore sa robe pourpre au soleil.','Mots neutres (« ma chérie », « s\'était ouverte »).'],
+  ['Ma belle, viens voir si la rose qui s\'est ouverte ce matin fait toujours sa belle en rouge au soleil.','« fait sa belle » et « viens voir » : ton de l\'oral et expressions familières.']],
+ ['Jean Racine, « Phèdre » (1677)',
+  ['Je le vis, je rougis, je pâlis à sa vue ;\nUn trouble s\'éleva dans mon âme éperdue.','Passé simple (« vis », « rougis », « pâlis »), « âme éperdue » : langue classique soutenue.'],
+  ['Je l\'ai vu, j\'ai rougi, j\'ai pâli en le voyant ; je me suis sentie très troublée.','Passé composé et mots neutres : registre courant.'],
+  ['Je l\'ai vu, je suis devenue toute rouge, puis toute blanche ; j\'étais complètement chamboulée.','« toute rouge, toute blanche » et « chamboulée » : langage imagé de l\'oral, mots familiers.']],
+ ['Alphonse de Lamartine, « Le Lac » (1820)',
+  ['Ô temps ! suspends ton vol, et vous, heures propices !\nSuspendez votre cours :','« Ô », apostrophe au temps, « suspends ton vol », « heures propices » : langue poétique soutenue.'],
+  ['Temps, arrête-toi, et vous, heures favorables, arrêtez-vous.','Mots neutres (« arrête-toi », « favorables »).'],
+  ['Eh, le temps, fais une pause ! Et vous, les bons moments, restez un peu.','« Eh », « fais une pause » et « les bons moments » : ton oral et familier.']]
+];
+FRGEN['fr-txt']=()=>{ const t=enPick(FR_TXT), i=enPick([0,1,2]), v=t[i+1], reg=['soutenu','courant','familier'][i];
+  const orig=i===0;
+  return {lang:'fr',choices:FR_CH,tag:'fr-txt',statement:'Texte d\'après '+t[0]+' :\n« '+v[0]+' »\nQuel est le registre de langue de ce texte ?',answers:[reg],instr:'Quel est le registre de ce texte ?',
+    hintline:'Réponds par un seul mot : familier, courant ou soutenu (les touches remplissent la zone). Les accents et les majuscules ne comptent pas.',placeholder:'familier, courant ou soutenu',
+    hint:'Cherche les mots recherchés ou poétiques, les constructions rares (passé simple, subjonctif imparfait, inversion), ou au contraire les mots familiers et les tournures de l\'oral.',
+    solution:'Registre <b>'+reg+'</b>. '+(orig?'C\'est la version d\'origine de l\'auteur. ':'C\'est une réécriture de ma main (le texte d\'origine, de '+t[0].split(',')[0]+', est soutenu). ')+v[1],
+    mist:frMist(reg),fallback:{tag:'fr-txt',title:'Réponds par un registre',html:'<p>Écris l\'un des trois registres : <b>familier</b>, <b>courant</b> ou <b>soutenu</b>.</p>'}}; };
+FRT('fr-txt',3,'frrg','Registre d\'un texte (extrait ou réécriture)');
 
 /* ===== Français : sémantique (exercices rédigés pour l'appli ; notions d'après les pages de cours reçues, aucun exemple de la feuille réutilisé dans les exercices) ===== */
 Object.assign(TAGS,{
