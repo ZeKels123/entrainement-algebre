@@ -6805,16 +6805,12 @@ function checkTxt(ex,input){
   return {status:'wrong',tag:'en-forme',title:'Ce n\'est pas la forme attendue',html:'<p>Relis la consigne, repère le temps (habitude ou action en cours), puis vérifie l\'auxiliaire, la terminaison et l\'orthographe. Utilise un indice si tu bloques.</p>'};
 }
 const ENT=(id,level,kind,label)=>{ TOPICS['en-'+id]={kind,level,label,gen:()=>mkTxt(ENGEN[id]())}; };
-ENT('ps-3s',1,'enor','3e personne (-s, -es, -ies)');
-ENT('pc-ing',1,'enor','Forme en -ing');
 ENT('ps-fill',1,'enps','Compléter au present simple');
 ENT('ps-neg',2,'enps','Present simple : négation');
 ENT('ps-q',2,'enps','Present simple : question');
 ENT('pc-fill',1,'enpc','Compléter au present continuous');
 ENT('pc-neg',2,'enpc','Present continuous : négation');
 ENT('pc-q',2,'enpc','Present continuous : question');
-ENT('mix-sc',3,'encm','Simple ou continuous ?');
-ENT('fix',3,'encm','Chasse à l\'erreur');
 
 /* ===== Français : registres de langue (exercices rédigés pour l'appli, sans reprendre ceux de la feuille) ===== */
 Object.assign(TAGS,{
@@ -8449,8 +8445,8 @@ const HINT_PB='Première ligne : l\'équation qui traduit l\'énoncé. Ensuite u
 const HINT_EQ='Écris une équation par ligne : chaque ligne doit avoir les mêmes solutions que la précédente. Termine par la solution, par exemple x = 2 (pour deux solutions : x = 2 ou x = -3 ; sinon « aucune solution » ou « tous les réels »). Fractions autorisées dans la solution : x = 3/2.';
 const RES_LABEL={clean:'Sans aide',helped:'Avec aide',shown:'Solution vue'};
 const S={mode:'mix',level:1,ex:null,n:0,results:[],log:[],status:'idle',tries:0,hints:0,recent:[],seriesErrs:{},pool:null,stepCount:1,domain:'alg',view:'train',combo:0,gxp:0,boss:null,bossNext:false};
-const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang','gsol','gtrig'],ang:['enps','enpc','enor','encm'],fr:['frrg','frre'],ff:['frfg','frfa'],fs:['fsnt','fsms','fsvc','fscl']};
-const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],ang:[['enps','Present simple'],['enpc','Present continuous'],['enor','Orthographe'],['encm','Comparaison'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fr:[['frrg','Reconnaître le registre'],['frre','Équivalents'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],ff:[['frfg','Reconnaître la figure'],['frfa','Analyser un exemple'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fs:[['fsnt','Notions du cours'],['fsms','Sens des mots'],['fsvc','Valeur et connotation'],['fscl','Champs lexicaux'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']]};
+const DKINDS={alg:['expand','factor'],eq:['solve','system','quad','problem'],geo:['gtri','gquad','gpyth','gthal','gcirc','gcomp','gang','gsol','gtrig'],ang:['enps','enpc'],fr:['frrg','frre'],ff:['frfg','frfa'],fs:['fsnt','fsms','fsvc','fscl']};
+const MODES={alg:[['expand','Développer'],['factor','Factoriser'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],eq:[['solve','1 inconnue'],['system','2 et 3 inconnues'],['quad','Second degré'],['problem','Problèmes'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],geo:[['gtri','Triangles'],['gquad','Quadrilatères'],['gpyth','Pythagore'],['gthal','Thalès'],['gcirc','Cercles'],['gcomp','Figures composées'],['gang','Angles et unités'],['gsol','Solides et volumes'],['gtrig','Trigonométrie'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']],ang:[['enps','Present simple'],['enpc','Present continuous'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fr:[['frrg','Reconnaître le registre'],['frre','Équivalents'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],ff:[['frfg','Reconnaître la figure'],['frfa','Analyser un exemple'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']],fs:[['fsnt','Notions du cours'],['fsms','Sens des mots'],['fsvc','Valeur et connotation'],['fscl','Champs lexicaux'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']]};
 const DOM_TITLE={alg:'Développer <span class="amp">&amp;</span> Factoriser',eq:'Équations',geo:'Géométrie',ang:'Anglais',fr:'Registres de langue',ff:'Figures de style',fs:'Sémantique'};
 const DOM_KICK={alg:'Algèbre · calcul littéral',eq:'Algèbre · équations, systèmes, problèmes',geo:'Géométrie plane · figures, aires et théorèmes',ang:'Anglais · present simple et present continuous',fr:'Français · familier, courant, soutenu',ff:'Français · reconnaître et analyser les figures',fs:'Français · analyse de texte : sémantique'};
 const DOMSTORE={alg:{mode:'mix',level:1},eq:{mode:'solve',level:1},geo:{mode:'gtri',level:1},ang:{mode:'mix',level:1},fr:{mode:'mix',level:1},ff:{mode:'mix',level:1},fs:{mode:'mix',level:1}};
