@@ -8898,7 +8898,7 @@ function attachDraw(){
 
 /* ===== Couche de jeu : XP, rangs, combo, boss, badges, boutique, records ===== */
 const GSTORE='dev-fact-game-v1';
-const RANKS=[[0,'Novice'],[50,'Novice II'],[100,'Élève'],[200,'Élève II'],[300,'Studieux'],[500,'Studieux II'],[700,'Assidu'],[1000,'Assidu II'],[1400,'Confirmé'],[1900,'Confirmé II'],[2500,'Érudit'],[3200,'Érudit II'],[4000,'Lauréat'],[5500,'Lauréat II']];
+const RANKS=[[0,'Novice'],[50,'Novice II'],[75,'Novice III'],[100,'Élève'],[200,'Élève II'],[250,'Élève III'],[300,'Studieux'],[500,'Studieux II'],[600,'Studieux III'],[700,'Assidu'],[1000,'Assidu II'],[1200,'Assidu III'],[1400,'Confirmé'],[1900,'Confirmé II'],[2200,'Confirmé III'],[2500,'Érudit'],[3200,'Érudit II'],[3600,'Érudit III'],[4000,'Lauréat'],[5500,'Lauréat II'],[6500,'Lauréat III'],[7500,'Expert'],[10000,'Expert II'],[11750,'Expert III'],[13500,'Maître'],[18000,'Maître II'],[21000,'Maître III'],[24000,'Grand maître'],[32000,'Grand maître II'],[37000,'Grand maître III'],[42000,'Légende'],[55000,'Légende II'],[65000,'Légende III'],[75000,'Mythique'],[90000,'Mythique II'],[110000,'Mythique III']];
 const RK=n=>RANKS.findIndex(x=>x[1]===n);
 const DAILY_GOAL=15, BOSS_TOTAL=5, BOSS_WIN=4;
 const xpBase=L=>Math.round(10*Math.pow(1.4,Math.max(1,L)-1));
