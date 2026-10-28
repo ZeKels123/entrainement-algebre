@@ -7,8 +7,8 @@ const EN={
   whyS3(v){ if(v==='have') return ' (have est irrégulier : has)'; const m=v.match(/(sh|ch|s|x|z|o)$/); if(m) return ' (verbe en -'+m[1]+' : on ajoute -es)'; if(/[^aeiou]y$/.test(v)) return ' (consonne + y : y devient -ies)'; return ' (on ajoute -s)'; },
   whyIng(v){ if(/ie$/.test(v)) return ' (ie devient ying)'; if(/[^aeiouy]e$/.test(v)&&!/ee$/.test(v)) return ' (le e final muet disparaît)'; if(EN.DBL.indexOf(v)>=0) return ' (verbe court consonne-voyelle-consonne : on double la consonne)'; return ' (on ajoute simplement -ing)'; },
   S:[{s:'I',q:'I',g:'1',c:"I'm"},{s:'You',q:'you',g:'p',c:"you're"},{s:'He',q:'he',g:'3',c:"he's"},{s:'She',q:'she',g:'3',c:"she's"},{s:'We',q:'we',g:'p',c:"we're"},{s:'They',q:'they',g:'p',c:"they're"},
-     {s:'My brother',q:'my brother',g:'3'},{s:'Our teacher',q:'our teacher',g:'3'},{s:'The children',q:'the children',g:'p'},{s:'Tom and Anna',q:'Tom and Anna',g:'p'},{s:'The train',q:'the train',g:'3'},{s:'My sister',q:'my sister',g:'3'}],
-  VP:[['play','football'],['watch','TV'],['study','French'],['go','to school'],['wash','the car'],['cook','dinner'],['read','a book'],['drink','coffee'],['open','the window'],['fix','the bike'],['help','at home'],['speak','German'],['write','emails'],['clean','the kitchen'],['drive','to work'],['eat','an apple'],['swim','in the lake'],['teach','maths'],['buy','bread'],['carry','the bags'],['fly','to Paris'],['stay','at home'],['live','in Jura'],['finish','work at five'],['have','a shower'],['walk','to the station'],['pass','the salt'],['run','in the park'],['sit','on the sofa'],['make','a cake'],['take','the bus'],['dance','in the hall']],
+     {s:'My brother',q:'my brother',g:'3'},{s:'Our teacher',q:'our teacher',g:'3'},{s:'My parents',q:'my parents',g:'p'},{s:'Tom and Anna',q:'Tom and Anna',g:'p'},{s:'My cousin',q:'my cousin',g:'3'},{s:'My sister',q:'my sister',g:'3'}],
+  VP:[['play','football'],['watch','TV'],['study','French'],['go','to the market'],['wash','the car'],['cook','dinner'],['read','a book'],['drink','coffee'],['open','the window'],['fix','the bike'],['help','at home'],['speak','German'],['write','emails'],['clean','the kitchen'],['drive','to the shop'],['eat','an apple'],['swim','in the lake'],['play','the piano'],['buy','bread'],['carry','the bags'],['fly','a kite'],['stay','at home'],['paint','the wall'],['finish','the homework'],['have','a shower'],['walk','to the station'],['make','tea'],['run','in the park'],['sit','on the sofa'],['make','a cake'],['take','the bus'],['dance','in the hall']],
   STAT:[['know','the answer'],['like','this song'],['want','a coffee'],['need','help'],['understand','the question'],['love','this film']],
   be:S=>S.g==='1'?'am':S.g==='3'?'is':'are',
   aux:S=>S.g==='3'?'does':'do',
@@ -35,7 +35,7 @@ const ENGEN={
    return enBase('pc-ing',1,'Écris la forme en -ing','« '+v+' »  →  ______',[r],
      'e muet : il disparaît. Verbe court consonne-voyelle-consonne : on double la consonne. ie → ying.',
      v+' → <b>'+r+'</b>'+EN.whyIng(v)+'.',[[v+'ing','Vérifie l\'orthographe : e muet, consonne doublée ou ie → ying.']]); },
- 'pc-fill':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], m=enPick([['Look!','',1],['Listen!','',1],['','at the moment',0],['','now',0],['','right now',0]]);
+ 'pc-fill':()=>{ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], m=enPick([['Look!','',1],['','at the moment',0],['','now',0],['','right now',0]]);
    const b=EN.be(S), ing=EN.ing(v), r=b+' '+ing, st=(m[0]?m[0]+' ':'')+S.s+' ___ ('+v+') '+vp[1]+(m[1]?' '+m[1]:'')+'.';
    const ans=[r,S.s+' '+r]; if(S.c) ans.push(S.c+' '+ing);
    if(b==='am') ans.push("'m "+ing); else if(b==='is') ans.push("'s "+ing); else ans.push("'re "+ing);
@@ -81,7 +81,7 @@ const ENGEN={
    if(t==='ps'){ const S=enSubj(), vp=enPick(EN.VP), v=vp[0], r=EN.vf(S,v), w=enPick([['Every day,',''],['Usually,','']]);
      return enBase('mix-sc',3,'Simple ou continuous ? Complète',w[0]+' '+S.q+' ___ ('+v+') '+vp[1]+'.',[r],
        'Repère : '+w[0].replace(',','')+' = habitude → present simple.','Habitude → present simple : <b>'+r+'</b>'+(S.g==='3'?EN.whyS3(v):'')+'.',[[EN.be(S)+' '+EN.ing(v),'Habitude : present simple.']]); }
-   const S=enSubj(), vp=enPick(EN.VP), v=vp[0], b=EN.be(S), ing=EN.ing(v), mk=enPick(['Look!','Listen!','Right now,','At the moment,']);
+   const S=enSubj(), vp=enPick(EN.VP), v=vp[0], b=EN.be(S), ing=EN.ing(v), mk=enPick(['Look!','Right now,','At the moment,']);
    return enBase('mix-sc',3,'Simple ou continuous ? Complète',mk+' '+(mk.endsWith(',')?S.q:S.s)+' ___ ('+v+') '+vp[1]+'.',[b+' '+ing,S.s+' '+b+' '+ing].concat(S.c?[S.c+' '+ing]:[]).concat([b==='am'?"'m "+ing:b==='is'?"'s "+ing:"'re "+ing]),
      '« '+mk.replace(',','')+' » : action en cours → present continuous.','Action en cours → <b>'+b+' '+ing+'</b>.',[[EN.vf(S,v),'« '+mk.replace(',','')+' » : action en cours, present continuous.']]); },
  'fix':()=>{ const L=[["She go to school every day.",["She goes to school every day"],"3e personne du singulier au present simple : go → goes."],

@@ -80,7 +80,7 @@ const BADGES=[
   ['gold','Pépite','Réussir un exercice doré du premier coup, sans indice.',()=>G.c.gold>=1],
   ['podium','Sur le podium','Terminer dans les 3 premiers du classement hebdomadaire.',()=>G.c.podium>=1],
   ['champion','Champion de la semaine','Terminer premier du classement hebdomadaire.',()=>G.c.champion>=1],
-  ['b_anglais','Anglophone','Réussir 40 exercices d\'anglais sans aide.',()=>(G.c.ang||0)>=40],
+  ['b_anglais','Anglophone','Réussir 40 exercices d\'anglais sans aide.',()=>((G.c.ang||0)+(G.c.apa||0))>=40],
   ['shop','Premier achat','Acheter un article à la boutique.',()=>G.c.buys>=1]
 ];
 function checkBadges(){

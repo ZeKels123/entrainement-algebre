@@ -4,12 +4,17 @@
    et la suite du rayonnement (documents utiles aux exercices 19 et 20) ne sont pas encore dans l'appli. */
 
 /* ----- domaine « ph » du moteur, rattaché à la branche Physique ----- */
-BRDOM.physique='ph'; DOMBR.ph='physique'; BRDOMS.physique=['ph'];
+BRDOM.physique='ph'; DOMBR.ph='physique'; DOMBR.phd='physique'; DOMBR.phg='physique'; BRDOMS.physique=['ph','phd','phg'];
 DKINDS.ph=['phcd','phcv','phmt'];
 MODES.ph=[['phcd','Conduction'],['phcv','Convection'],['phmt','Modes de transfert'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']];
-DOM_TITLE.ph='Chaleur';
-DOM_KICK.ph='Physique · transferts de chaleur, dilatation, gaz parfaits';
-DOMSTORE.ph={mode:'mix',level:1};
+DOM_TITLE.ph='Chaleur'; DOM_TITLE.phd='Dilatation'; DOM_TITLE.phg='Gaz parfaits';
+DOM_KICK.ph='Physique · transferts de chaleur : conduction, convection, rayonnement';
+DOM_KICK.phd='Physique · dilatation des solides et des liquides';
+DOM_KICK.phg='Physique · gaz parfaits : pression, volume, température';
+DOMSTORE.ph={mode:'mix',level:1}; DOMSTORE.phd={mode:'mix',level:1}; DOMSTORE.phg={mode:'mix',level:1};
+DKINDS.phd=[]; DKINDS.phg=[];
+MODES.phd=[['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']];
+MODES.phg=[['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']];
 Object.assign(KIND_LABEL,{phcd:'Conduction',phcv:'Convection',phmt:'Modes de transfert'});
 
 Object.assign(TAGS,{
@@ -228,7 +233,9 @@ const PH_FORM=[
   ['Énergie et conversions',[['Chaleur transmise',M('Q = (Q/Δt) × Δt')],['Durées','1 min = 60 s ; 1 h = 3600 s'],['Énergie','1 kJ = 1000 J ; 1 MJ = 1 000 000 J'],['Épaisseur','1 cm = 0,01 m']]],
   ['Conductivité thermique λ (W·m⁻¹·°C⁻¹)',PH_LAMBDA.map(x=>[x[0],NF(x[1])])]
 ];
-function phFormulas(T){ return PH_FORM.map(f=>T(f[0],f[1])).join(''); }
+/* thème (onglet) de chaque tableau de formules : « ph » (Chaleur) par défaut */
+const PH_FDOM={'Dilatation des solides':'phd','Dilatation des liquides':'phd','Gaz parfaits':'phg'};
+function phFormulas(T,d){ return PH_FORM.filter(f=>(PH_FDOM[f[0]]||'ph')===(d||'ph')).map(f=>T(f[0],f[1])).join(''); }
 
 /* ----- fiches de cours ----- */
 Object.assign(brData('physique'),{fiches:[

@@ -3,8 +3,8 @@
 /* Fiche d'après les pages C-54 (Boyle-Mariotte, gaz parfaits) et C-58 (résumé) ; exercices originaux inspirés des pages
    C-55 à C-57, sans en reprendre les énoncés. Les pages précédentes du chapitre (Gay-Lussac et Charles en détail) ne sont pas encore reçues. */
 
-DKINDS.ph.push('phgz','phgq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phgz','Gaz parfaits'],['phgq','Gaz : questions']);
+DKINDS.phg.push('phgz','phgq');
+MODES.phg.splice(MODES.phg.findIndex(m=>m[0]==='mix'),0,['phgz','Gaz parfaits'],['phgq','Gaz : questions']);
 Object.assign(KIND_LABEL,{phgz:'Gaz parfaits',phgq:'Gaz : questions'});
 
 Object.assign(TAGS,{
@@ -114,14 +114,14 @@ PHT('ph-gq1',1,'phgq','Vrai ou faux et situations',genPhGq);
 
 PH_FORM.push(['Gaz parfaits',[['Température absolue',M('T = θ + 273')+' (en K)'],['Boyle-Mariotte (T constante)',M('p₁ · V₁ = p₂ · V₂')],['Gay-Lussac (p constante)',M('V = V₀ · T / T₀')+' ; '+M('V₂ / T₂ = V₁ / T₁')],['Charles (V constant)',M('p = p₀ · T / T₀')+' ; '+M('p₂ / T₂ = p₁ / T₁')],['Loi des gaz parfaits',M('p · V / T = constante')]]]);
 brData('physique').fiches.push(
-{d:'ph',t:'Chaleur · La dilatation des gaz parfaits (résumé)',html:
+{d:'phg',t:'Chaleur · La dilatation des gaz parfaits (résumé)',html:
 '<p>La dilatation d\'un gaz à <b>pression constante</b> s\'exprime par la <b>loi de Gay-Lussac</b> :</p><p>'+M('V = V₀ · (1 + γ · θ) = V₀ · T / T₀')+'</p>'
 +'<p>V : volume du gaz à la température θ [m³] ; V₀ : volume du gaz à 0 °C [m³] ; γ : coefficient de dilatation (γ = 1/273 °C⁻¹) ; θ : température [°C] ; T : température absolue [K] ; T₀ = 1/γ = 273 K.</p>'
 +'<p>L\'augmentation de pression d\'un gaz, à <b>volume constant</b>, s\'exprime par la <b>loi de Charles</b> :</p><p>'+M('p = p₀ · (1 + γ · θ) = p₀ · T / T₀')+'</p>'
 +'<p>p : pression du gaz à la température θ [Pa] ; p₀ : pression du gaz à 0 °C [Pa].</p>'
 +'<p>À <b>température constante</b>, la pression et le volume d\'un gaz parfait sont liés par la <b>loi de Boyle-Mariotte</b> : '+M('p · V = constante')+'.</p>'
 +'<p>Les gaz parfaits satisfont donc à la <b>loi des gaz parfaits</b> : '+M('p · V / T = constante')+' (p : pression absolue [Pa] ; V : volume [m³] ; T : température absolue [K]).</p>'},
-{d:'ph',t:'Boyle-Mariotte et gaz parfaits (pages C-54)',html:
+{d:'phg',t:'Boyle-Mariotte et gaz parfaits (pages C-54)',html:
 '<p>Un gaz étant compressible, il est possible de modifier son volume. Si sa température ne change pas, sa pression varie. Expérimentalement, on constate que '+M('p₁ · V₁ = p₂ · V₂')+'.</p>'
 +'<p><b>Lorsqu\'on comprime un gaz à température constante, sa pression et son volume sont inversement proportionnels</b> : '+M('p · V = constante')+'. C\'est la loi de Boyle-Mariotte ; l\'unité de la constante est le N · m, c\'est-à-dire le J : il s\'agit donc d\'une énergie.</p>'
 +'<p>Les trois lois sont résumées dans une loi plus générale, qui décrit la transformation d\'un gaz de masse constante : '+M('p · V / T = constante')+' (unité de la constante : J · K⁻¹). C\'est la loi des gaz parfaits.</p>'

@@ -3,8 +3,8 @@
 /* Fiche d'après la page C-46 (résumé) ; exercices originaux inspirés des pages C-47 et C-48, sans en reprendre les énoncés.
    Le cours ne contient pas de tableau des coefficients γ et α : les valeurs usuelles utilisées sont ajoutées par moi. */
 
-DKINDS.ph.push('phli','phlq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phli','Liquides'],['phlq','Liquides : questions']);
+DKINDS.phd.push('phli','phlq');
+MODES.phd.splice(MODES.phd.findIndex(m=>m[0]==='mix'),0,['phli','Liquides'],['phlq','Liquides : questions']);
 Object.assign(KIND_LABEL,{phli:'Dilatation des liquides',phlq:'Liquides : questions'});
 
 Object.assign(TAGS,{
@@ -117,14 +117,14 @@ PHT('ph-lq1',1,'phlq','Vrai ou faux et situations',genPhLq);
 
 PH_FORM.push(['Dilatation des liquides',[['Dilatation réelle',M('ΔV = γ · V₁ · Δθ')+' ; '+M('V₂ = V₁ · (1 + γ · Δθ)')],['Dilatation apparente',M('ΔV app = (γ − 3α) · V₁ · Δθ')],['γ, α','γ : coefficient volumique du liquide ; α : coefficient linéaire du récipient'],['Exception','L\'eau entre 0 °C et 4 °C se contracte quand on la chauffe']]]);
 brData('physique').fiches.push(
-{d:'ph',t:'Chaleur · La dilatation des liquides (résumé)',html:
+{d:'phd',t:'Chaleur · La dilatation des liquides (résumé)',html:
 '<p>À part les rares cas de réarrangement moléculaire (comme pour l\'eau entre 0 °C et 4 °C), l\'augmentation de température d\'un liquide s\'accompagne d\'une augmentation de son volume :</p>'
 +'<p>'+M('ΔV = V₂ − V₁ = γ · V₁ · (θ₂ − θ₁) = γ · V₁ · Δθ')+'<br>'+M('V₂ = V₁ + γ · V₁ · Δθ = V₁ · (1 + γ · Δθ)')+'</p>'
 +'<p>V₁ : volume initial [m³] ; V₂ : volume final [m³] ; ΔV : variation de volume [m³] ; θ₁, θ₂ : températures initiale et finale [°C] ou [K] ; Δθ = θ₂ − θ₁ ; γ : <b>coefficient de dilatation volumique</b> du liquide [°C⁻¹] ou [K⁻¹].</p>'
 +'<h3>Dilatation apparente</h3><p>Généralement, un liquide est contenu dans un récipient qui se dilate lui-même ; on peut en tenir compte si l\'on connaît le coefficient de dilatation linéaire α de la matière du récipient. On calcule alors la <b>dilatation apparente</b> du liquide dans le récipient, particulièrement utile pour les liquides contenus dans des récipients gradués :</p>'
 +'<p>'+M('ΔV app = (γ − 3α) · V₁ · (θ₂ − θ₁)')+'<br>'+M('V₂ app = V₁ · (1 + (γ − 3α) · Δθ)')+'</p>'
 +'<p>γ : coefficient de dilatation volumique du liquide ; α : coefficient de dilatation linéaire du récipient [°C⁻¹] ou [K⁻¹].</p>'},
-{d:'ph',t:'Liquides : coefficients utilisés (CHR 6)',html:
+{d:'phd',t:'Liquides : coefficients utilisés (CHR 6)',html:
 '<p>Ton cours ne donne pas de tableau des coefficients. Les exercices de l\'appli utilisent ces valeurs usuelles (ajoutées par moi, à vérifier dans ton cours) :</p>'
 +'<table class="ov"><thead><tr><th>Liquide</th><th>γ en 10⁻³ °C⁻¹</th></tr></thead><tbody>'+PH_GAMMA.map(x=>'<tr><td>'+x[0]+'</td><td>'+NF(x[1])+'</td></tr>').join('')+'</tbody></table>'
 +'<table class="ov"><thead><tr><th>Récipient</th><th>α en 10⁻⁶ °C⁻¹</th></tr></thead><tbody>'+PH_CONT.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>').join('')+'</tbody></table>'

@@ -488,7 +488,7 @@ footer{max-width:880px; margin:28px auto 0; font-size:13px; color:var(--ink-3)}
 .brstats .lbl{font:600 13px/1 var(--f-head); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
 
 .app.nomath .tabs:not(#brtabs),.app.nomath #subnav,#tab-shop,#tab-lb{display:none!important}
-.app[data-br=anglais] .tabs:not(#brtabs) .tab:not(#tab-stats),.app[data-br=physique] .tabs:not(#brtabs) .tab:not(#tab-stats),.app[data-br=francais] .tabs:not(#brtabs) #tab-alg,.app[data-br=francais] .tabs:not(#brtabs) #tab-eq,.app[data-br=francais] .tabs:not(#brtabs) #tab-geo,.app:not([data-br=francais]) #tab-fr,.app:not([data-br=francais]) #tab-ff,.app:not([data-br=francais]) #tab-fs{display:none!important}
+.app[data-br=anglais] .tabs:not(#brtabs) .tab:not(#tab-stats):not(#tab-ang):not(#tab-apa),.app:not([data-br=anglais]) #tab-ang,.app:not([data-br=anglais]) #tab-apa,.app[data-br=physique] .tabs:not(#brtabs) .tab:not(#tab-stats):not(#tab-ph):not(#tab-phd):not(#tab-phg),.app:not([data-br=physique]) #tab-ph,.app:not([data-br=physique]) #tab-phd,.app:not([data-br=physique]) #tab-phg,.app[data-br=francais] .tabs:not(#brtabs) #tab-alg,.app[data-br=francais] .tabs:not(#brtabs) #tab-eq,.app[data-br=francais] .tabs:not(#brtabs) #tab-geo,.app:not([data-br=francais]) #tab-fr,.app:not([data-br=francais]) #tab-ff,.app:not([data-br=francais]) #tab-fs{display:none!important}
 .en-gap{display:inline-block;min-width:64px;border-bottom:2px solid var(--muted,#888);margin:0 2px}
 .app.nogame .gbar,.app.nogame .syncbar{display:none!important}
 .branchbar{display:flex; gap:6px; overflow-x:auto; padding:10px 0 0; scrollbar-width:thin}

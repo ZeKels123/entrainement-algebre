@@ -3,8 +3,8 @@
 /* Fiche d'après la page C-39 (résumé) ; exercices originaux inspirés des pages C-40 et C-41, sans en reprendre les énoncés.
    Le cours ne contient pas de tableau des coefficients α : les valeurs usuelles utilisées sont ajoutées par moi. */
 
-DKINDS.ph.push('phdl','phdq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phdl','Dilatation'],['phdq','Dilatation : questions']);
+DKINDS.phd.push('phdl','phdq');
+MODES.phd.splice(MODES.phd.findIndex(m=>m[0]==='mix'),0,['phdl','Dilatation'],['phdq','Dilatation : questions']);
 Object.assign(KIND_LABEL,{phdl:'Dilatation',phdq:'Dilatation : questions'});
 
 Object.assign(TAGS,{
@@ -123,7 +123,7 @@ PHT('ph-dq1',1,'phdq','Vrai ou faux et situations',genPhDq);
 /* ----- fiche de cours ----- */
 PH_FORM.push(['Dilatation des solides',[['Longueur',M('Δℓ = α · ℓ₁ · Δθ')+' ; '+M('ℓ₂ = ℓ₁ · (1 + α · Δθ)')],['Surface',M('ΔA = 2α · A₁ · Δθ')+' ; '+M('A₂ = A₁ · (1 + 2α · Δθ)')],['Volume',M('ΔV = 3α · V₁ · Δθ')+' ; '+M('V₂ = V₁ · (1 + 3α · Δθ)')],['α','Coefficient de dilatation linéaire, en °C⁻¹ ou K⁻¹']]]);
 brData('physique').fiches.push(
-{d:'ph',t:'Chaleur · La dilatation des solides (résumé)',html:
+{d:'phd',t:'Chaleur · La dilatation des solides (résumé)',html:
 '<p>À part les rares cas de réarrangement moléculaire, l\'augmentation de température d\'un corps s\'accompagne d\'une augmentation de taille. Selon les cas, on s\'intéresse à une de ses dimensions (<b>dilatation linéaire</b>), à sa surface (<b>dilatation de surface</b>) ou à son volume (<b>dilatation volumique</b>).</p>'
 +'<h3>Dilatation linéaire</h3><p>'+M('Δℓ = ℓ₂ − ℓ₁ = α · ℓ₁ · (θ₂ − θ₁) = α · ℓ₁ · Δθ')+'<br>'+M('ℓ₂ = ℓ₁ + α · ℓ₁ · Δθ = ℓ₁ · (1 + α · Δθ)')+'</p>'
 +'<p>ℓ₁ : longueur initiale [m] ; ℓ₂ : longueur finale [m] ; Δℓ : variation de longueur [m].</p>'
@@ -133,7 +133,7 @@ brData('physique').fiches.push(
 +'<p>V₁ : volume initial [m³] ; V₂ : volume final [m³] ; ΔV : variation de volume [m³].</p>'
 +'<p>Dans les trois cas : θ₁ température initiale et θ₂ température finale [°C] ou [K] ; Δθ = θ₂ − θ₁ ; α <b>coefficient de dilatation linéaire</b> [°C⁻¹] ou [K⁻¹].</p>'
 +'<p><b>Remarque</b> : les relations pour la dilatation de surface et la dilatation volumique sont obtenues par approximation ; l\'erreur est cependant inférieure à 1 %.</p>'},
-{d:'ph',t:'Dilatation : coefficients utilisés (CHR 5)',html:
+{d:'phd',t:'Dilatation : coefficients utilisés (CHR 5)',html:
 '<p>Ton cours ne donne pas encore de tableau des coefficients α. Les exercices de l\'appli utilisent ces valeurs usuelles (ajoutées par moi, à vérifier dans ton cours) :</p>'
 +'<table class="ov"><thead><tr><th>Matériau</th><th>α en 10⁻⁶ °C⁻¹</th></tr></thead><tbody>'+PH_ALPHA.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>').join('')+'</tbody></table>'
 +'<p>Les exercices de l\'appli sont <b>originaux</b> : mêmes notions que ta feuille (allongement, surface, volume, variations relatives, vrai ou faux, situations de la vie courante), avec d\'autres situations et des valeurs tirées au hasard.</p>'}

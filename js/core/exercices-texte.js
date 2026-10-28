@@ -3,12 +3,12 @@
 const enPick=a=>a[Math.floor(Math.random()*a.length)];
 const enNorm=s=>String(s).replace(/[’‘`´]/g,"'").replace(/\s+/g,' ').trim().toLowerCase().replace(/[.?!\s]+$/,'');
 /* branches → domaines du moteur : chaque branche de langue ou de texte a son domaine (onglet) */
-const BRDOM={anglais:'ang',francais:'fr'}, DOMBR={ang:'anglais',fr:'francais',ff:'francais',fs:'francais'}, BRDOMS={anglais:['ang'],francais:['fr','ff','fs']};
-const tagDom=t=>/^en-/.test(t)?'ang':/^fr-/.test(t)?'fr':/^ph-/.test(t)?'ph':'math';
+const BRDOM={anglais:'ang',francais:'fr'}, DOMBR={ang:'anglais',apa:'anglais',fr:'francais',ff:'francais',fs:'francais'}, BRDOMS={anglais:['ang','apa'],francais:['fr','ff','fs']};
+const tagDom=t=>/^en-/.test(t)?'ang':/^ep-/.test(t)?'apa':/^fr-/.test(t)?'fr':/^ph-(dil|liq)-/.test(t)?'phd':/^ph-gaz-/.test(t)?'phg':/^ph-/.test(t)?'ph':'math';
 const enNorm2=s=>enNorm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function mkTxt(g){
   const lang=g.lang||'en', stmt=g.statement, ans=g.answers;
-  const ms=g.mist.map(m=>({s:enNorm2(m[0]),msg:m[1],tag:g.tag||enTag(m[1])}));
+  const ms=g.mist.map(m=>({s:enNorm2(m[0]),msg:m[1],tag:g.tag||(g.tagf?g.tagf(m[1]):enTag(m[1]))}));
   const html='<div class="geo"><p class="geotxt" lang="'+lang+'">'+esc(stmt).replace(/\n/g,'<br>').replace(/_{3,}/g,'<span class="en-gap">…………</span>')+'</p></div>';
   return {kind:'txt',txt:true,expected:{},vars:[],v:null,geo:{mode:'txt',answers:ans.map(enNorm2),stmt:stmt,choices:g.choices||null},choices:g.choices||null,
     statement:stmt, html, expectedStr:ans[0], expectedHtml:'<span lang="'+lang+'">'+esc(ans[0])+'</span>',
