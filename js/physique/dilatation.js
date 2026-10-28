@@ -3,9 +3,9 @@
 /* Fiche d'après la page C-39 (résumé) ; exercices originaux inspirés des pages C-40 et C-41, sans en reprendre les énoncés.
    Le cours ne contient pas de tableau des coefficients α : les valeurs usuelles utilisées sont ajoutées par moi. */
 
-DKINDS.ph.push('phdl','phdq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phdl','Dilatation'],['phdq','Dilatation : questions']);
-Object.assign(KIND_LABEL,{phdl:'Dilatation',phdq:'Dilatation : questions'});
+DKINDS.ph.push('phdl');
+MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phdl','Dilatation']);
+Object.assign(KIND_LABEL,{phdl:'Dilatation'});
 
 Object.assign(TAGS,{
   'ph-dil-facteur':{label:'Facteur 2α ou 3α',tip:'Longueur : Δℓ = α · ℓ₁ · Δθ. Surface : ΔA = 2α · A₁ · Δθ. Volume : ΔV = 3α · V₁ · Δθ. α est toujours le coefficient de dilatation linéaire.'},
@@ -118,7 +118,7 @@ PHT('ph-dl2',2,'phdl','Longueur finale (chauffage ou refroidissement)',genPhDl2)
 PHT('ph-dl3',3,'phdl','Dilatation d\'une surface',genPhDl3);
 PHT('ph-dl4',4,'phdl','Dilatation d\'un volume (capacité)',genPhDl4);
 PHT('ph-dl5',5,'phdl','Variations relatives',genPhDl5);
-PHT('ph-dq1',1,'phdq','Vrai ou faux et situations',genPhDq);
+PHT('ph-dq1',1,'phdl','Vrai ou faux et situations',genPhDq);
 
 /* ----- fiche de cours ----- */
 PH_FORM.push(['Dilatation des solides',[['Longueur',M('Δℓ = α · ℓ₁ · Δθ')+' ; '+M('ℓ₂ = ℓ₁ · (1 + α · Δθ)')],['Surface',M('ΔA = 2α · A₁ · Δθ')+' ; '+M('A₂ = A₁ · (1 + 2α · Δθ)')],['Volume',M('ΔV = 3α · V₁ · Δθ')+' ; '+M('V₂ = V₁ · (1 + 3α · Δθ)')],['α','Coefficient de dilatation linéaire, en °C⁻¹ ou K⁻¹']]]);

@@ -3,9 +3,9 @@
 /* Fiche d'après la page C-46 (résumé) ; exercices originaux inspirés des pages C-47 et C-48, sans en reprendre les énoncés.
    Le cours ne contient pas de tableau des coefficients γ et α : les valeurs usuelles utilisées sont ajoutées par moi. */
 
-DKINDS.ph.push('phli','phlq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phli','Liquides'],['phlq','Liquides : questions']);
-Object.assign(KIND_LABEL,{phli:'Dilatation des liquides',phlq:'Liquides : questions'});
+DKINDS.ph.push('phli');
+MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phli','Liquides']);
+Object.assign(KIND_LABEL,{phli:'Dilatation des liquides'});
 
 Object.assign(TAGS,{
   'ph-liq-app':{label:'Dilatation apparente',tip:'Le récipient se dilate aussi : la dilatation apparente vaut ΔV app = (γ − 3α) · V₁ · Δθ, avec γ du liquide et α (linéaire) du récipient.'},
@@ -113,7 +113,7 @@ PHT('ph-li2',2,'phli','Volume final (chauffage ou refroidissement)',genPhLi2);
 PHT('ph-li3',3,'phli','Dilatation apparente dans un récipient gradué',genPhLi3);
 PHT('ph-li4',4,'phli','Température de débordement',genPhLi4);
 PHT('ph-li5',5,'phli','Colonne d\'un thermomètre',genPhLi5);
-PHT('ph-lq1',1,'phlq','Vrai ou faux et situations',genPhLq);
+PHT('ph-lq1',1,'phli','Vrai ou faux et situations',genPhLq);
 
 PH_FORM.push(['Dilatation des liquides',[['Dilatation réelle',M('ΔV = γ · V₁ · Δθ')+' ; '+M('V₂ = V₁ · (1 + γ · Δθ)')],['Dilatation apparente',M('ΔV app = (γ − 3α) · V₁ · Δθ')],['γ, α','γ : coefficient volumique du liquide ; α : coefficient linéaire du récipient'],['Exception','L\'eau entre 0 °C et 4 °C se contracte quand on la chauffe']]]);
 brData('physique').fiches.push(
