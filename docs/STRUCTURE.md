@@ -160,7 +160,7 @@ au moment de l'appel.
 
 ## Ajouts après le découpage
 
-- **Physique (domaines `ph`, `phd`, `phg`)** : trois onglets de thèmes, comme en français : Chaleur (`ph` : conduction, convection, modes de transfert), Dilatation (`phd` : solides et liquides) et Gaz parfaits (`phg`). Le préfixe des genres dans `domainOf` et celui des tags dans `tagDom` (`ph-dil-`, `ph-liq-` → `phd` ; `ph-gaz-` → `phg`) répartissent exercices et erreurs ; chaque fiche porte `d:'ph'|'phd'|'phg'` et `phFormulas(T,d)` filtre les formules par thème. Les fichiers `js/physique/*.js` complètent `BRDOM`, `DOMBR`, `BRDOMS`, `DKINDS`,
+- **Physique (domaine `ph`)** : un seul onglet « Chaleur » regroupe tous les thèmes (transferts, dilatation, gaz parfaits). Les fichiers `js/physique/*.js` complètent `BRDOM`, `DOMBR`, `BRDOMS`, `DKINDS`,
   `MODES`, `DOM_TITLE`, `DOM_KICK`, `DOMSTORE`, `KIND_LABEL` et `TAGS`. Trois lignes ont été ajoutées au code
   partagé : le préfixe `ph` dans `domainOf` (`js/algebre/factoriser.js`) et `tagDom` (`js/core/exercices-texte.js`),
   et l'appel `phFormulas(T)` dans `formulasHTML` (`js/ui/examen.js`).
