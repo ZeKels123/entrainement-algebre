@@ -84,6 +84,10 @@ Les numéros de lignes renvoient à l'ancien `index.html` (commit `ceee127`).
 | 40 | `js/branches/branches.js` | Branches de maturité : `BRANCHES`, `BR`, `brProg`, accueil, `setBranch`, `brSetup()` | 10191–10310 |
 | 41 | `js/anglais/fiches.js` | Fiches de cours d'anglais (`brData('anglais')`) | 10311–10336 |
 | 42 | `js/francais/fiches.js` | Fiches de cours de français (`brData('francais')`) | 10337–10444 |
+| 43a | `js/physique/chaleur.js` | Physique · Chaleur : déclare le domaine `ph` (branche Physique) ; CHR 4 transferts de chaleur (conduction, convection, modes de transfert), fiches, `PH_FORM` (fiche de formules) | ajouté après le découpage |
+| 43b | `js/physique/dilatation.js` | CHR 5 dilatation des solides | ajouté |
+| 43c | `js/physique/liquides.js` | CHR 6 dilatation des liquides | ajouté |
+| 43d | `js/physique/gaz.js` | CHR 7 gaz parfaits | ajouté |
 | 43 | `js/ui/cours-bilan.js` | Cours, bilan, rangs par thème | 10445–10691 |
 | 44 | `js/init.js` | `init()` : branchement des événements puis démarrage, appelé en dernier | 10692–10735 |
 
@@ -153,3 +157,13 @@ au moment de l'appel.
   `branches/branches.js` lisent le `localStorage` au chargement.
 - `ui/*`, `jeu/*`, `compte/compte.js`, `branches/branches.js` et `init.js` s'appellent
   entre eux dans les deux sens, uniquement à l'exécution (après `init()`).
+
+## Ajouts après le découpage
+
+- **Physique (domaine `ph`)** : les fichiers `js/physique/*.js` complètent `BRDOM`, `DOMBR`, `BRDOMS`, `DKINDS`,
+  `MODES`, `DOM_TITLE`, `DOM_KICK`, `DOMSTORE`, `KIND_LABEL` et `TAGS`. Trois lignes ont été ajoutées au code
+  partagé : le préfixe `ph` dans `domainOf` (`js/algebre/factoriser.js`) et `tagDom` (`js/core/exercices-texte.js`),
+  et l'appel `phFormulas(T)` dans `formulasHTML` (`js/ui/examen.js`).
+- **Unités du correcteur numérique** (`geoUnit`, `js/correction/geometrie.js`) : en plus des longueurs, il
+  reconnaît W, kW, J, kJ, MJ, °C, K, L, mL, bar, mbar, hPa et Pa (table `GU_PHYS`). Les exercices numériques de
+  physique utilisent ce correcteur via `mkGeo` (égalités vérifiées ligne par ligne, arrondi, unité).

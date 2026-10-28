@@ -4,7 +4,7 @@ const enPick=a=>a[Math.floor(Math.random()*a.length)];
 const enNorm=s=>String(s).replace(/[’‘`´]/g,"'").replace(/\s+/g,' ').trim().toLowerCase().replace(/[.?!\s]+$/,'');
 /* branches → domaines du moteur : chaque branche de langue ou de texte a son domaine (onglet) */
 const BRDOM={anglais:'ang',francais:'fr'}, DOMBR={ang:'anglais',fr:'francais',ff:'francais',fs:'francais'}, BRDOMS={anglais:['ang'],francais:['fr','ff','fs']};
-const tagDom=t=>/^en-/.test(t)?'ang':/^fr-/.test(t)?'fr':'math';
+const tagDom=t=>/^en-/.test(t)?'ang':/^fr-/.test(t)?'fr':/^ph-/.test(t)?'ph':'math';
 const enNorm2=s=>enNorm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function mkTxt(g){
   const lang=g.lang||'en', stmt=g.statement, ans=g.answers;

@@ -23,6 +23,8 @@ js/
                         niveau 6, schémas explicatifs, cours de géométrie
   anglais/              exercices (anglais.js) et fiches de cours (fiches.js)
   francais/             registres, figures de style, sémantique, fiches de cours
+  physique/             Chaleur : transferts de chaleur, dilatation des solides, des liquides,
+                        gaz parfaits (fiches, exercices et formules du domaine « ph »)
   copie/                mode « Corrige la copie »
   stockage/             statistiques (stats.js), révision espacée SRS (revision-srs.js)
   ui/                   entraînement, examen, dessin, cours et bilan
@@ -110,3 +112,9 @@ demande encore de modifier des fichiers partagés :
 
 S'inspirer de l'anglais (`js/anglais/anglais.js`) : générateurs, `TAGS` et
 enregistrement dans `TOPICS`.
+
+Exemple complet : la physique. `js/physique/chaleur.js` déclare le domaine `ph`
+(`BRDOM`, `DKINDS`, `MODES`, `DOM_TITLE`… sont complétés depuis ce fichier) ; seuls
+`domainOf`, `tagDom` et `formulasHTML` ont reçu une ligne pour le préfixe `ph`. Chaque
+sous-thème (`dilatation.js`, `liquides.js`, `gaz.js`) ajoute ensuite ses thèmes, ses
+fiches et ses formules sans toucher aux autres fichiers.
