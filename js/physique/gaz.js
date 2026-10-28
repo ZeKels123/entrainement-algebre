@@ -3,9 +3,9 @@
 /* Fiche d'après les pages C-54 (Boyle-Mariotte, gaz parfaits) et C-58 (résumé) ; exercices originaux inspirés des pages
    C-55 à C-57, sans en reprendre les énoncés. Les pages précédentes du chapitre (Gay-Lussac et Charles en détail) ne sont pas encore reçues. */
 
-DKINDS.ph.push('phgz','phgq');
-MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phgz','Gaz parfaits'],['phgq','Gaz : questions']);
-Object.assign(KIND_LABEL,{phgz:'Gaz parfaits',phgq:'Gaz : questions'});
+DKINDS.ph.push('phgz');
+MODES.ph.splice(MODES.ph.findIndex(m=>m[0]==='mix'),0,['phgz','Gaz parfaits']);
+Object.assign(KIND_LABEL,{phgz:'Gaz parfaits'});
 
 Object.assign(TAGS,{
   'ph-gaz-kelvin':{label:'Température en kelvins',tip:'Dans les lois des gaz, T est la température absolue : T = θ + 273 (en K). Avec des °C, les rapports sont faux.'},
@@ -110,7 +110,7 @@ PHT('ph-gz2',2,'phgz','Gay-Lussac (pression constante)',genPhGz2);
 PHT('ph-gz3',3,'phgz','Charles (volume constant)',genPhGz3);
 PHT('ph-gz4',4,'phgz','Loi des gaz parfaits',genPhGz4);
 PHT('ph-gz5',5,'phgz','Réserve de gaz comprimé',genPhGz5);
-PHT('ph-gq1',1,'phgq','Vrai ou faux et situations',genPhGq);
+PHT('ph-gq1',1,'phgz','Vrai ou faux et situations',genPhGq);
 
 PH_FORM.push(['Gaz parfaits',[['Température absolue',M('T = θ + 273')+' (en K)'],['Boyle-Mariotte (T constante)',M('p₁ · V₁ = p₂ · V₂')],['Gay-Lussac (p constante)',M('V = V₀ · T / T₀')+' ; '+M('V₂ / T₂ = V₁ / T₁')],['Charles (V constant)',M('p = p₀ · T / T₀')+' ; '+M('p₂ / T₂ = p₁ / T₁')],['Loi des gaz parfaits',M('p · V / T = constante')]]]);
 brData('physique').fiches.push(
