@@ -6,7 +6,7 @@
 /* ----- domaine « ph » du moteur, rattaché à la branche Physique ----- */
 BRDOM.physique='ph'; DOMBR.ph='physique'; BRDOMS.physique=['ph'];
 DKINDS.ph=['phcd','phcv','phmt'];
-MODES.ph=[['phcd','Conduction'],['phcv','Convection'],['phmt','Modes de transfert'],['mix','Mélange'],['srs','À revoir'],['review','Chasse aux erreurs']];
+MODES.ph=[['phcd','Conduction'],['phcv','Convection'],['phmt','Modes de transfert'],['mix','Mélange'],['copy','Corrige la copie'],['srs','À revoir'],['review','Chasse aux erreurs']];
 DOM_TITLE.ph='Chaleur';
 DOM_KICK.ph='Physique · transferts de chaleur, dilatation, gaz parfaits';
 DOMSTORE.ph={mode:'mix',level:1};

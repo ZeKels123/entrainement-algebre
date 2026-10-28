@@ -8,7 +8,7 @@ const tagDom=t=>/^en-/.test(t)?'ang':/^ep-/.test(t)?'apa':/^fr-/.test(t)?'fr':/^
 const enNorm2=s=>enNorm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function mkTxt(g){
   const lang=g.lang||'en', stmt=g.statement, ans=g.answers;
-  const ms=g.mist.map(m=>({s:enNorm2(m[0]),msg:m[1],tag:g.tag||(g.tagf?g.tagf(m[1]):enTag(m[1]))}));
+  const ms=g.mist.map(m=>({s:enNorm2(m[0]),raw:m[0],msg:m[1],tag:g.tag||(g.tagf?g.tagf(m[1]):enTag(m[1]))}));
   const html='<div class="geo"><p class="geotxt" lang="'+lang+'">'+esc(stmt).replace(/\n/g,'<br>').replace(/_{3,}/g,'<span class="en-gap">…………</span>')+'</p></div>';
   return {kind:'txt',txt:true,expected:{},vars:[],v:null,geo:{mode:'txt',answers:ans.map(enNorm2),stmt:stmt,choices:g.choices||null},choices:g.choices||null,
     statement:stmt, html, expectedStr:ans[0], expectedHtml:'<span lang="'+lang+'">'+esc(ans[0])+'</span>',

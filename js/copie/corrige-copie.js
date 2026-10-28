@@ -413,9 +413,23 @@ function geoDev(ex,m){
   return {lines:L.map(dvM),key,geo:true,fn:G.mode==='fn'};
 }
 
+/* ---------- Anglais et français : réponse écrite de l'élève (phrase complétée, mot ou forme) ---------- */
+function txtDev(ex,m){
+  if(!ex.txt||!ex.geo) return null;
+  const raw=m?m.raw:ex.expectedStr; if(raw==null||raw==='') return null;
+  const st=ex.geo.stmt||'', fill=/___/.test(st)?st.replace(/___\s*(\([^)]*\))?/,raw):raw;
+  const lang=((ex.expectedHtml||'').match(/lang="(\w+)"/)||[])[1]||'en';
+  return {lines:[dvM(fill)],htmlLines:['<span lang="'+lang+'">'+esc(fill)+'</span>'],key:'t:'+enNorm2(fill),direct:true};
+}
+/* ---------- Physique : réponse chiffrée de l'élève (sans développement détaillé) ---------- */
+function phAnsDev(ex,m){
+  const a=copyAnswer(ex,m); if(!a) return null;
+  return {lines:[dvM(a.plain)],htmlLines:a.lines,key:'a:'+a.plain,direct:true};
+}
 function copyDev(ex,m){
   try{
-    if(ex.kind==='geo') return geoDev(ex,m);
+    if(ex.txt) return txtDev(ex,m);
+    if(ex.kind==='geo'){ const d=geoDev(ex,m); if(d||!/^ph-/.test(ex.topic||'')) return d; return phAnsDev(ex,m); }
     if(ex.kind==='expand') return expandDev(ex,m);
     if(ex.kind==='factor') return factorDev(ex,m);
     if(ex.sys) return sysDev(ex,m);
@@ -432,6 +446,7 @@ function copyDev(ex,m){
 }
 /* rendu HTML d'une ligne de copie */
 function dvLineHTML(ex,d,l,i){
+  if(d.direct&&d.htmlLines) return d.htmlLines[i];
   if(l.t!=null) return esc(l.t);
   const s=l.m;
   if(d.geo&&!d.fn){ try{ return previewGeo(s); }catch(e){ return M(s); } }
