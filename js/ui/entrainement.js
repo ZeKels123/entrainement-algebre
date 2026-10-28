@@ -27,7 +27,7 @@ function setTab(t){
   const st=t==='stats'||t==='shop'||t==='lb';
   ['train','course','formulas','exam','stats','shop','lb'].forEach(k=>{ $('view-'+k).hidden=(k!==t); });
   ['train','course','formulas','exam'].forEach(k=>{ const on=k===t||(k==='exam'&&running()); $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
-  ['alg','eq','geo','ang','apa','ph','phd','phg','fr','ff','fs'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
+  ['alg','eq','geo','ang','apa','ph','fr','ff','fs'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
   ['stats','shop','lb'].forEach(k=>{ const on=t===k; $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
   $('subnav').hidden=st;
   if(!st) S.view=t;
