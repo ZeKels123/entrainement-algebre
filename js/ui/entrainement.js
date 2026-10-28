@@ -123,7 +123,7 @@ function buildKeys(){
     return;
   }
   S.ex.vars.forEach(v=>add('<i>'+v+'</i>','Lettre '+v,()=>ins(v)));
-  if(S.ex.geo){ add('²','Au carré',()=>ins('²')); add('√','Racine carrée',()=>ins('√')); add('π','Pi',()=>ins('π')); }
+  if(S.ex.geo){ add('²','Au carré',()=>ins('²')); add('√','Racine carrée',()=>ins('√')); add('π','Pi',()=>ins('π')); if(/^ph-/.test(S.ex.topic||'')) [['Δ','Delta (variation)'],['θ','Thêta (température)'],['ℓ','Longueur ℓ'],['α','Alpha'],['γ','Gamma'],['λ','Lambda'],['₁','Indice 1'],['₂','Indice 2']].forEach(k=>add(k[0],k[1],()=>ins(k[0]))); }
   else if(!S.ex.sys){ add('²','Au carré',()=>ins('²')); add('^','Exposant (accent circonflexe)',()=>ins('^')); }
   add('(','Parenthèse ouvrante',()=>ins('(')); add(')','Parenthèse fermante',()=>ins(')'));
   add('+','Plus',()=>ins('+')); add('−','Moins',()=>ins('-')); add('×','Fois',()=>ins('*'));
