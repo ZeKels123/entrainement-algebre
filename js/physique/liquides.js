@@ -30,9 +30,9 @@ function genPhLi1(){
     steps:[stp('Formule',M('ΔV = γ · V₁ · Δθ')),stp('Calcul',M('ΔV = '+NF(g)+' · 10^-3 × '+V1+' × '+dt+' = '+NF(phR(dV,5)))+' L'),stp('En mL',M('ΔV ≈ '+NF(phR(mL,d)))+' mL')],
     hints:['ΔV = γ · V₁ · Δθ avec V₁ en L : le résultat sort en L.','Δθ = '+t2+' − '+t1+' = '+dt+' °C ; 1 L = 1000 mL.'],
     work:['ΔV = '+NF(g)+' * 10^-3 * '+V1+' * '+dt,'ΔV = '+NF(phR(dV,5))+' L','ΔV ≈ '+NF(phR(mL,d))+' mL'],
-    mistakes:[{v:dV,tag:'ph-dil-unite',msg:'Ce résultat est en litres. L\'énoncé demande des mL : multiplie par 1000.'},
-      {v:3*mL,tag:'ph-liq-formule',msg:'γ est déjà un coefficient de dilatation volumique : pas de facteur 3 (le 3α concerne les solides).'},
-      {v:g*1e-3*dt*1000,tag:'ph-dil-formule',msg:'Il faut aussi multiplier par le volume initial V₁ = '+V1+' L.'}]});
+    mistakes:[{v:dV,x:NF(g)+' * 10^-3 * '+V1+' * '+dt,u:'L',tag:'ph-dil-unite',msg:'Ce résultat est en litres. L\'énoncé demande des mL : multiplie par 1000.'},
+      {v:3*mL,x:'3 * '+NF(g)+' * 10^-3 * '+V1+' * '+dt+' * 1000',tag:'ph-liq-formule',msg:'γ est déjà un coefficient de dilatation volumique : pas de facteur 3 (le 3α concerne les solides).'},
+      {v:g*1e-3*dt*1000,x:NF(g)+' * 10^-3 * '+dt+' * 1000',tag:'ph-dil-formule',msg:'Il faut aussi multiplier par le volume initial V₁ = '+V1+' L.'}]});
 }
 function genPhLi2(){
   const l=pick(PH_GAMMA.slice(0,4)), g=l[1], V1=pick([20,50,100,200,500]), t1=rnd(15,30), cool=Math.random()<0.5, t2=cool?t1-rnd(15,30):t1+rnd(10,25), dt=t2-t1;
@@ -42,9 +42,9 @@ function genPhLi2(){
     steps:[stp('Formule',M('V₂ = V₁ · (1 + γ · Δθ)')),stp('Écart',M('Δθ = '+phDtD(t1,t2))+' °C'+(cool?' (négatif : le liquide se contracte)':'')),stp('Calcul',M('V₂ = '+V1+' × (1 + '+NF(g)+' · 10^-3 × '+(dt<0?'('+phS(dt)+')':dt)+') ≈ '+NF(phR(V2,d)))+' L')],
     hints:['V₂ = V₁ · (1 + γ · Δθ).','Δθ = θ₂ − θ₁ = '+phDtD(t1,t2)+' °C'+(cool?' : il est négatif, le volume diminue.':'.')],
     work:['V₂ = '+V1+' * (1 + '+NF(g)+' * 10^-3 * '+(dt<0?'('+dt+')':dt)+')','V₂ ≈ '+NF(phR(V2,d))+' L'],
-    mistakes:[{v:V1-(V2-V1),tag:'ph-dt',msg:cool?'Le liquide refroidit : il se contracte, son volume diminue.':'Le liquide chauffe : il se dilate, son volume augmente.'},
-      {v:V2-V1,tag:'ph-dil-formule',msg:'Tu as calculé la variation ΔV. Le volume final est V₂ = V₁ + ΔV.'},
-      {v:V1*(1+3*g*1e-3*dt),tag:'ph-liq-formule',msg:'γ est déjà volumique : V₂ = V₁ · (1 + γ · Δθ), sans facteur 3.'}]});
+    mistakes:[{v:V1-(V2-V1),x:V1+' - '+V1+' * '+NF(g)+' * 10^-3 * '+phN(dt),tag:'ph-dt',msg:cool?'Le liquide refroidit : il se contracte, son volume diminue.':'Le liquide chauffe : il se dilate, son volume augmente.'},
+      {v:V2-V1,x:V1+' * '+NF(g)+' * 10^-3 * '+phN(dt),l:'ΔV',tag:'ph-dil-formule',msg:'Tu as calculé la variation ΔV. Le volume final est V₂ = V₁ + ΔV.'},
+      {v:V1*(1+3*g*1e-3*dt),x:V1+' * (1 + 3 * '+NF(g)+' * 10^-3 * '+phN(dt)+')',tag:'ph-liq-formule',msg:'γ est déjà volumique : V₂ = V₁ · (1 + γ · Δθ), sans facteur 3.'}]});
 }
 function phApp(){
   const l=pick(PH_GAMMA), c=pick(PH_CONT.filter(x=>!(l[0]==='mercure'&&x[0]==='aluminium'))), g=l[1]*1e-3, a=c[1]*1e-6;
@@ -57,10 +57,10 @@ function genPhLi3(){
     steps:[stp('Le récipient se dilate aussi','On lit la dilatation apparente : '+M('ΔV app = (γ − 3α) · V₁ · Δθ')),stp('Coefficient apparent',M('γ − 3α = '+NF(p.l[1])+' · 10^-3 − 3 × '+p.c[1]+' · 10^-6 = '+NF(phR(p.k*1e3,4))+' · 10^-3')+' °C⁻¹'),stp('Calcul',M('ΔV app = '+NF(phR(p.k*1e3,4))+' · 10^-3 × '+NF(V1)+' × '+dt+' ≈ '+NF(phR(mL,d)))+' mL')],
     hints:['Les graduations se dilatent avec le récipient : utilise ΔV app = (γ − 3α) · V₁ · Δθ.','Attention aux puissances : γ est en 10⁻³, α en 10⁻⁶. Puis 1 L = 1000 mL.'],
     work:['ΔV = ('+NF(p.l[1])+' * 10^-3 - 3 * '+p.c[1]+' * 10^-6) * '+NF(V1)+' * '+dt,'ΔV ≈ '+NF(phR(mL,d))+' mL'],
-    mistakes:[{v:p.g*V1*dt*1000,tag:'ph-liq-app',msg:'Tu as calculé la dilatation réelle du liquide. Le récipient se dilate aussi : retire 3α (dilatation apparente).'},
-      {v:(p.g-p.a)*V1*dt*1000,tag:'ph-liq-app',msg:'Le récipient se dilate en volume : c\'est 3α qu\'il faut retirer, pas α.'},
-      {v:(p.g+3*p.a)*V1*dt*1000,tag:'ph-liq-app',msg:'La dilatation du récipient se retranche : (γ − 3α), pas (γ + 3α).'},
-      {v:dV,tag:'ph-dil-unite',msg:'Ce résultat est en litres : multiplie par 1000 pour l\'avoir en mL.'}]});
+    mistakes:[{v:p.g*V1*dt*1000,x:NF(p.l[1])+' * 10^-3 * '+NF(V1)+' * '+dt+' * 1000',tag:'ph-liq-app',msg:'Tu as calculé la dilatation réelle du liquide. Le récipient se dilate aussi : retire 3α (dilatation apparente).'},
+      {v:(p.g-p.a)*V1*dt*1000,x:'('+NF(p.l[1])+' * 10^-3 - '+p.c[1]+' * 10^-6) * '+NF(V1)+' * '+dt+' * 1000',tag:'ph-liq-app',msg:'Le récipient se dilate en volume : c\'est 3α qu\'il faut retirer, pas α.'},
+      {v:(p.g+3*p.a)*V1*dt*1000,x:'('+NF(p.l[1])+' * 10^-3 + 3 * '+p.c[1]+' * 10^-6) * '+NF(V1)+' * '+dt+' * 1000',tag:'ph-liq-app',msg:'La dilatation du récipient se retranche : (γ − 3α), pas (γ + 3α).'},
+      {v:dV,x:'('+NF(p.l[1])+' * 10^-3 - 3 * '+p.c[1]+' * 10^-6) * '+NF(V1)+' * '+dt,u:'L',tag:'ph-dil-unite',msg:'Ce résultat est en litres : multiplie par 1000 pour l\'avoir en mL.'}]});
 }
 function genPhLi4(){
   const p=phApp(), V1=pick([1,2,4,5,10]), t1=rnd(12,22), free=pick([10,20,25,40,50]), dt=free/1000/(p.k*V1), t2=t1+dt, d=1;
@@ -69,9 +69,9 @@ function genPhLi4(){
     steps:[stp('Condition','Le liquide déborde quand sa dilatation apparente atteint la place libre : '+M('ΔV app = '+free+' mL = '+NF(free/1000)+' L')),stp('Isoler Δθ',M('Δθ = ΔV app / ((γ − 3α) · V₁) = '+NF(free/1000)+' / ('+NF(phR(p.k*1e3,4))+' · 10^-3 × '+V1+') ≈ '+NF(phR(dt,2)))+' °C'),stp('Température',M('θ₂ = '+t1+' + '+NF(phR(dt,2))+' ≈ '+NF(phR(t2,d)))+' °C')],
     hints:['Le récipient se dilate aussi : c\'est la dilatation apparente (γ − 3α) · V₁ · Δθ qui doit valoir la place libre.','Convertis la place libre en L ('+free+' mL = '+NF(free/1000)+' L), isole Δθ, puis ajoute-le à '+t1+' °C.'],
     work:['Δθ = '+NF(free/1000)+' / (('+NF(p.l[1])+' * 10^-3 - 3 * '+p.c[1]+' * 10^-6) * '+V1+')','θ ≈ '+NF(phR(t2,d))+' °C'],
-    mistakes:[{v:dt,tag:'ph-dt',msg:'Tu as calculé l\'échauffement Δθ. La température cherchée est θ₂ = θ₁ + Δθ.'},
-      {v:t1+free/1000/(p.g*V1),tag:'ph-liq-app',msg:'Le récipient se dilate aussi et repousse le débordement : utilise (γ − 3α), pas γ seul.'},
-      {v:t1+free/(p.k*V1),tag:'ph-dil-unite',msg:'La place libre doit être en litres comme V₁ : '+free+' mL = '+NF(free/1000)+' L.'}]});
+    mistakes:[{v:dt,x:NF(free/1000)+' / (('+NF(p.l[1])+' * 10^-3 - 3 * '+p.c[1]+' * 10^-6) * '+V1+')',l:'Δθ',u:'°C',tag:'ph-dt',msg:'Tu as calculé l\'échauffement Δθ. La température cherchée est θ₂ = θ₁ + Δθ.'},
+      {v:t1+free/1000/(p.g*V1),x:t1+' + '+NF(free/1000)+' / ('+NF(p.l[1])+' * 10^-3 * '+V1+')',tag:'ph-liq-app',msg:'Le récipient se dilate aussi et repousse le débordement : utilise (γ − 3α), pas γ seul.'},
+      {v:t1+free/(p.k*V1),x:t1+' + '+free+' / (('+NF(p.l[1])+' * 10^-3 - 3 * '+p.c[1]+' * 10^-6) * '+V1+')',tag:'ph-dil-unite',msg:'La place libre doit être en litres comme V₁ : '+free+' mL = '+NF(free/1000)+' L.'}]});
 }
 function genPhLi5(){
   const l=pick([['alcool',1.1],['mercure',0.18]]), V=l[0]==='mercure'?pick([150,200,250,300]):pick([100,150,200]), s=pick([0.05,0.08,0.1,0.2]), dt=pick([1,5,10,20]), h=l[1]*1e-3*V*dt/s, d=1;
@@ -80,8 +80,8 @@ function genPhLi5(){
     steps:[stp('Volume dilaté',M('ΔV = γ · V₁ · Δθ = '+NF(l[1])+' · 10^-3 × '+V+' × '+dt+' = '+NF(phR(l[1]*1e-3*V*dt,4)))+' mm³'),stp('Hauteur dans le tube','Le volume supplémentaire remplit le tube : '+M('h = ΔV / s = '+NF(phR(l[1]*1e-3*V*dt,4))+' / '+NF(s)+' ≈ '+NF(phR(h,d)))+' mm')],
     hints:['Calcule d\'abord le volume ajouté ΔV = γ · V₁ · Δθ (en mm³).','Ce volume forme une colonne de section s : sa hauteur vaut h = ΔV / s.'],
     work:['ΔV = '+NF(l[1])+' * 10^-3 * '+V+' * '+dt,'h = '+NF(phR(l[1]*1e-3*V*dt,4))+' / '+NF(s),'h ≈ '+NF(phR(h,d))+' mm'],
-    mistakes:[{v:l[1]*1e-3*V*dt,tag:'ph-liq-formule',msg:'Tu as calculé le volume ajouté (en mm³). Divise-le par la section du tube pour obtenir la hauteur.'},
-      {v:l[1]*1e-3*V*dt*s,tag:'ph-liq-formule',msg:'La hauteur vaut ΔV / s : il faut diviser par la section, pas multiplier.'}]});
+    mistakes:[{v:l[1]*1e-3*V*dt,x:NF(l[1])+' * 10^-3 * '+V+' * '+dt,l:'ΔV',u:'',tag:'ph-liq-formule',msg:'Tu as calculé le volume ajouté (en mm³). Divise-le par la section du tube pour obtenir la hauteur.'},
+      {v:l[1]*1e-3*V*dt*s,x:NF(l[1])+' * 10^-3 * '+V+' * '+dt+' * '+NF(s),l:'h',tag:'ph-liq-formule',msg:'La hauteur vaut ΔV / s : il faut diviser par la section, pas multiplier.'}]});
 }
 
 const PH_LVF=[

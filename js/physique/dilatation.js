@@ -31,9 +31,9 @@ function genPhDl1(){
     steps:[stp('Formule',M('Δℓ = α · ℓ₁ · Δθ')),stp('Écart de température',M('Δθ = θ₂ − θ₁ = '+phDtD(t[0],t[1]))+' °C'),stp('Calcul',M('Δℓ = '+a+' · 10^-6 × '+L+' × '+dt+' = '+NF(phR(dl,6)))+' m ≈ '+NF(phR(mm,d))+' mm')],
     hints:['Δℓ = α · ℓ₁ · Δθ avec ℓ₁ en m : le résultat sort en m.','Δθ = θ₂ − θ₁ = '+phDtD(t[0],t[1])+' °C ; puis 1 m = 1000 mm.'],
     work:['Δℓ = '+a+' * 10^-6 * '+L+' * '+dt,'Δℓ = '+NF(phR(dl,6))+' m','Δℓ ≈ '+NF(phR(mm,d))+' mm'],
-    mistakes:[{v:dl,tag:'ph-dil-unite',msg:'Ce résultat est en mètres. L\'énoncé demande des mm : multiplie par 1000.'},
-      {v:a*1e-6*L*(t[1]+t[0])*1000,tag:'ph-dt',msg:'Δθ = θ₂ − θ₁ = '+phDtD(t[0],t[1])+' °C.'},
-      {v:a*1e-6*dt*1000,tag:'ph-dil-formule',msg:'Tu as oublié de multiplier par la longueur initiale ℓ₁ = '+L+' m.'}]});
+    mistakes:[{v:dl,x:a+' * 10^-6 * '+L+' * '+dt,u:'m',tag:'ph-dil-unite',msg:'Ce résultat est en mètres. L\'énoncé demande des mm : multiplie par 1000.'},
+      {v:a*1e-6*L*(t[1]+t[0])*1000,x:a+' * 10^-6 * '+L+' * ('+phN(t[1])+' + '+phN(t[0])+') * 1000',tag:'ph-dt',msg:'Δθ = θ₂ − θ₁ = '+phDtD(t[0],t[1])+' °C.'},
+      {v:a*1e-6*dt*1000,x:a+' * 10^-6 * '+dt+' * 1000',tag:'ph-dil-formule',msg:'Tu as oublié de multiplier par la longueur initiale ℓ₁ = '+L+' m.'}]});
 }
 function genPhDl2(){
   const m=pick(PH_ALPHA), a=m[1], L=pick([10,12,15,18,20,25,30,40]), t=phTemps(), dt=t[1]-t[0], L2=L*(1+a*1e-6*dt), d=3;
@@ -43,9 +43,9 @@ function genPhDl2(){
     steps:[stp('Formule',M('ℓ₂ = ℓ₁ · (1 + α · Δθ)')),stp('Écart',M('Δθ = '+phDtD(t[0],t[1]))+' °C'+(chauffe?'':' (négatif : la barre se contracte)')),stp('Calcul',M('ℓ₂ = '+L+' × (1 + '+a+' · 10^-6 × '+(dt<0?'('+phS(dt)+')':dt)+') ≈ '+NF(phR(L2,d)))+' m')],
     hints:['ℓ₂ = ℓ₁ · (1 + α · Δθ).','Δθ = θ₂ − θ₁ = '+phDtD(t[0],t[1])+' °C'+(chauffe?'.':' : il est négatif, la longueur diminue.')],
     work:['ℓ₂ = '+L+' * (1 + '+a+' * 10^-6 * '+(dt<0?'('+dt+')':dt)+')','ℓ₂ ≈ '+NF(phR(L2,d))+' m'],
-    mistakes:[{v:L-(L2-L),tag:'ph-dt',msg:chauffe?'La barre est chauffée : elle s\'allonge, ℓ₂ est plus grand que ℓ₁.':'La barre est refroidie : elle se contracte, ℓ₂ est plus petit que ℓ₁.'},
-      {v:L+a*1e-6*dt,tag:'ph-dil-formule',msg:'La variation vaut α · ℓ₁ · Δθ : il faut aussi multiplier par ℓ₁ = '+L+' m.'},
-      {v:L2-L,tag:'ph-dil-formule',msg:'Tu as calculé la variation Δℓ. La longueur finale est ℓ₂ = ℓ₁ + Δℓ.'}]});
+    mistakes:[{v:L-(L2-L),x:L+' - '+L+' * '+a+' * 10^-6 * '+phN(dt),tag:'ph-dt',msg:chauffe?'La barre est chauffée : elle s\'allonge, ℓ₂ est plus grand que ℓ₁.':'La barre est refroidie : elle se contracte, ℓ₂ est plus petit que ℓ₁.'},
+      {v:L+a*1e-6*dt,x:L+' + '+a+' * 10^-6 * '+phN(dt),tag:'ph-dil-formule',msg:'La variation vaut α · ℓ₁ · Δθ : il faut aussi multiplier par ℓ₁ = '+L+' m.'},
+      {v:L2-L,x:L+' * '+a+' * 10^-6 * '+phN(dt),l:'Δℓ',tag:'ph-dil-formule',msg:'Tu as calculé la variation Δℓ. La longueur finale est ℓ₂ = ℓ₁ + Δℓ.'}]});
 }
 function genPhDl3(){
   const m=pick(['acier','aluminium','cuivre','laiton']), a=PH_ALPHA.find(x=>x[0]===m)[1], Lc=pick([30,40,50,60,80]), lc=pick([20,25,30,40]), A1=Lc*lc, t1=rnd(15,22), t2=t1+pick([80,100,150,200,250]), dt=t2-t1;
@@ -55,9 +55,9 @@ function genPhDl3(){
     steps:[stp('Aire initiale',M('A₁ = '+Lc+' × '+lc+' = '+A1)+' cm²'),stp('Formule',M('A₂ = A₁ · (1 + 2α · Δθ)')),stp('Calcul',M('A₂ = '+A1+' × (1 + 2 × '+a+' · 10^-6 × '+dt+') ≈ '+NF(phR(A2,d)))+' cm²')],
     hints:['Pour une surface, le coefficient est 2α : A₂ = A₁ · (1 + 2α · Δθ).','A₁ = '+Lc+' × '+lc+' = '+A1+' cm² et Δθ = '+t2+' − '+t1+' = '+dt+' °C.'],
     work:['A₂ = '+A1+' * (1 + 2 * '+a+' * 10^-6 * '+dt+')','A₂ ≈ '+NF(phR(A2,d))+' cm²'],
-    mistakes:[{v:A1*(1+a*1e-6*dt),tag:'ph-dil-facteur',msg:'Pour une surface, la dilatation vaut 2α · A₁ · Δθ (et non α · A₁ · Δθ).'},
-      {v:A1*(1+3*a*1e-6*dt),tag:'ph-dil-facteur',msg:'3α s\'utilise pour un volume. Pour une surface, c\'est 2α.'},
-      {v:2*a*1e-6*A1*dt,tag:'ph-dil-formule',msg:'Tu as calculé la variation ΔA. L\'aire finale est A₂ = A₁ + ΔA.'}]});
+    mistakes:[{v:A1*(1+a*1e-6*dt),x:A1+' * (1 + '+a+' * 10^-6 * '+dt+')',tag:'ph-dil-facteur',msg:'Pour une surface, la dilatation vaut 2α · A₁ · Δθ (et non α · A₁ · Δθ).'},
+      {v:A1*(1+3*a*1e-6*dt),x:A1+' * (1 + 3 * '+a+' * 10^-6 * '+dt+')',tag:'ph-dil-facteur',msg:'3α s\'utilise pour un volume. Pour une surface, c\'est 2α.'},
+      {v:2*a*1e-6*A1*dt,x:'2 * '+a+' * 10^-6 * '+A1+' * '+dt,l:'ΔA',tag:'ph-dil-formule',msg:'Tu as calculé la variation ΔA. L\'aire finale est A₂ = A₁ + ΔA.'}]});
 }
 function genPhDl4(){
   const alu=Math.random()<0.5, a=alu?23:12, V1=alu?pick([2,5,10]):pick([200,500,1000]), t1=rnd(10,20), t2=t1+(alu?pick([60,80,100]):pick([30,40,50])), dt=t2-t1;
@@ -67,9 +67,9 @@ function genPhDl4(){
     steps:[stp('Le creux se dilate','La capacité (le creux) se dilate comme si elle était pleine du même matériau.'),stp('Formule',M('V₂ = V₁ · (1 + 3α · Δθ)')),stp('Calcul',M('V₂ = '+V1+' × (1 + 3 × '+a+' · 10^-6 × '+dt+') ≈ '+NF(phR(V2,d)))+' L')],
     hints:['Pour un volume, le coefficient est 3α : V₂ = V₁ · (1 + 3α · Δθ).','Δθ = '+t2+' − '+t1+' = '+dt+' °C.'],
     work:['V₂ = '+V1+' * (1 + 3 * '+a+' * 10^-6 * '+dt+')','V₂ ≈ '+NF(phR(V2,d))+' L'],
-    mistakes:[{v:V1*(1+a*1e-6*dt),tag:'ph-dil-facteur',msg:'Pour un volume, la dilatation vaut 3α · V₁ · Δθ (et non α · V₁ · Δθ).'},
-      {v:V1*(1+2*a*1e-6*dt),tag:'ph-dil-facteur',msg:'2α s\'utilise pour une surface. Pour un volume, c\'est 3α.'},
-      {v:V1,tag:'ph-dil-cours',msg:'Le creux du récipient se dilate aussi : la capacité augmente un peu.'}]});
+    mistakes:[{v:V1*(1+a*1e-6*dt),x:V1+' * (1 + '+a+' * 10^-6 * '+dt+')',tag:'ph-dil-facteur',msg:'Pour un volume, la dilatation vaut 3α · V₁ · Δθ (et non α · V₁ · Δθ).'},
+      {v:V1*(1+2*a*1e-6*dt),x:V1+' * (1 + 2 * '+a+' * 10^-6 * '+dt+')',tag:'ph-dil-facteur',msg:'2α s\'utilise pour une surface. Pour un volume, c\'est 3α.'},
+      {v:V1,x:String(V1),tag:'ph-dil-cours',msg:'Le creux du récipient se dilate aussi : la capacité augmente un peu.'}]});
 }
 function genPhDl5(){
   const from=pick(['surface','volume']), q=from==='surface'?pick([0.2,0.4,0.6,0.8,1]):pick([0.3,0.6,0.9,1.2,1.5]), k=from==='surface'?2:3;
@@ -80,9 +80,9 @@ function genPhDl5(){
     steps:[stp('Variations relatives',M('Δℓ / ℓ₁ = α · Δθ')+' ; '+M('ΔA / A₁ = 2α · Δθ')+' ; '+M('ΔV / V₁ = 3α · Δθ')),stp('Produit α · Δθ',M('α · Δθ = '+NF(q)+' / '+k+' = '+NF(phR(q/k,4)))+' %'),stp('Résultat',M(sym[to]+' = '+(kt===1?'':kt+' × ')+NF(phR(q/k,4))+' = '+NF(phR(val,d)))+' %')],
     hints:['Divise chaque formule par la grandeur initiale : '+sym[from]+' = '+k+'α · Δθ.','Trouve d\'abord α · Δθ = '+NF(q)+' / '+k+', puis multiplie par le facteur de '+nom[to]+' ('+kt+').'],
     work:['α * Δθ = '+NF(q)+' / '+k,sym[to]+' = '+NF(phR(val,d))],
-    mistakes:[{v:q,tag:'ph-dil-facteur',msg:'Les variations relatives ne sont pas égales : longueur α · Δθ, surface 2α · Δθ, volume 3α · Δθ.'},
-      {v:q*k*kt,tag:'ph-dil-facteur',msg:'Il faut d\'abord diviser par '+k+' pour obtenir α · Δθ, puis multiplier par '+kt+'.'},
-      {v:q/k,tag:'ph-dil-facteur',msg:'Tu as obtenu α · Δθ, c\'est-à-dire la variation de la longueur. Pour '+nom[to]+', multiplie par '+kt+'.'}]});
+    mistakes:[{v:q,x:NF(q),l:sym[to],tag:'ph-dil-facteur',msg:'Les variations relatives ne sont pas égales : longueur α · Δθ, surface 2α · Δθ, volume 3α · Δθ.'},
+      {v:q*k*kt,x:NF(q)+' * '+k+' * '+kt,l:sym[to],tag:'ph-dil-facteur',msg:'Il faut d\'abord diviser par '+k+' pour obtenir α · Δθ, puis multiplier par '+kt+'.'},
+      {v:q/k,x:NF(q)+' / '+k,l:sym[to],tag:'ph-dil-facteur',msg:'Tu as obtenu α · Δθ, c\'est-à-dire la variation de la longueur. Pour '+nom[to]+', multiplie par '+kt+'.'}]});
 }
 
 /* ----- questions (vrai ou faux, n° 1 ; situations des exercices) ----- */

@@ -29,7 +29,7 @@ function genPhGz1(){
     steps:[stp('Loi de Boyle-Mariotte','Température constante : '+M('p₁ · V₁ = p₂ · V₂')),stp('Calcul',M('p₂ = p₁ · V₁ / V₂ = '+NF(p1)+' × '+NF(V1)+' / '+NF(V2)+' ≈ '+NF(phR(p2,d)))+' bar')],
     hints:['À température constante, p · V reste constant : p₁ · V₁ = p₂ · V₂.','Le volume diminue, donc la pression augmente : p₂ = p₁ · V₁ / V₂.'],
     work:['p₂ = '+NF(p1)+' * '+NF(V1)+' / '+NF(V2),'p₂ ≈ '+NF(phR(p2,d))+' bar'],
-    mistakes:[{v:p1*V2/V1,tag:'ph-gaz-loi',msg:'Pression et volume sont inversement proportionnels : si le volume diminue, la pression augmente. p₂ = p₁ · V₁ / V₂.'}]});
+    mistakes:[{v:p1*V2/V1,x:NF(p1)+' * '+NF(V2)+' / '+NF(V1),tag:'ph-gaz-loi',msg:'Pression et volume sont inversement proportionnels : si le volume diminue, la pression augmente. p₂ = p₁ · V₁ / V₂.'},{v:p1*V1,x:NF(p1)+' * '+NF(V1),tag:'ph-gaz-loi',msg:'Il faut encore diviser par le volume final V₂ = '+NF(V2)+' '+c[1]+'.'}]});
 }
 /* Gay-Lussac : pression constante */
 function genPhGz2(){
@@ -40,7 +40,7 @@ function genPhGz2(){
     steps:[stp('Températures absolues',M('T₁ = '+t1+' + 273 = '+T1)+' K ; '+M('T₂ = '+phS(t2)+' + 273 = '+T2)+' K'),stp('Loi de Gay-Lussac','Pression constante : '+M('V₂ / T₂ = V₁ / T₁')),stp('Calcul',M('V₂ = '+NF(V1)+' × '+T2+' / '+T1+' ≈ '+NF(phR(V2,d)))+' '+c[1])],
     hints:['À pression constante, le volume est proportionnel à la température absolue : V₂ = V₁ · T₂ / T₁.','Convertis d\'abord : T = θ + 273.'],
     work:['T₁ = '+t1+' + 273 = '+T1,'T₂ = '+t2+' + 273 = '+T2,'V₂ = '+NF(V1)+' * '+T2+' / '+T1,'V₂ ≈ '+NF(phR(V2,d))+' '+c[1]],
-    mistakes:[{v:V1*t2/t1,tag:'ph-gaz-kelvin',msg:'Tu as utilisé les températures en °C. Dans les lois des gaz, T est en kelvins : T = θ + 273.'},{v:V1*T1/T2,tag:'ph-gaz-loi',msg:'Rapport inversé : un gaz qui '+(t2>t1?'chauffe':'refroidit')+' à pression constante voit son volume '+(t2>t1?'augmenter':'diminuer')+'.'}]});
+    mistakes:[{v:V1*t2/t1,x:NF(V1)+' * '+phN(t2)+' / '+t1,tag:'ph-gaz-kelvin',msg:'Tu as utilisé les températures en °C. Dans les lois des gaz, T est en kelvins : T = θ + 273.'},{v:V1*T1/T2,x:NF(V1)+' * '+T1+' / '+T2,tag:'ph-gaz-loi',msg:'Rapport inversé : un gaz qui '+(t2>t1?'chauffe':'refroidit')+' à pression constante voit son volume '+(t2>t1?'augmenter':'diminuer')+'.'}]});
 }
 /* Charles : volume constant */
 function genPhGz3(){
@@ -51,7 +51,7 @@ function genPhGz3(){
     steps:[stp('Températures absolues',M('T₁ = '+t1+' + 273 = '+T1)+' K ; '+M('T₂ = '+t2+' + 273 = '+T2)+' K'),stp('Loi de Charles','Volume constant : '+M('p₂ / T₂ = p₁ / T₁')),stp('Calcul',M('p₂ = '+NF(p1)+' × '+T2+' / '+T1+' ≈ '+NF(phR(p2,d)))+' bar')],
     hints:['À volume constant, la pression est proportionnelle à la température absolue : p₂ = p₁ · T₂ / T₁.','T = θ + 273 : '+T1+' K et '+T2+' K.'],
     work:['p₂ = '+NF(p1)+' * '+T2+' / '+T1,'p₂ ≈ '+NF(phR(p2,d))+' bar'],
-    mistakes:[{v:p1*t2/t1,tag:'ph-gaz-kelvin',msg:'Avec des °C, le rapport est faux : passe en kelvins (T = θ + 273).'},{v:p1*T1/T2,tag:'ph-gaz-loi',msg:'Rapport inversé : un gaz chauffé à volume constant voit sa pression augmenter.'}]});
+    mistakes:[{v:p1*t2/t1,x:NF(p1)+' * '+phN(t2)+' / '+t1,tag:'ph-gaz-kelvin',msg:'Avec des °C, le rapport est faux : passe en kelvins (T = θ + 273).'},{v:p1*T1/T2,x:NF(p1)+' * '+T1+' / '+T2,tag:'ph-gaz-loi',msg:'Rapport inversé : un gaz chauffé à volume constant voit sa pression augmenter.'}]});
 }
 /* loi des gaz parfaits : trois grandeurs changent */
 function genPhGz4(){
@@ -63,9 +63,9 @@ function genPhGz4(){
     steps:[stp('Loi des gaz parfaits',M('p₁ · V₁ / T₁ = p₂ · V₂ / T₂')),stp('Températures absolues',M('T₁ = '+T1)+' K ; '+M('T₂ = '+T2)+' K'),stp('Calcul',M('V₂ = V₁ · (p₁ / p₂) · (T₂ / T₁) = '+NF(V1)+' × '+p1+' × '+T2+' / ('+p2+' × '+T1+') ≈ '+NF(phR(V2,d)))+' '+c[1])],
     hints:['p · V / T reste constant : V₂ = V₁ · (p₁ / p₂) · (T₂ / T₁).','Pressions dans la même unité (hPa), températures en kelvins (T = θ + 273).'],
     work:['V₂ = '+NF(V1)+' * '+p1+' * '+T2+' / ('+p2+' * '+T1+')','V₂ ≈ '+NF(phR(V2,d))+' '+c[1]],
-    mistakes:[{v:V1*p1*t2/(p2*t1),tag:'ph-gaz-kelvin',msg:'Les températures doivent être en kelvins : T = θ + 273.'},
-      {v:V1*p2*T2/(p1*T1),tag:'ph-gaz-loi',msg:'Rapport des pressions inversé : quand la pression extérieure baisse, le volume augmente. V₂ = V₁ · p₁ / p₂ · T₂ / T₁.'},
-      {v:V1*p1/p2,tag:'ph-gaz-loi',msg:'Tu as oublié l\'effet de la température (T₂ / T₁).'}]});
+    mistakes:[{v:V1*p1*t2/(p2*t1),x:NF(V1)+' * '+p1+' * '+phN(t2)+' / ('+p2+' * '+t1+')',tag:'ph-gaz-kelvin',msg:'Les températures doivent être en kelvins : T = θ + 273.'},
+      {v:V1*p2*T2/(p1*T1),x:NF(V1)+' * '+p2+' * '+T2+' / ('+p1+' * '+T1+')',tag:'ph-gaz-loi',msg:'Rapport des pressions inversé : quand la pression extérieure baisse, le volume augmente. V₂ = V₁ · p₁ / p₂ · T₂ / T₁.'},
+      {v:V1*p1/p2,x:NF(V1)+' * '+p1+' / '+p2,tag:'ph-gaz-loi',msg:'Tu as oublié l\'effet de la température (T₂ / T₁).'}]});
 }
 /* réserve de gaz comprimé (température constante) */
 function genPhGz5(){
@@ -76,7 +76,7 @@ function genPhGz5(){
     steps:[stp('Boyle-Mariotte','Même température : '+M('p₁ · V₁ = p₂ · V₂')),stp('Calcul',M('V₂ = '+p1+' × '+V1+' / '+NF(pa)+' ≈ '+NF(phR(V2,d)))+' L')],
     hints:['La quantité de gaz ne change pas ; à température constante, p · V reste constant.','Une pression divisée par '+NF(phR(p1/pa,1))+' donne un volume multiplié par autant.'],
     work:['V₂ = '+p1+' * '+V1+' / '+NF(pa),'V₂ ≈ '+NF(phR(V2,d))+' L'],
-    mistakes:[{v:V1*pa/p1,tag:'ph-gaz-loi',msg:'Détendu, le gaz occupe un volume bien plus grand : V₂ = p₁ · V₁ / p₂.'},{v:p1*V1,tag:'ph-gaz-loi',msg:'Il faut encore diviser par la pression ambiante p₂ = '+NF(pa)+' bar.'}]});
+    mistakes:[{v:V1*pa/p1,x:NF(V1)+' * '+NF(pa)+' / '+p1,tag:'ph-gaz-loi',msg:'Détendu, le gaz occupe un volume bien plus grand : V₂ = p₁ · V₁ / p₂.'},{v:p1*V1,x:p1+' * '+NF(V1),tag:'ph-gaz-loi',msg:'Il faut encore diviser par la pression ambiante p₂ = '+NF(pa)+' bar.'}]});
 }
 
 const PH_GVF=[

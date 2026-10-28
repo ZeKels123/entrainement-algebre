@@ -39,7 +39,19 @@ function phWallSvg(t1,t2,eTxt,fluid){
   return '<figure class="geofig"><svg class="geo-svg" viewBox="0 0 340 '+(fluid?165:190)+'" role="img" aria-label="'+(fluid?'Surface et fluide':'Paroi d\'épaisseur e')+'">'+o+'</svg><figcaption>Schéma non à l\'échelle.</figcaption></figure>';
 }
 /* exercice numérique : moteur de correction de la géométrie (égalités vérifiées ligne par ligne, arrondi, unité) */
+const phN=n=>n<0?'('+n+')':String(n);
+/* copie : lignes de calcul de l'élève pour chaque erreur (x = expression fausse, l = membre de gauche, u = unité du résultat faux) */
+function phWrong(o){
+  const W=o.work||[], la=W[W.length-1]||'', i=la.search(/ [≈=] /); if(i<0) return o.mistakes;
+  const lhs=la.slice(0,i), sep=la.indexOf(' ≈ ')>=0?' ≈ ':' = ', un=o.unit?o.unit+(o.pow===2?'²':''):'';
+  return (o.mistakes||[]).map(m=>{
+    if(m.w||m.x===undefined||typeof m.v!=='number'||!isFinite(m.v)) return m;
+    const L=m.l||lhs, u=m.u!==undefined?m.u:un, dd=Math.min(8,Math.max(o.d||0,(o.d||0)-Math.floor(Math.log10(Math.abs(m.v)||1))));
+    return Object.assign({},m,{w:[L+' = '+m.x,L+sep+NF(phR(m.v,dd))+(u?' '+u:'')]});
+  });
+}
 function phNum(o){
+  o=Object.assign({},o,{mistakes:phWrong(o)});
   return Object.assign(mkGeo(Object.assign({mode:'round'},o)),{hintline:PH_HINT,placeholder:o.placeholder||'Q/Δt = 12 × 0,83 × 15 / 0,2\nQ/Δt ≈ 747 W',instr:o.instr||('Calcule '+o.ask)});
 }
 const phArr=d=>d===0?'arrondi à l\'unité':d===1?'arrondi au dixième':'arrondi au centième';
@@ -60,10 +72,10 @@ function genPhCd(neg){
     steps:[stp('Formule',M('Q/Δt = S · λ · Δθ / e')),stp('Données',M('e = '+NF(b.e)+' cm = '+NF(b.em)+' m')+' ; '+M('Δθ = '+phDtTxt(b))+' °C'),stp('Calcul',M('Q/Δt = '+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em)+' ≈ '+NF(r))+' W')],
     hints:['Formule de la conduction : Q/Δt = S · λ · Δθ / e, avec e en mètres ('+NF(b.e)+' cm = '+NF(b.em)+' m).','Δθ est l\'écart de température entre les deux faces : '+phDtTxt(b)+' °C.'],
     work:['Q/Δt = '+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em),'Q/Δt ≈ '+NF(r)+' W'],
-    mistakes:[{v:b.S*b.lam*b.dt/b.e,tag:'ph-unite-e',msg:'Tu as laissé l\'épaisseur en cm. Dans la formule, e s\'exprime en mètres : '+NF(b.e)+' cm = '+NF(b.em)+' m.'},
-      {v:b.S*b.lam*b.dt*b.em,tag:'ph-formule',msg:'L\'épaisseur se place au dénominateur : plus la paroi est épaisse, moins la chaleur passe.'},
-      {v:b.lam*b.dt/b.em,tag:'ph-formule',msg:'Tu as oublié de multiplier par la surface S = '+b.S+' m².'},
-      {v:b.S*b.lam*(b.t1+b.t2)/b.em,tag:'ph-dt',msg:'Δθ est une différence : '+phDtTxt(b)+' °C'+(neg?' (soustraire une température négative revient à ajouter).':'.')}],
+    mistakes:[{v:b.S*b.lam*b.dt/b.e,x:b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.e),tag:'ph-unite-e',msg:'Tu as laissé l\'épaisseur en cm. Dans la formule, e s\'exprime en mètres : '+NF(b.e)+' cm = '+NF(b.em)+' m.'},
+      {v:b.S*b.lam*b.dt*b.em,x:b.S+' × '+NF(b.lam)+' × '+b.dt+' × '+NF(b.em),tag:'ph-formule',msg:'L\'épaisseur se place au dénominateur : plus la paroi est épaisse, moins la chaleur passe.'},
+      {v:b.lam*b.dt/b.em,x:NF(b.lam)+' × '+b.dt+' / '+NF(b.em),tag:'ph-formule',msg:'Tu as oublié de multiplier par la surface S = '+b.S+' m².'},
+      {v:b.S*b.lam*(b.t1+b.t2)/b.em,x:b.S+' × '+NF(b.lam)+' × ('+b.t1+' + '+phN(b.t2)+') / '+NF(b.em),tag:'ph-dt',msg:'Δθ est une différence : '+phDtTxt(b)+' °C'+(neg?' (soustraire une température négative revient à ajouter).':'.')}],
     sanity:[{when:x=>x<0,msg:'Un flux de chaleur se compte positivement, du côté chaud vers le côté froid.',tag:'ph-dt'}]});
 }
 function genPhCdEnergie(){
@@ -74,10 +86,10 @@ function genPhCdEnergie(){
     steps:[stp('Flux',M('Q/Δt = S · λ · Δθ / e = '+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em)+' ≈ '+NF(Fr))+' W'),stp('Durée',M('Δt = '+h+' × 3600 = '+(h*3600))+' s'),stp('Chaleur',M('Q = (Q/Δt) × Δt ≈ '+NF(phR(b.F*h*3600,0)))+' J ≈ '+NF(r)+' MJ')],
     hints:['Calcule d\'abord le flux Q/Δt (en W), puis multiplie par la durée en secondes.','1 h = 3600 s et 1 MJ = 1 000 000 J.'],
     work:['Q/Δt = '+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em),'Q = '+NF(Fr)+' × '+(h*3600),'Q ≈ '+NF(r)+' MJ'],
-    mistakes:[{v:b.F*h/1e6,tag:'ph-duree',msg:'La durée doit être en secondes : '+h+' h = '+(h*3600)+' s.'},
-      {v:b.F*h*3600/1e3,tag:'ph-duree',msg:'Ce résultat est en kJ. L\'énoncé demande des MJ : divise encore par 1000.'},
-      {v:b.F*h*3600,tag:'ph-duree',msg:'Ce résultat est en joules. Convertis en MJ : 1 MJ = 1 000 000 J.'},
-      {v:b.S*b.lam*b.dt/b.e*h*3600/1e6,tag:'ph-unite-e',msg:'L\'épaisseur doit être en mètres : '+NF(b.e)+' cm = '+NF(b.em)+' m.'}]});
+    mistakes:[{v:b.F*h/1e6,x:'('+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em)+') × '+h+' / 1000000',tag:'ph-duree',msg:'La durée doit être en secondes : '+h+' h = '+(h*3600)+' s.'},
+      {v:b.F*h*3600/1e3,x:'('+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em)+') × '+(h*3600)+' / 1000',u:'kJ',tag:'ph-duree',msg:'Ce résultat est en kJ. L\'énoncé demande des MJ : divise encore par 1000.'},
+      {v:b.F*h*3600,x:'('+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.em)+') × '+(h*3600),u:'J',tag:'ph-duree',msg:'Ce résultat est en joules. Convertis en MJ : 1 MJ = 1 000 000 J.'},
+      {v:b.S*b.lam*b.dt/b.e*h*3600/1e6,x:'('+b.S+' × '+NF(b.lam)+' × '+b.dt+' / '+NF(b.e)+') × '+(h*3600)+' / 1000000',tag:'ph-unite-e',msg:'L\'épaisseur doit être en mètres : '+NF(b.e)+' cm = '+NF(b.em)+' m.'}]});
 }
 function genPhCdEpaisseur(){
   const p=pick(PH_PAROI.filter(x=>x[0]!=='verre')), mat=p[0], lam=phL(mat), S=rnd(5,20), t1=rnd(18,22), t2=rnd(-10,8), dt=t1-t2;
@@ -88,9 +100,9 @@ function genPhCdEpaisseur(){
     steps:[stp('Isoler e',M('Q/Δt = S · λ · Δθ / e')+' donc '+M('e = S · λ · Δθ / (Q/Δt)')),stp('Calcul',M('e = '+S+' × '+NF(lam)+' × '+dt+' / '+Fmax+' ≈ '+NF(phR(em,4)))+' m'),stp('En cm',M('e ≈ '+NF(r))+' cm')],
     hints:['Isole e dans Q/Δt = S · λ · Δθ / e : e = S · λ · Δθ / (Q/Δt).','Le résultat sort en mètres : multiplie par 100 pour l\'avoir en cm. Δθ = '+phDtTxt(b)+' °C.'],
     work:['e = '+S+' × '+NF(lam)+' × '+dt+' / '+Fmax,'e ≈ '+NF(r)+' cm'],
-    mistakes:[{v:em,tag:'ph-unite-e',msg:'Ce résultat est en mètres. Convertis en cm (× 100).'},
-      {v:Fmax/(S*lam*dt)*100,tag:'ph-formule',msg:'Tu as inversé la fraction : e = S · λ · Δθ / (Q/Δt).'},
-      {v:S*lam*(t1+t2)/Fmax*100,tag:'ph-dt',msg:'Δθ = '+phDtTxt(b)+' °C.'}]});
+    mistakes:[{v:em,x:S+' × '+NF(lam)+' × '+dt+' / '+Fmax,u:'m',tag:'ph-unite-e',msg:'Ce résultat est en mètres. Convertis en cm (× 100).'},
+      {v:Fmax/(S*lam*dt)*100,x:Fmax+' / ('+S+' × '+NF(lam)+' × '+dt+') × 100',tag:'ph-formule',msg:'Tu as inversé la fraction : e = S · λ · Δθ / (Q/Δt).'},
+      {v:S*lam*(t1+t2)/Fmax*100,x:S+' × '+NF(lam)+' × ('+t1+' + '+phN(t2)+') / '+Fmax+' × 100',tag:'ph-dt',msg:'Δθ = '+phDtTxt(b)+' °C.'}]});
 }
 function genPhCdEquiv(){
   const ins=pick(['laine de verre','polystyrène','liège en graine']), other=pick(['bois de sapin','brique rouge','ciment']);
@@ -103,7 +115,7 @@ function genPhCdEquiv(){
     steps:[stp('Même flux',M('S · λ₁ · Δθ / e₁ = S · λ₂ · Δθ / e₂')+' donc '+M('λ₁ / e₁ = λ₂ / e₂')),stp('Calcul',M('e₂ = e₁ × λ₂ / λ₁ = '+NF(given[2])+' × '+NF(want[1])+' / '+NF(given[1])+' ≈ '+NF(r))+' cm')],
     hints:['Isoler autant veut dire laisser passer le même flux de chaleur (même S, même Δθ) : il faut donc le même rapport λ / e.','e₂ = e₁ × λ₂ / λ₁ : un matériau moins conducteur (λ plus petit) demande une épaisseur plus faible.'],
     work:['e = '+NF(given[2])+' × '+NF(want[1])+' / '+NF(given[1]),'e ≈ '+NF(r)+' cm'],
-    mistakes:[{v:given[2]*given[1]/want[1],tag:'ph-formule',msg:'Rapport inversé : le matériau le plus isolant (λ le plus petit) doit être le moins épais. e₂ = e₁ × λ₂ / λ₁.'}]});
+    mistakes:[{v:given[2]*given[1]/want[1],x:NF(given[2])+' × '+NF(given[1])+' / '+NF(want[1]),tag:'ph-formule',msg:'Rapport inversé : le matériau le plus isolant (λ le plus petit) doit être le moins épais. e₂ = e₁ × λ₂ / λ₁.'},{v:given[2]*want[1],x:NF(given[2])+' × '+NF(want[1]),tag:'ph-formule',msg:'Il manque la division par λ du matériau de départ : e₂ = e₁ × λ₂ / λ₁.'}]});
 }
 
 /* ----- convection : Q/Δt = S · α · Δθ ----- */
@@ -117,7 +129,7 @@ function genPhCv(neg){
     steps:[stp('Formule',M('Q/Δt = S · α · Δθ')),stp('Écart',M('Δθ = '+phDtTxt(b))+' °C'),stp('Calcul',M('Q/Δt = '+NF(S)+' × '+a+' × '+dt+' = '+NF(r))+' W')],
     hints:['Formule de la convection : Q/Δt = S · α · Δθ.','Δθ = '+phDtTxt(b)+' °C.'],
     work:['Q/Δt = '+NF(S)+' × '+a+' × '+dt,'Q/Δt = '+NF(r)+' W'],
-    mistakes:[{v:S*a*(ts+tf),tag:'ph-dt',msg:'Δθ est une différence : '+phDtTxt(b)+' °C'+(tf<0?' (soustraire une température négative revient à ajouter).':'.')},{v:a*dt,tag:'ph-formule',msg:'Tu as oublié la surface S = '+NF(S)+' m².'},{v:S*a,tag:'ph-formule',msg:'Il manque la différence de température Δθ.'}]});
+    mistakes:[{v:S*a*(ts+tf),x:NF(S)+' × '+a+' × ('+ts+' + '+phN(tf)+')',tag:'ph-dt',msg:'Δθ est une différence : '+phDtTxt(b)+' °C'+(tf<0?' (soustraire une température négative revient à ajouter).':'.')},{v:a*dt,x:a+' × '+dt,tag:'ph-formule',msg:'Tu as oublié la surface S = '+NF(S)+' m².'},{v:S*a,x:NF(S)+' × '+a,tag:'ph-formule',msg:'Il manque la différence de température Δθ.'}]});
 }
 function genPhCvAir(){
   const S=pick([2.4,2.8,3.2,3.6]), a=rnd(4,8), tp=rnd(35,45), ta0=rnd(8,18), P=Math.round(S*a*(tp-ta0)), x=P/(S*a), ta=tp-x, d=1, r=phR(ta,d);
@@ -126,7 +138,7 @@ function genPhCvAir(){
     steps:[stp('Écart',M('Δθ = (Q/Δt) / (S · α) = '+P+' / ('+NF(S)+' × '+a+') ≈ '+NF(phR(x,2)))+' °C'),stp('Température de l\'air','La paroi est plus chaude que l\'air : '+M('θ = '+tp+' − '+NF(phR(x,2))+' ≈ '+NF(r))+' °C')],
     hints:['Isole Δθ dans Q/Δt = S · α · Δθ : Δθ = (Q/Δt) / (S · α).','Le chauffe-eau perd de la chaleur : l\'air est plus froid que sa paroi, donc θ air = θ paroi − Δθ.'],
     work:['Δθ = '+P+' / ('+NF(S)+' × '+a+')','θ ≈ '+NF(r)+' °C'],
-    mistakes:[{v:tp+x,tag:'ph-dt',msg:'La paroi cède de la chaleur à l\'air : l\'air est plus froid que la paroi. Soustrais Δθ.'},{v:x,tag:'ph-dt',msg:'Tu as calculé l\'écart Δθ. Il reste à le retrancher de la température de la paroi.'}]});
+    mistakes:[{v:tp+x,x:tp+' + '+P+' / ('+NF(S)+' × '+a+')',tag:'ph-dt',msg:'La paroi cède de la chaleur à l\'air : l\'air est plus froid que la paroi. Soustrais Δθ.'},{v:x,x:P+' / ('+NF(S)+' × '+a+')',l:'Δθ',tag:'ph-dt',msg:'Tu as calculé l\'écart Δθ. Il reste à le retrancher de la température de la paroi.'}]});
 }
 function genPhCvAlpha(){
   const liq=Math.random()<0.4, S=liq?pick([0.5,0.8,1,1.2]):rnd(2,12), a0=liq?rnd(200,1500):rnd(5,40), ts=liq?rnd(40,80):rnd(25,60), tf=liq?rnd(10,30):rnd(5,20), dt=ts-tf;
@@ -136,7 +148,7 @@ function genPhCvAlpha(){
     steps:[stp('Isoler α',M('α = (Q/Δt) / (S · Δθ)')),stp('Calcul',M('α = '+P+' / ('+NF(S)+' × '+dt+') ≈ '+NF(r))),stp('Contrôle','Valeurs typiques : de 5 à 250 pour un gaz, de 200 à 5000 pour un liquide.')],
     hints:['Isole α dans Q/Δt = S · α · Δθ.','Δθ = '+ts+' − '+tf+' = '+dt+' °C.'],
     work:['α = '+P+' / ('+NF(S)+' × '+dt+')','α ≈ '+NF(r)],
-    mistakes:[{v:P*S/dt,tag:'ph-formule',msg:'α = (Q/Δt) / (S · Δθ) : S est au dénominateur.'},{v:P/S,tag:'ph-dt',msg:'Il faut aussi diviser par Δθ = '+dt+' °C.'}]});
+    mistakes:[{v:P*S/dt,x:P+' × '+NF(S)+' / '+dt,tag:'ph-formule',msg:'α = (Q/Δt) / (S · Δθ) : S est au dénominateur.'},{v:P/S,x:P+' / '+NF(S),tag:'ph-dt',msg:'Il faut aussi diviser par Δθ = '+dt+' °C.'}]});
 }
 
 /* ----- modes de transfert, conducteurs et isolants (réponse à choisir) ----- */
