@@ -89,6 +89,7 @@ Les numéros de lignes renvoient à l'ancien `index.html` (commit `ceee127`).
 | 43c | `js/physique/liquides.js` | CHR 6 dilatation des liquides | ajouté |
 | 43d | `js/physique/gaz.js` | CHR 7 gaz parfaits | ajouté |
 | 43e | `js/physique/variantes.js` | exercices supplémentaires par niveau (conduction, convection, dilatation, liquides, gaz) | ajouté |
+| 43f | `js/physique/vecteurs.js` | thème Vecteurs (composantes, forme polaire, somme, résultante de forces) | ajouté |
 | 43 | `js/ui/cours-bilan.js` | Cours, bilan, rangs par thème | 10445–10691 |
 | 44 | `js/init.js` | `init()` : branchement des événements puis démarrage, appelé en dernier | 10692–10735 |
 

@@ -61,7 +61,7 @@ function mkGeo(o){
     .filter(m=>m.s!==undefined||(isFinite(pv(m.v))&&Math.abs(pv(m.v)-pv(val))>1e-6));
   const uniq=o.mode==='fn'?ms:ms.filter((m,i)=>ms.findIndex(x=>x.v&&Math.abs(pv(x.v)-pv(m.v))<1e-6&&Math.abs(x.v.b-m.v.b)<1e-9)===i);
   return {kind:'geo',expected:{},vars:o.fn?[o.fn.lhs].concat(o.fn.vars):[],v:null,
-    geo:{unit,pow,mode,d:o.d,val,choice:o.choice,sanity:o.sanity||[],fn:o.fn||null},
+    geo:{unit,pow,mode,d:o.d,tol:o.tol||0,val,choice:o.choice,sanity:o.sanity||[],fn:o.fn||null},
     statement:tx.plain.replace(/<[^>]+>/g,''), html:'<div class="geo">'+o.svg+'<p class="geotxt">'+tx.html+'</p></div>',
     expectedStr:es+(mode==='choice'?'':ustr), expectedHtml:M(es)+(mode==='choice'?'':esc(ustr)),
     steps:o.steps||[], hints:o.hints||[], mistakes:uniq,

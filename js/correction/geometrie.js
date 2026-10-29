@@ -28,25 +28,27 @@ Object.assign(TAGS,{
   'geo-methode':{label:'Méthode à revoir',tip:'Identifie le théorème ou la formule, écris-la avec les noms des points, remplace par les valeurs, puis calcule.'}
 });
 const GU_POW=s=>s; 
-const GU_PHYS={w:'W',kw:'kW',j:'J',kj:'kJ',mj:'MJ','°c':'°C',l:'L',ml:'mL',bar:'bar',mbar:'mbar',hpa:'hPa',pa:'Pa',k:'K',kwh:'kWh',wh:'Wh'};
+const GU_PHYS={w:'W',kw:'kW',j:'J',kj:'kJ',mj:'MJ','°c':'°C',l:'L',ml:'mL',bar:'bar',mbar:'mbar',hpa:'hPa',pa:'Pa',k:'K',kwh:'kWh',wh:'Wh',n:'N'};
 function geoNorm(s){
   return String(s).replace(/[−–—]/g,'-').replace(/[×·⋅∙]/g,'*').replace(/÷/g,'/').replace(/²/g,'^2').replace(/³/g,'^3')
-    .replace(/sqrt|racine|rac/gi,'√').replace(/(^|[^a-zA-Z])pi(?![a-zA-Z])/gi,'$1π').replace(/(\d)\s*[x]\s*(?=\d)/g,'$1*').replace(/(\d),(\d)/g,'$1.$2').replace(/[  ]/g,' ');
+    .replace(/(?:tan\s*\^?\s*(?:-1|⁻¹)|arctan|arctg)/gi,'atan').replace(/sqrt|racine|rac/gi,'√').replace(/(^|[^a-zA-Z])pi(?![a-zA-Z])/gi,'$1π').replace(/(\d)\s*[x]\s*(?=\d)/g,'$1*').replace(/(\d),(\d)/g,'$1.$2').replace(/[  ]/g,' ');
 }
 function geoUnit(seg){
   let s=geoNorm(seg).trim(), unit='', pow=0, deg=false;
   const dm=s.match(/^(.*?)\s*(?:°|degr[ée]s?|deg)\s*$/i); if(dm){ s=dm[1]; deg=true; }
-  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|ml|m|kwh|wh|kw|w|kj|mj|j|°c|l|mbar|bar|hpa|pa|k)\s*(\^\s*([23]))?\s*$/i);
+  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|ml|m|kwh|wh|kw|w|kj|mj|j|°c|l|mbar|bar|hpa|pa|k|n)\s*(\^\s*([23]))?\s*$/i);
   if(um){ s=um[1]; unit=GU_PHYS[um[2].toLowerCase()]||um[2].toLowerCase(); pow=um[3]?+um[4]:1; }
   return {core:s.trim(),unit,pow,deg};
 }
-const isNumCore=c=>/^[0-9+\-*/^().π√\s]+$/.test(c)&&/[0-9π]/.test(c);
+const isNumCore=c=>{ const s=c.replace(/atan|cos|sin|tan|°/gi,''); return /^[0-9+\-*/^().π√\s]+$/.test(s)&&/[0-9π]/.test(s); };
 function geoEval(core){
   const t=[]; let i=0; const s=core;
   while(i<s.length){
     const c=s[i];
     if(/\s/.test(c)){ i++; continue; }
     if(/[0-9.]/.test(c)){ let j=i; while(j<s.length&&/[0-9.]/.test(s[j])) j++; const w=s.slice(i,j); if((w.match(/\./g)||[]).length>1||w==='.') throw new ParseError('Le nombre « '+w+' » est mal écrit.'); t.push({k:'n',v:parseFloat(w)}); i=j; continue; }
+    if(c==='°'){ i++; continue; }
+    const fm=s.slice(i).match(/^(atan|cos|sin|tan)/i); if(fm){ t.push({k:'f',f:fm[1].toLowerCase()}); i+=fm[1].length; continue; }
     if('+-*/^()π√'.includes(c)){ t.push({k:c}); i++; continue; }
     throw new ParseError('Caractère non reconnu : « '+c+' ».');
   }
@@ -58,7 +60,7 @@ function geoEval(core){
   function term(){ let v=unary(); for(;;){ const k=peek();
       if(k==='*'){ p++; v=mul(v,unary()); }
       else if(k==='/'){ p++; v=div(v,unary()); }
-      else if(k==='π'||k==='√'||k==='('){ v=mul(v,unary()); }
+      else if(k==='π'||k==='√'||k==='('||k==='f'){ v=mul(v,unary()); }
       else if(k==='n'){ throw new ParseError('Il manque un signe d\'opération entre deux nombres.'); }
       else break; }
     return v; }
@@ -68,6 +70,7 @@ function geoEval(core){
     const k=peek();
     if(k==='n'){ return {a:t[p++].v,b:0}; }
     if(k==='π'){ p++; return {a:0,b:1}; }
+    if(k==='f'){ const f=t[p++].f; let x; if(peek()==='('||peek()==='n') x=atom(); else if(peek()==='-'){ p++; const y=atom(); x={a:-y.a,b:-y.b}; } else throw new ParseError('Écris l\'angle après '+f+', par exemple '+f+'(30).'); if(x.b) throw new ParseError('Pas de π dans un angle en degrés ici.'); const r=x.a*Math.PI/180; let val; if(f==='cos') val=Math.cos(r); else if(f==='sin') val=Math.sin(r); else if(f==='tan'){ if(Math.abs(Math.cos(r))<1e-12) throw new ParseError('La tangente de cet angle n\'existe pas.'); val=Math.tan(r); } else val=Math.atan(x.a)*180/Math.PI; return {a:val,b:0}; }
     if(k==='√'){ p++; const x=(peek()==='(')?atom():((peek()==='n')?{a:t[p++].v,b:0}:null); if(!x) throw new ParseError('Écris ce qui est sous la racine, par exemple √25 ou √(9 + 16).'); if(x.b) throw new ParseError('Une racine de π n\'est pas utilisée ici.'); if(x.a<0) throw new ParseError('La racine carrée d\'un nombre négatif n\'existe pas.'); return {a:Math.sqrt(x.a),b:0}; }
     if(k==='('){ p++; const v=expr(); if(peek()!==')') throw new ParseError('Il manque une parenthèse fermante.'); p++; return v; }
     if(k===null) throw new ParseError('L\'expression est incomplète.');
@@ -206,7 +209,7 @@ function checkGeoWork(ex,input){
   else if(G.mode==='pi'){ good=Math.abs(u.a-val.a)<=1e-6*Math.max(1,Math.abs(val.a))&&Math.abs(u.b-val.b)<=1e-6*Math.max(1,Math.abs(val.b)); if(!good&&Math.abs(u.b)<1e-9&&Math.abs(u.a-vnum)<=0.01*Math.max(1,Math.abs(vnum))) near='exact'; }
   else if(G.mode==='sqrt'){ good=Math.abs(u.b)<1e-9&&Math.abs(u.a-vnum)<=1e-8*Math.max(1,vnum); if(!good&&Math.abs(u.b)<1e-9&&Math.abs(u.a-vnum)<=0.02*Math.max(1,vnum)) near='exact'; }
   else if(G.mode==='round'){ const r=Math.round(vnum*Math.pow(10,G.d))/Math.pow(10,G.d);
-    good=Math.abs(u.b)<1e-9&&Math.abs(u.a-r)<1e-9;
+    good=Math.abs(u.b)<1e-9&&(Math.abs(u.a-r)<1e-9||(G.tol&&decimalsOf(fin.raw)<=G.d&&Math.abs(u.a-vnum)<=G.tol));
     if(!good&&Math.abs(u.b)<1e-9){ const dd=decimalsOf(fin.raw);
       if(Math.abs(u.a-vnum)<=1e-6*Math.max(1,vnum)&&dd<=G.d+1) near='unrounded';
       else if(dd>G.d&&Math.abs(u.a-Math.round(vnum*Math.pow(10,dd))/Math.pow(10,dd))<1e-9) near='toofine';

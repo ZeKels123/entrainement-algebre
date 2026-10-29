@@ -348,9 +348,10 @@ const TOPICS={
   'ctx-fact':{kind:'factor',level:4,label:'Applications : aires',gen:genCtxFact}
 };
 const LEVEL_NAMES={1:'Niveau 1',2:'Niveau 2',3:'Niveau 3',4:'Niveau 4',5:'Niveau 5'};
-const domainOf=kind=>(kind==='expand'||kind==='factor')?'alg':(/^g/.test(kind)?'geo':/^en/.test(kind)?'ang':/^ep/.test(kind)?'apa':/^frf/.test(kind)?'ff':/^fs/.test(kind)?'fs':/^fr/.test(kind)?'fr':/^ph/.test(kind)?'ph':'eq');
+const domainOf=kind=>(kind==='expand'||kind==='factor')?'alg':(/^g/.test(kind)?'geo':/^en/.test(kind)?'ang':/^ep/.test(kind)?'apa':/^frf/.test(kind)?'ff':/^fs/.test(kind)?'fs':/^fr/.test(kind)?'fr':/^pv/.test(kind)?'pv':/^ph/.test(kind)?'ph':'eq');
 function newExercise(mode,level,avoid,pool,domain){
-  const ids=pool&&pool.length?pool:Object.keys(TOPICS).filter(id=>(mode==='mix'?domainOf(TOPICS[id].kind)===(domain||'alg'):TOPICS[id].kind===mode)&&(!level||TOPICS[id].level===level));
+  let ids=pool&&pool.length?pool:Object.keys(TOPICS).filter(id=>(mode==='mix'?domainOf(TOPICS[id].kind)===(domain||'alg'):TOPICS[id].kind===mode)&&(!level||TOPICS[id].level===level));
+  if(!ids.length) ids=Object.keys(TOPICS).filter(id=>mode==='mix'?domainOf(TOPICS[id].kind)===(domain||'alg'):TOPICS[id].kind===mode);
   let ex;
   for(let i=0;i<40;i++){
     const id=pick(ids); ex=TOPICS[id].gen(); ex.topic=id; ex.level=TOPICS[id].level;

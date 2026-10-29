@@ -27,7 +27,7 @@ function setTab(t){
   const st=t==='stats'||t==='shop'||t==='lb';
   ['train','course','formulas','exam','stats','shop','lb'].forEach(k=>{ $('view-'+k).hidden=(k!==t); });
   ['train','course','formulas','exam'].forEach(k=>{ const on=k===t||(k==='exam'&&running()); $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
-  ['alg','eq','geo','ang','apa','ph','fr','ff','fs'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
+  ['alg','eq','geo','ang','apa','ph','pv','fr','ff','fs'].forEach(d=>{ const on=!st&&d===S.domain; $('tab-'+d).setAttribute('aria-selected',String(on)); $('tab-'+d).tabIndex=on?0:-1; });
   ['stats','shop','lb'].forEach(k=>{ const on=t===k; $('tab-'+k).setAttribute('aria-selected',String(on)); $('tab-'+k).tabIndex=on?0:-1; });
   $('subnav').hidden=st;
   if(!st) S.view=t;
@@ -53,7 +53,9 @@ function renderSetup(){ renderSetup0(); gameBossZone(); }
 function renderSetup0(){
   $('seg-mode').innerHTML=MODES[S.domain].map(m=>'<button type="button" data-v="'+m[0]+'" aria-pressed="'+(m[0]===S.mode)+'">'+m[1]+(m[0]==='srs'&&srsDueIds(S.domain).length?' ('+srsDueIds(S.domain).length+')':'')+'</button>').join('');
   const mx=maxLevel(); if(mx&&S.level>mx) S.level=mx;
-  $('seg-level').innerHTML=[0].concat(Array.from({length:mx},(_,i)=>i+1)).map(n=>'<button type="button" data-v="'+n+'" aria-pressed="'+(n===S.level)+'"'+((S.mode==='review'||S.mode==='srs'||!!S.pool)?' disabled':'')+'>'+(n?n:'Tous')+'</button>').join('');
+  const lvOk=n=>!n||S.mode==='review'||S.mode==='srs'||!!S.pool||Object.keys(TOPICS).some(id=>((S.mode==='mix'||S.mode==='copy')?DKINDS[S.domain].includes(TOPICS[id].kind):TOPICS[id].kind===S.mode)&&TOPICS[id].level===n);
+  if(S.level&&!lvOk(S.level)) S.level=0;
+  $('seg-level').innerHTML=[0].concat(Array.from({length:mx},(_,i)=>i+1)).map(n=>'<button type="button" data-v="'+n+'" aria-pressed="'+(n===S.level)+'"'+((S.mode==='review'||S.mode==='srs'||!!S.pool||!lvOk(n))?' disabled':'')+'>'+(n?n:'Tous')+'</button>').join('');
   const canTopic=!(S.pool||S.mode==='srs'||S.mode==='review'||S.mode==='copy');
   const tids=canTopic?Object.keys(TOPICS).filter(id=>(S.mode==='mix'?DKINDS[S.domain].includes(TOPICS[id].kind):TOPICS[id].kind===S.mode)&&(!S.level||TOPICS[id].level===S.level)):[];
   if(S.only&&!tids.includes(S.only)) S.only='';
