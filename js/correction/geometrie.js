@@ -28,7 +28,7 @@ Object.assign(TAGS,{
   'geo-methode':{label:'Méthode à revoir',tip:'Identifie le théorème ou la formule, écris-la avec les noms des points, remplace par les valeurs, puis calcule.'}
 });
 const GU_POW=s=>s; 
-const GU_PHYS={w:'W',kw:'kW',j:'J',kj:'kJ',mj:'MJ','°c':'°C',l:'L',ml:'mL',bar:'bar',mbar:'mbar',hpa:'hPa',pa:'Pa',k:'K'};
+const GU_PHYS={w:'W',kw:'kW',j:'J',kj:'kJ',mj:'MJ','°c':'°C',l:'L',ml:'mL',bar:'bar',mbar:'mbar',hpa:'hPa',pa:'Pa',k:'K',kwh:'kWh',wh:'Wh'};
 function geoNorm(s){
   return String(s).replace(/[−–—]/g,'-').replace(/[×·⋅∙]/g,'*').replace(/÷/g,'/').replace(/²/g,'^2').replace(/³/g,'^3')
     .replace(/sqrt|racine|rac/gi,'√').replace(/(^|[^a-zA-Z])pi(?![a-zA-Z])/gi,'$1π').replace(/(\d)\s*[x]\s*(?=\d)/g,'$1*').replace(/(\d),(\d)/g,'$1.$2').replace(/[  ]/g,' ');
@@ -36,7 +36,7 @@ function geoNorm(s){
 function geoUnit(seg){
   let s=geoNorm(seg).trim(), unit='', pow=0, deg=false;
   const dm=s.match(/^(.*?)\s*(?:°|degr[ée]s?|deg)\s*$/i); if(dm){ s=dm[1]; deg=true; }
-  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|ml|m|kw|w|kj|mj|j|°c|l|mbar|bar|hpa|pa|k)\s*(\^\s*([23]))?\s*$/i);
+  const um=s.match(/^(.*?[\d)π])\s*(mm|cm|dm|km|ml|m|kwh|wh|kw|w|kj|mj|j|°c|l|mbar|bar|hpa|pa|k)\s*(\^\s*([23]))?\s*$/i);
   if(um){ s=um[1]; unit=GU_PHYS[um[2].toLowerCase()]||um[2].toLowerCase(); pow=um[3]?+um[4]:1; }
   return {core:s.trim(),unit,pow,deg};
 }
